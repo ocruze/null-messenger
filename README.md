@@ -1,7 +1,7 @@
 # null-messenger
 
 Lancer le serveur :
-`java LaunchServer'
+`java LaunchServer`
 
 Lancer le client :
-`java LaunchClient'
+`java LaunchClient`
