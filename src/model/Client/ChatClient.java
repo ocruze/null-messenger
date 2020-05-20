@@ -25,7 +25,7 @@ public class ChatClient {
 
 			readThread = new ReadThread(socket, this);
 			writeThread = new WriteThread(socket, this);
-			
+
 			readThread.start();
 			writeThread.start();
 
@@ -45,13 +45,4 @@ public class ChatClient {
 		return this.userName;
 	}
 
-	public static void main(String[] args) {
-		// if (args.length < 2) return;
-
-		String hostname = "127.0.0.1";// args[0];
-		int port = 8989;// Integer.parseInt(args[1]);
-
-		ChatClient client = new ChatClient(hostname, port);
-		client.execute();
-	}
 }

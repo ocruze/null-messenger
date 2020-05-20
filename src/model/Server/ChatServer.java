@@ -1,91 +1,88 @@
 package model.Server;
 
+import java.io.IOException;
+import java.net.ServerSocket;
+import java.net.Socket;
+import java.util.HashSet;
+import java.util.Set;
 
-import java.io.*;
-import java.net.*;
-import java.util.*;
+import model.User;
 
 public class ChatServer {
-    private int port;
-    private Set<String> userNames = new HashSet<>();
-    private Set<UserThread> userThreads = new HashSet<>();
+	private int port;
+	private Set<User> users = new HashSet<>();
+	private Set<UserThread> userThreads = new HashSet<>();
 
-    public static void main(String[] args) {
-        /*
-         * if (args.length < 1) {
-         * System.out.println("Syntax: java ChatServer <port-number>"); System.exit(0);
-         * }
-         */
+	public ChatServer(int port) {
+		this.port = port;
+	}
 
-        int port = 8989;// Integer.parseInt(args[0]);
+	public void execute() {
+		try (ServerSocket serverSocket = new ServerSocket(port)) {
 
-        ChatServer server = new ChatServer(port);
-        server.execute();
-    }
+			System.out.println("Chat Server is listening on port " + port);
 
-    public ChatServer(int port) {
-        this.port = port;
-    }
+			while (true) {
+				Socket socket = serverSocket.accept();
+				System.out.println("New user connected");
 
-    public void execute() {
-        try (ServerSocket serverSocket = new ServerSocket(port)) {
+				UserThread newUser = new UserThread(socket, this);
+				userThreads.add(newUser);
+				newUser.start();
 
-            System.out.println("Chat Server is listening on port " + port);
+			}
 
-            while (true) {
-                Socket socket = serverSocket.accept();
-                System.out.println("New user connected");
+		} catch (IOException ex) {
+			System.out.println("Error in the server: " + ex.getMessage());
+			ex.printStackTrace();
+		}
+	}
 
-                UserThread newUser = new UserThread(socket, this);
-                userThreads.add(newUser);
-                newUser.start();
+	/**
+	 * Delivers a message from one user to others (broadcasting)
+	 */
+	void broadcast(String message, UserThread excludeUser) {
+		for (UserThread aUser : userThreads) {
+			if (aUser != excludeUser) {
+				aUser.sendMessage(message);
+			}
+		}
+	}
 
-            }
+	User getUser(String username) {
+		return users.stream().filter(x -> x.getUsername().equals(username)).findFirst().get();
+	}
 
-        } catch (IOException ex) {
-            System.out.println("Error in the server: " + ex.getMessage());
-            ex.printStackTrace();
-        }
-    }
+	User addUser(String username) {
+		User newUser = new User(username);
+		boolean added = users.add(newUser);
+		return added ? newUser : null; 
+	}
 
-    /**
-     * Delivers a message from one user to others (broadcasting)
-     */
-    void broadcast(String message, UserThread excludeUser) {
-        for (UserThread aUser : userThreads) {
-            if (aUser != excludeUser) {
-                aUser.sendMessage(message);
-            }
-        }
-    }
+	UserThread getUserThread(User user) {
+		return userThreads.stream().filter(x -> x.getUser().equals(user)).findFirst().get();
+	}
 
-    /**
-     * Stores username of the newly connected client.
-     */
-    void addUserName(String userName) {
-        userNames.add(userName);
-    }
+	UserThread getUserThread(String username) {
+		return getUserThread(getUser(username));
+	}
 
-    /**
-     * When a client is disconneted, removes the associated username and UserThread
-     */
-    void removeUser(String userName, UserThread aUser) {
-        boolean removed = userNames.remove(userName);
-        if (removed) {
-            userThreads.remove(aUser);
-            System.out.println("The user " + userName + " quitted");
-        }
-    }
+	/**
+	 * When a client is disconneted, removes the associated username and UserThread
+	 */
+	boolean disconnectUser(User user) {
+		return userThreads.remove(getUserThread(user));
+	}
 
-    Set<String> getUserNames() {
-        return this.userNames;
-    }
+	/**
+	 * Returns true if there are other users connected (not count the currently
+	 * connected user)
+	 */
+	boolean hasUsers() {
+		return !this.users.isEmpty();
+	}
 
-    /**
-     * Returns true if there are other users connected (not count the currently
-     * connected user)
-     */
-    boolean hasUsers() {
-        return !this.userNames.isEmpty();
-    }
+	public Set<User> getUsers() {
+		return users;
+	}
 }
