@@ -56,7 +56,7 @@ public class ChatServer {
 	}
 
 	Connection createDatabase() {
-		String url = "jdbc:sqlite:C:/Users/Never/Desktop/db.sql";
+		String url = "jdbc:sqlite:./db.sql";
 		System.out.println(url);
 		File tmp = new File(url);
 		if (tmp.exists()) {
