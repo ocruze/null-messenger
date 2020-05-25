@@ -14,10 +14,6 @@ public class LaunchClient {
 		System.out.print("Please type a port number : ");
 		int port = Integer.parseInt(sc.nextLine());
 
-
-		// String hostname = "127.0.0.1";// args[0];
-		// int port = 8989;// Integer.parseInt(args[1]);
-
 		ChatClient client = new ChatClient(hostname, port);
 		client.execute();
 	}
