@@ -5,16 +5,22 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.HashSet;
 import java.util.Set;
+import java.io.File;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.SQLException;
 
 import model.User;
 
 public class ChatServer {
 	private int port;
+	private Connection database;
 	private Set<User> users = new HashSet<>();
 	private Set<UserThread> userThreads = new HashSet<>();
 
 	public ChatServer(int port) {
 		this.port = port;
+		this.database = this.createDatabase();
 	}
 
 	public void execute() {
@@ -46,6 +52,30 @@ public class ChatServer {
 			if (aUser != excludeUser) {
 				aUser.sendMessage(message);
 			}
+		}
+	}
+
+	Connection createDatabase() {
+		String url = "jdbc:sqlite:C:/Users/Never/Desktop/db.sql";
+		System.out.println(url);
+		File tmp = new File(url);
+		if (tmp.exists()) {
+			System.out.println("File exists !");
+			try {
+				return DriverManager.getConnection(url);
+			}
+			catch(SQLException e) {
+				System.out.println(e.getMessage());
+				return null;
+			}
+		}
+		System.out.println("File does not exists !");
+		try {
+			return DriverManager.getConnection(url);
+		}
+		catch(SQLException e) {
+			System.out.println(e.getMessage());
+			return null;
 		}
 	}
 
