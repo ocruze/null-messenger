@@ -1,10 +1,10 @@
 package model.Client;
 
-import java.io.Console;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.net.Socket;
+import java.util.Scanner;
 
 public class WriteThread extends Thread {
 	private PrintWriter writer;
@@ -26,22 +26,27 @@ public class WriteThread extends Thread {
 
 	public void run() {
 
-		Console console = System.console();
+		// Console console = System.console();
 
-		String userName = console.readLine("\nEnter your name: ");
+		Scanner saisie = new Scanner(System.in);
+		System.out.print("Enter your name: ");
+		String userName = saisie.nextLine();
 		client.setUserName(userName);
 		writer.println(userName);
 
 		String text;
 
 		do {
-			text = console.readLine("[" + userName + "]: ");
+			System.out.print("[" + userName + "] :");
+			text = saisie.nextLine();
 			writer.println(text);
 
 		} while (!text.equals("bye"));
 
+
 		try {
 			socket.close();
+			saisie.close();
 		} catch (IOException ex) {
 
 			System.out.println("Error writing to server: " + ex.getMessage());
