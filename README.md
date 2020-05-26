@@ -1,7 +1,18 @@
-# null-messenger
+#Bienvenue sur le README du projet Chat Room
 
-Lancer le serveur :
-`java Server`
+### Sommaire
+-[Participants]
+-[Descriptions]
+-[Technologies]
+-[How to use]
+-[Base de données]
+-[Licence]
+-[Another informations]
 
-Lancer le client :
-`java Client`
+
+#Participants
+Abensur Maxime
+Augere Baptiste
+Hector Godzien
+Cruze Arnest
+Leffy
