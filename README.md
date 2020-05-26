@@ -2,14 +2,20 @@
 
 ### Sommaire
 
-* [Participants ]
-* [ Descriptions] 
-
+* [Participants]
+* [Descriptions]
+* [Technologies]
+* [How to use]
+* [Base de données] 
+* [Licence]
+* [Another Information] 
 
 
 #Participants
-Abensur Maxime
-Augere Baptiste
-Hector Godzien
-Cruze Arnest
-Leffy
+
+* Gallois Anrnaud
+* Augere Baptiste
+* Abensur Maxime
+* Hector Godzien
+* Cruze Arnest
+* Leffy Léo 
