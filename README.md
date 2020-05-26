@@ -1,4 +1,4 @@
-<h1 align="center">Chat Room
+<h1 align="center" Chat Room>
 
 ### Sommaire
 
