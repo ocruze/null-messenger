@@ -2,7 +2,6 @@ package window.view;
 
 import java.awt.Button;
 import java.awt.Color;
-import java.awt.EventQueue;
 import java.awt.Font;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
@@ -10,50 +9,26 @@ import java.awt.event.MouseMotionAdapter;
 
 import javax.swing.ImageIcon;
 import javax.swing.JFrame;
-<<<<<<< HEAD:src/view/GUI.java
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-=======
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 
-import window.presenter.IPresenter;
 import window.presenter.PresenterConnection;
 
-import java.awt.Color;
-import java.awt.Button;
-import java.awt.SystemColor;
 import javax.swing.JTextField;
-import javax.swing.JSeparator;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
->>>>>>> devWindow:src/window/view/ViewConnection.java
 import javax.swing.JPasswordField;
-import javax.swing.JTextField;
 import javax.swing.SwingConstants;
-<<<<<<< HEAD:src/view/GUI.java
-import javax.swing.border.EmptyBorder;
-=======
-import java.awt.Font;
 import java.awt.event.ActionEvent;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseMotionAdapter;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
->>>>>>> devWindow:src/window/view/ViewConnection.java
 
 public class ViewConnection extends JFrame {
-
+	private static final long serialVersionUID = 1L;
 	private JPanel contentPane;
 	private JTextField usernameField;
 	private JTextField ipField;
 	private JPasswordField passwordField;
-<<<<<<< HEAD:src/view/GUI.java
-	private JPasswordField passwordField_1;
-
-	int xx, xy;
-=======
 	private JTextField portField;
 	public PresenterConnection presenter;
 	
@@ -61,41 +36,19 @@ public class ViewConnection extends JFrame {
 		USERNAME,PASSWORD,IP,PORT
 	}
 	
-	int xx,xy;
->>>>>>> devWindow:src/window/view/ViewConnection.java
-
-	/**
-	 * Launch the application.
-	 */
-	/**
-	public static void main(String[] args) {
-		EventQueue.invokeLater(new Runnable() {
-			public void run() {
-				try {
-					ViewConnection frame = new ViewConnection();
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-			}
-		});
-	} **/
+	private int xx,xy;
 
 	public ViewConnection() {
 		init();
 		this.setUndecorated(true);
 		this.setVisible(true);
 	}
-<<<<<<< HEAD:src/view/GUI.java
-
-	public GUI() {
-=======
 	
 	public void setPresenter(PresenterConnection presenter) 
 	{
 	        this.presenter = presenter;
 	}
 	public void init() {
->>>>>>> devWindow:src/window/view/ViewConnection.java
 		setBackground(Color.WHITE);
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 729, 476);
@@ -133,13 +86,8 @@ public class ViewConnection extends JFrame {
 			public void mouseDragged(MouseEvent arg0) {
 
 				int x = arg0.getXOnScreen();
-<<<<<<< HEAD:src/view/GUI.java
-				int y = arg0.getYOnScreen();
-				GUI.this.setLocation(x - xx, y - xy);
-=======
 	            int y = arg0.getYOnScreen();
 	            ViewConnection.this.setLocation(x - xx, y - xy);  
->>>>>>> devWindow:src/window/view/ViewConnection.java
 			}
 		});
 		label.setBounds(-38, 0, 420, 290);
@@ -153,20 +101,6 @@ public class ViewConnection extends JFrame {
 		lblWeGotYou.setFont(new Font("Tahoma", Font.PLAIN, 18));
 		lblWeGotYou.setBounds(57, 343, 223, 27);
 		panel.add(lblWeGotYou);
-<<<<<<< HEAD:src/view/GUI.java
-
-		Button button = new Button("SignUp");
-		button.setForeground(Color.WHITE);
-		button.setBackground(Color.BLUE);
-		button.setBounds(395, 363, 283, 36);
-		contentPane.add(button);
-
-		textField = new JTextField();
-		textField.setBounds(395, 83, 283, 36);
-		contentPane.add(textField);
-		textField.setColumns(10);
-
-=======
 		
 		Button loginButton = new Button("Login");
 		loginButton.setForeground(Color.WHITE);
@@ -192,7 +126,6 @@ public class ViewConnection extends JFrame {
 		contentPane.add(usernameField);
 		usernameField.setColumns(10);
 		
->>>>>>> devWindow:src/window/view/ViewConnection.java
 		JLabel lblUsername = new JLabel("USERNAME");
 		lblUsername.setBounds(395, 58, 181, 14);
 		contentPane.add(lblUsername);
@@ -200,21 +133,12 @@ public class ViewConnection extends JFrame {
 		JLabel adresse = new JLabel("IP ADDRESSE");
 		adresse.setBounds(395, 132, 210, 14);
 		contentPane.add(adresse);
-<<<<<<< HEAD:src/view/GUI.java
-
-		textField_1 = new JTextField();
-		textField_1.setColumns(10);
-		textField_1.setBounds(395, 157, 283, 36);
-		contentPane.add(textField_1);
-
-=======
 		
 		ipField = new JTextField();
 		ipField.setColumns(10);
 		ipField.setBounds(395, 157, 283, 36);
 		contentPane.add(ipField);
 		
->>>>>>> devWindow:src/window/view/ViewConnection.java
 		JLabel lblPassword = new JLabel("PASSWORD");
 		lblPassword.setBounds(395, 204, 96, 14);
 		contentPane.add(lblPassword);
@@ -226,19 +150,11 @@ public class ViewConnection extends JFrame {
 		passwordField = new JPasswordField();
 		passwordField.setBounds(395, 229, 283, 36);
 		contentPane.add(passwordField);
-<<<<<<< HEAD:src/view/GUI.java
-
-		passwordField_1 = new JPasswordField();
-		passwordField_1.setBounds(395, 293, 283, 36);
-		contentPane.add(passwordField_1);
-
-=======
 		
 		portField = new JTextField();
 		portField.setBounds(395, 293, 283, 36);
 		contentPane.add(portField);
 		
->>>>>>> devWindow:src/window/view/ViewConnection.java
 		JLabel lbl_close = new JLabel("X");
 		lbl_close.addMouseListener(new MouseAdapter() {
 			@Override
@@ -271,7 +187,7 @@ public class ViewConnection extends JFrame {
 		Matcher m = p.matcher(field.getText()); 
 
 		if(!m.matches() && !type.equals(FieldType.USERNAME) && !type.equals(FieldType.PASSWORD)) {
-			message.showMessageDialog(null, "Le champ "+ type.name().toLowerCase()+" ne repecte pas le critère demandé", "Erreur", JOptionPane.ERROR_MESSAGE);
+			message.showMessageDialog(null, "Le champ "+ type.name().toLowerCase()+" ne repecte pas le critï¿½re demandï¿½", "Erreur", JOptionPane.ERROR_MESSAGE);
 		}
 	
 		if(!field.getText().equals("") && !(field instanceof JPasswordField)) {
@@ -285,7 +201,7 @@ public class ViewConnection extends JFrame {
 			}
 		}
 		else {
-			message.showMessageDialog(null, "Le champ "+ type.name().toLowerCase()+" n'est pas renseigné", "Erreur", JOptionPane.ERROR_MESSAGE);
+			message.showMessageDialog(null, "Le champ "+ type.name().toLowerCase()+" n'est pas renseignï¿½", "Erreur", JOptionPane.ERROR_MESSAGE);
 		}
 		return null;
 

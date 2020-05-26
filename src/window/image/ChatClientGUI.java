@@ -1,4 +1,4 @@
-package view;
+package window.image;
 
 import java.awt.EventQueue;
 import java.awt.GridBagConstraints;
