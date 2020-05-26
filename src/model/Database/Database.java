@@ -1,5 +1,6 @@
 package model.Database;
 
+import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -16,26 +17,42 @@ public class Database {
 	final static String SQL_FILENAME = "NullMessenger.sql";
 
 	private static Connection conn;
-	private static boolean hasData = false;
 
-	private void getConnection() throws ClassNotFoundException, SQLException {
-		Class.forName("org.sqlite.JDBC");
-		conn = DriverManager.getConnection("jdbc:sqlite:" + DATABASE_FILENAME);
-		init();
+	public Database() {
+		try {
+			conn = initConnection();
+			initStructure();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
 	}
 
-	private void init() throws SQLException {
-		if (!hasData) {
-			hasData = true;
+	private Connection initConnection() throws SQLException {
+		String url = "jdbc:sqlite:" + DATABASE_FILENAME;
+		System.out.println(url);
+		File tmp = new File(DATABASE_FILENAME);
 
-			String query = "SELECT name FROM sqlite_master WHERE type='table' AND name='user'";
-			Statement stmt = conn.createStatement();
-			ResultSet res = stmt.executeQuery(query);
+		if (tmp.exists()) {
+			System.out.println("File exists!");
+		} else {
+			System.out.println("File does not exists!");
+		}
 
-			if (!res.next()) {
-				System.out.println("Building the user table");
-				createSchema();
-			}
+		try {
+			return DriverManager.getConnection(url);
+		} catch (SQLException e) {
+			System.out.println(e.getMessage());
+			return null;
+		}
+	}
+
+	private void initStructure() throws SQLException {
+		String query = "SELECT name FROM sqlite_master WHERE type='table' AND name='user'";
+		Statement stmt = conn.createStatement();
+		ResultSet res = stmt.executeQuery(query);
+
+		if (!res.next()) {
+			createSchema();
 		}
 	}
 
@@ -56,9 +73,6 @@ public class Database {
 	}
 
 	ResultSet getUsers() throws SQLException, ClassNotFoundException {
-		if (conn == null)
-			getConnection();
-
 		String query = "SELECT * FROM user";
 		Statement stmt = conn.createStatement();
 		return stmt.executeQuery(query);
@@ -73,9 +87,6 @@ public class Database {
 	 * @throws ClassNotFoundException
 	 */
 	void addUser(String username, String password) throws SQLException, ClassNotFoundException {
-		if (conn == null)
-			getConnection();
-
 		String query = "INSERT INTO user (username, password) VALUES (?,?);";
 
 		PreparedStatement stmt = conn.prepareStatement(query);
@@ -92,10 +103,11 @@ public class Database {
 	 * @throws ClassNotFoundException
 	 */
 	void deleteUser(String username) throws SQLException, ClassNotFoundException {
-		if (conn == null)
-			getConnection();
+		String query = "DELETE FROM user WHERE username LIKE ?;";
 
-		// TODO
+		PreparedStatement stmt = conn.prepareStatement(query);
+		stmt.setString(1, username);
+		stmt.execute();
 	}
 
 	/**
@@ -108,10 +120,13 @@ public class Database {
 	 * @throws ClassNotFoundException
 	 */
 	void addMessage(int idConversation, int idSender, String content) throws SQLException, ClassNotFoundException {
-		if (conn == null)
-			getConnection();
+		String query = "INSERT INTO message (content, idSender, idConversation) VALUES (?,?,?);";
 
-		// TODO
+		PreparedStatement stmt = conn.prepareStatement(query);
+		stmt.setString(1, content);
+		stmt.setInt(2, idSender);
+		stmt.setInt(3, idConversation);
+		stmt.execute();
 	}
 
 	/**
@@ -123,9 +138,12 @@ public class Database {
 	 * @throws ClassNotFoundException
 	 */
 	void deleteMessage(int idConversation, int idSender) throws SQLException, ClassNotFoundException {
-		if (conn == null)
-			getConnection();
+		String query = "DELETE FROM message WHERE idSender LIKE ? AND idConversation LIKE ?;";
 
-		// TODO
+		PreparedStatement stmt = conn.prepareStatement(query);
+		stmt.setInt(1, idSender);
+		stmt.setInt(2, idConversation);
+		stmt.execute();
+
 	}
 }

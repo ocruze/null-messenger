@@ -6,14 +6,16 @@ import java.sql.SQLException;
 
 public class DatabaseMainTest {
 	public static void main(String[] args) {
-		Database database = new Database();
+		Database database;
 
 		try {
-			showResultSet(database.getUsers());
-			
-			database.addUser("arnest", "456464");
-			database.addUser("leo", "5465464");
-			
+			database = new Database();
+
+//			showResultSet(database.getUsers());
+//
+//			database.addUser("arnest", "456464");
+//			database.addUser("leo", "5465464");
+
 			showResultSet(database.getUsers());
 		} catch (ClassNotFoundException | SQLException e) {
 			e.printStackTrace();

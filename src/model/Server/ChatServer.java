@@ -6,6 +6,7 @@ import java.net.Socket;
 import java.util.HashSet;
 import java.util.Set;
 
+import model.Database.Database;
 import model.Entity.User;
 
 import java.io.File;
@@ -15,13 +16,13 @@ import java.sql.SQLException;
 
 public class ChatServer {
 	private int port;
-	private Connection database;
+	private Database database;
 	private Set<User> users = new HashSet<>();
 	private Set<UserThread> userThreads = new HashSet<>();
 
 	public ChatServer(int port) {
 		this.port = port;
-		this.database = this.createDatabase();
+		this.database = new Database();
 	}
 
 	public void execute() {
@@ -56,30 +57,6 @@ public class ChatServer {
 		}
 	}
 
-	Connection createDatabase() {
-		String url = "jdbc:sqlite:./db.sql";
-		System.out.println(url);
-		File tmp = new File(url);
-		if (tmp.exists()) {
-			System.out.println("File exists !");
-			try {
-				return DriverManager.getConnection(url);
-			}
-			catch(SQLException e) {
-				System.out.println(e.getMessage());
-				return null;
-			}
-		}
-		System.out.println("File does not exists !");
-		try {
-			return DriverManager.getConnection(url);
-		}
-		catch(SQLException e) {
-			System.out.println(e.getMessage());
-			return null;
-		}
-	}
-
 	User getUser(String username) {
 		return users.stream().filter(x -> x.getUsername().equals(username)).findFirst().get();
 	}
@@ -87,7 +64,7 @@ public class ChatServer {
 	User addUser(String username) {
 		User newUser = new User(username);
 		boolean added = users.add(newUser);
-		return added ? newUser : null; 
+		return added ? newUser : null;
 	}
 
 	UserThread getUserThread(User user) {
