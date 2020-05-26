@@ -1,7 +1,5 @@
 
-
-
-<h1 align="center">Chat Room/h1>
+<h1 align="center">Chat Room h1>
 
 ### Sommaire
 
