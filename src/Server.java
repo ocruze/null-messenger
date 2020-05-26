@@ -2,7 +2,7 @@ import model.Server.ChatServer;
 import java.util.Scanner;
 
 
-public class LaunchServer {
+public class Server {
 	public static void main(String[] args) {
 		Scanner saisie = new Scanner(System.in);
 

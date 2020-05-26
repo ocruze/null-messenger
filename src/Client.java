@@ -1,7 +1,7 @@
 import model.Client.ChatClient;
 import java.util.Scanner;
 
-public class LaunchClient {
+public class Client {
 
 	public static void main(String[] args) {
 		// if (args.length < 2) return;
