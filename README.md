@@ -12,8 +12,8 @@
 
 ##Participants
 
-* Gallois Anrnaud
 * Augere Baptiste
+* Galloy Anrnaud
 * Abensur Maxime
 * Godzien Hector
 * Cruze Arnest
