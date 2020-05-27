@@ -7,11 +7,12 @@ import java.net.UnknownHostException;
 public class ChatClient {
 	private String hostname;
 	private int port;
-	private String userName;
+	private static String userName;
 
 	public ChatClient(String hostname, int port) {
 		this.hostname = hostname;
 		this.port = port;
+		ChatClient.userName = null;
 	}
 
 	public void execute() {
@@ -38,11 +39,11 @@ public class ChatClient {
 	}
 
 	void setUserName(String userName) {
-		this.userName = userName;
+		ChatClient.userName = userName;
 	}
 
-	String getUserName() {
-		return this.userName;
+	static String getUserName() {
+		return ChatClient.userName;
 	}
 
 }

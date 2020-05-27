@@ -29,8 +29,9 @@ public class WriteThread extends Thread {
 		// Console console = System.console();
 
 		Scanner saisie = new Scanner(System.in);
-		System.out.print("Enter your name: ");
-		String userName = saisie.nextLine();
+		// System.out.print("Enter your name: ");
+		// String userName = saisie.nextLine();
+		String userName = model.Client.ChatClient.getUserName();
 		client.setUserName(userName);
 		writer.println(userName);
 
@@ -38,7 +39,9 @@ public class WriteThread extends Thread {
 
 		do {
 			System.out.print("[" + userName + "] :");
-			text = saisie.nextLine();
+			// TODO
+			text = 
+			// text = saisie.nextLine();
 			writer.println(text);
 
 		} while (!text.equals("bye"));

@@ -1,22 +1,29 @@
 package window.presenter;
 
-import window.model.IModel;
+import model.Client.ChatClient;
 import window.model.ModelConnection;
 import window.view.ViewConnection;
 
-public class PresenterConnection implements IPresenter {
+public class PresenterConnection {
 
 	public ViewConnection view;
 	public ModelConnection model;
-	
+	public ChatClient chatclient;
+
+
 	public PresenterConnection(ViewConnection view, ModelConnection model)	 {
 		this.view = view;
 		this.model = model;
+		this.chatclient = null;
 	}
 	
-	public void login() {
+	public void login(String hostname, int port) {
 		
-		System.out.println("Login :" +model.getUsername());
+		this.chatclient = new ChatClient(hostname, port);
+		this.chatclient.execute();
+
+		// System.out.println("Login :" +model.getUsername());
+		
 		
 	}
 	
