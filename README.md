@@ -1,5 +1,5 @@
 <div align="center">
-    <img src="https://miro.medium.com/max/1400/1*ZGRXE9ReZsawGHtEn0kpmQ.jpeg"
+    <img width="100" height="100" src="https://miro.medium.com/max/1400/1*ZGRXE9ReZsawGHtEn0kpmQ.jpeg"
 </div>
 </div>
 
@@ -43,4 +43,4 @@ licensed under the CC BY-NC-SA 4.0 license.
 ##Another Information
 
 
-<p align="center"><sub>Projet réalisé par l'équipe de L'ESIEA 3A-UFA with ❤<p>
+<p align="center"><sub>Projet réalisé par l'équipe de L'ESIEA 3A-UFA ❤<p>
