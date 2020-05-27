@@ -6,6 +6,8 @@ import java.io.PrintWriter;
 import java.net.Socket;
 import java.util.Scanner;
 
+import org.json.JSONObject;
+
 public class WriteThread extends Thread {
 	private PrintWriter writer;
 	private Socket socket;
@@ -35,17 +37,17 @@ public class WriteThread extends Thread {
 		client.setUserName(userName);
 		writer.println(userName);
 
-		String text;
+		JSONObject jsonClientMessage = null;
 
 		do {
-			System.out.print("[" + userName + "] :");
-			// TODO
-			text = 
+			// System.out.print("[" + userName + "] :");
+			jsonClientMessage = new JSONObject();
+			jsonClientMessage.put("username", userName);
 			// text = saisie.nextLine();
-			writer.println(text);
 
-		} while (!text.equals("bye"));
+			writer.println(jsonClientMessage.toString());
 
+		} while (!jsonClientMessage.getString("action").equals("disconnect"));
 
 		try {
 			socket.close();
@@ -56,4 +58,3 @@ public class WriteThread extends Thread {
 		}
 	}
 }
-

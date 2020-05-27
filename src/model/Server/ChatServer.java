@@ -9,11 +9,6 @@ import java.util.Set;
 import model.Database.Database;
 import model.Entity.User;
 
-import java.io.File;
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.SQLException;
-
 public class ChatServer {
 	private int port;
 	private Database database;

@@ -10,32 +10,33 @@ public class PresenterConnection {
 	public ModelConnection model;
 	public ChatClient chatclient;
 
-
-	public PresenterConnection(ViewConnection view, ModelConnection model)	 {
+	public PresenterConnection(ViewConnection view, ModelConnection model) {
 		this.view = view;
 		this.model = model;
 		this.chatclient = null;
 	}
-	
-	public void login(String hostname, int port) {
-		
-		this.chatclient = new ChatClient(hostname, port);
+
+	public void login() {
+
+		this.chatclient = new ChatClient(model.getIp(), model.getPort());
 		this.chatclient.execute();
 
 		// System.out.println("Login :" +model.getUsername());
-		
-		
+
 	}
-	
+
 	public void setPassword(String password) {
 		model.setPassword(password);
 	}
+
 	public void setUsername(String username) {
 		model.setUsername(username);
 	}
+
 	public void setPort(int port) {
 		model.setPort(port);
 	}
+
 	public void setIp(String ip) {
 		model.setIp(ip);
 	}
