@@ -1,7 +1,7 @@
 <div align="center">
     <img src="https://miro.medium.com/max/1400/1*ZGRXE9ReZsawGHtEn0kpmQ.jpeg"
 </div>
-/>
+</div>
 
 ### Sommaire
 
