@@ -1,17 +1,5 @@
-![1_ZGRXE9ReZsawGHtEn0kpmQ](/uploads/13a2960bbe34ab35bd2a1c7c949a0e07/1_ZGRXE9ReZsawGHtEn0kpmQ.jpeg)
-
-
 <div align="center">
-  <!-- Codenvy -->
-  <a href="https://codenvy.io.com/">
     <img src="https://miro.medium.com/max/1400/1*ZGRXE9ReZsawGHtEn0kpmQ.jpeg"
-      alt="Codenvy" />
-  </a>
-  <!-- License -->
-  <a href="https://github.com/EnergizedProtection/block/blob/master/LICENSE">
-    <img src="https://img.shields.io/badge/License-MIT-blue.svg?style=flat-square"
-      alt="MIT" />
-  </a>
 </div>
 
  
