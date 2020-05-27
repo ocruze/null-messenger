@@ -26,7 +26,7 @@ public class Database {
 		this(FILENAME_DATABASE);
 	}
 
-	protected Database(String filenameDatabase) {
+	public Database(String filenameDatabase) {
 		this.filenameDatabase = filenameDatabase;
 
 		try {
@@ -82,7 +82,7 @@ public class Database {
 		}
 	}
 
-	int count(String tableName) throws SQLException {
+	public int count(String tableName) throws SQLException {
 		String query = "SELECT * FROM " + tableName;
 
 		Statement stmt = conn.createStatement();
@@ -106,7 +106,7 @@ public class Database {
 	 * @return
 	 * @throws SQLException
 	 */
-	ResultSet getUsers() throws SQLException {
+	public ResultSet getUsers() throws SQLException {
 		String query = "SELECT * FROM user";
 		Statement stmt = conn.createStatement();
 		return stmt.executeQuery(query);
@@ -119,7 +119,7 @@ public class Database {
 	 * @return
 	 * @throws SQLException
 	 */
-	ResultSet getUser(int idUser) throws SQLException {
+	public ResultSet getUser(int idUser) throws SQLException {
 		String query = "SELECT * FROM user WHERE idUser = ?";
 
 		PreparedStatement stmt = conn.prepareStatement(query);
@@ -134,7 +134,7 @@ public class Database {
 	 * @return
 	 * @throws SQLException
 	 */
-	ResultSet getUser(String username) throws SQLException {
+	public ResultSet getUser(String username) throws SQLException {
 		String query = "SELECT * FROM user WHERE username = ?";
 
 		PreparedStatement stmt = conn.prepareStatement(query);
@@ -149,7 +149,7 @@ public class Database {
 	 * @param password
 	 * @throws SQLException
 	 */
-	void addUser(String username, String password) throws SQLException {
+	public void addUser(String username, String password) throws SQLException {
 		String query = "INSERT INTO user (username, password) VALUES (?,?);";
 
 		PreparedStatement stmt = conn.prepareStatement(query);
@@ -165,7 +165,7 @@ public class Database {
 	 * @param password
 	 * @throws SQLException
 	 */
-	void modifyUserUsername(int idUser, String newUsername) throws SQLException {
+	public void modifyUserUsername(int idUser, String newUsername) throws SQLException {
 		String query = "UPDATE user SET username = ? WHERE idUser = ?;";
 
 		PreparedStatement stmt = conn.prepareStatement(query);
@@ -181,7 +181,7 @@ public class Database {
 	 * @param username
 	 * @throws SQLException
 	 */
-	void deleteUser(String username) throws SQLException {
+	public void deleteUser(String username) throws SQLException {
 		String query = "DELETE FROM user WHERE username LIKE ?;";
 
 		PreparedStatement stmt = conn.prepareStatement(query);
@@ -194,7 +194,7 @@ public class Database {
 	 * 
 	 * @throws SQLException
 	 */
-	void addConversation() throws SQLException {
+	public void addConversation() throws SQLException {
 		String query = "INSERT INTO conversation VALUES (NULL);";
 		Statement stmt = conn.createStatement();
 		stmt.execute(query);
@@ -208,7 +208,7 @@ public class Database {
 	 * @param content
 	 * @throws SQLException
 	 */
-	void addMessage(int idConversation, int idSender, String content) throws SQLException {
+	public void addMessage(int idConversation, int idSender, String content) throws SQLException {
 		String query = "INSERT INTO message (content, idSender, idConversation, date) VALUES (?,?,?,?);";
 
 		PreparedStatement stmt = conn.prepareStatement(query);
@@ -232,7 +232,7 @@ public class Database {
 	 * @return
 	 * @throws SQLException
 	 */
-	ResultSet getMessage(int idMessage) throws SQLException {
+	public ResultSet getMessage(int idMessage) throws SQLException {
 		String query = "SELECT * FROM message WHERE idUser = ?;";
 
 		PreparedStatement stmt = conn.prepareStatement(query);
@@ -247,7 +247,7 @@ public class Database {
 	 * @return
 	 * @throws SQLException
 	 */
-	ResultSet getConversationMessages(int idConversation) throws SQLException {
+	public ResultSet getConversationMessages(int idConversation) throws SQLException {
 		String query = "SELECT * FROM message WHERE idConversation = ? ORDER BY date ASC;";
 
 		PreparedStatement stmt = conn.prepareStatement(query);
@@ -261,7 +261,7 @@ public class Database {
 	 * @param idMessage
 	 * @throws SQLException
 	 */
-	void deleteMessage(int idMessage) throws SQLException {
+	public void deleteMessage(int idMessage) throws SQLException {
 		String query = "UPDATE message SET contenu = ? WHERE idMessage = ?;";
 
 		PreparedStatement stmt = conn.prepareStatement(query);
@@ -277,7 +277,7 @@ public class Database {
 	 * @param idSender
 	 * @throws SQLException
 	 */
-	void deleteMessage(int idConversation, int idSender) throws SQLException {
+	public void deleteMessage(int idConversation, int idSender) throws SQLException {
 		String query = "UPDATE message SET contenu = ? WHERE idSender = ? AND idConversation = ?;";
 
 		PreparedStatement stmt = conn.prepareStatement(query);
