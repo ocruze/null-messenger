@@ -1,6 +1,6 @@
 package window.model;
 
-public class ModelConnection implements IModel{
+public class ModelConnection {
 
 	private String username;
 	private String password;
