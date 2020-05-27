@@ -4,7 +4,7 @@
 <div align="center">
   <!-- Codenvy -->
   <a href="https://codenvy.io.com/">
-    <img src="https://www.google.com/url?sa=i&url=https%3A%2F%2Fmedium.com%2F%40ciceronechelmu%2Fbest-chat-room-for-stranger-e5a22f0e3296&psig=AOvVaw0SQl3IjTdZvp-W-hH3OJCG&ust=1590681728756000&source=images&cd=vfe&ved=0CAIQjRxqFwoTCIDm36211OkCFQAAAAAdAAAAABAD"
+    <img src="https://miro.medium.com/max/1400/1*ZGRXE9ReZsawGHtEn0kpmQ.jpeg"
       alt="Codenvy" />
   </a>
   <!-- License -->
