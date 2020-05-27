@@ -2,6 +2,42 @@
 
 <h1 align="center">Chat Room
 
+<div align="center">
+  <!-- Codenvy -->
+  <a href="https://codenvy.io.com/">
+    <img src="https://img.shields.io/badge/Cloud-Codenvy-00305b.svg?longCache=true&style=flat-square"
+      alt="Codenvy" />
+  </a>
+  <!-- License -->
+  <a href="https://github.com/EnergizedProtection/block/blob/master/LICENSE">
+    <img src="https://img.shields.io/badge/License-MIT-blue.svg?style=flat-square"
+      alt="MIT" />
+  </a>
+</div>
+
+ 
+
+<div align="center">
+  <h3>
+    <a href="http://go.energized.pro/github">
+      block Repository
+    </a>
+    <span> | </span>
+    <a href="https://energized.pro">
+      Website
+    </a>
+    <span> | </span>
+    <a href="http://go.energized.pro/telegram">
+      Telegram Support Group
+    </a>
+  </h3>
+</div>
+
+ 
+
+
+
+
 ### Sommaire
 
 * [Participants]
