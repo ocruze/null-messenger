@@ -2,28 +2,6 @@
     <img src="https://miro.medium.com/max/1400/1*ZGRXE9ReZsawGHtEn0kpmQ.jpeg"
 </div>
 
- 
-
-<div align="center">
-  <h3>
-    <a href="http://go.energized.pro/github">
-      block Repository
-    </a>
-    <span> | </span>
-    <a href="https://energized.pro">
-      Website
-    </a>
-    <span> | </span>
-    <a href="http://go.energized.pro/telegram">
-      Telegram Support Group
-    </a>
-  </h3>
-</div>
-
- 
-
-
-
 
 ### Sommaire
 
