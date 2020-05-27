@@ -7,14 +7,18 @@ import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.net.Socket;
+import java.sql.SQLException;
 
-import model.Entity.User;
+import org.json.JSONObject;
+
+import model.Exception.UserInexistantException;
 
 public class UserThread extends Thread {
 	private Socket socket;
 	private ChatServer server;
 	private PrintWriter writer;
-	private User user;
+	private String username;
+	// private User user;
 
 	public UserThread(Socket socket, ChatServer server) {
 		this.socket = socket;
@@ -31,22 +35,96 @@ public class UserThread extends Thread {
 
 			printUsers();
 
-			String username = reader.readLine();
-			user = server.addUser(username);
+//			String username = reader.readLine();
+//			user = server.addUser(username);
 
-			String serverMessage = "New user connected: " + username;
-			server.broadcast(serverMessage, this);
+//			String serverMessage = "New user connected: " + username;
+//			server.broadcast(serverMessage, this);
+			String serverMessage = "";
 
 			String clientMessage;
+			JSONObject jsonClientMessage;
+			JSONObject jsonServerMessage;
+
+			String action;
 
 			do {
+				jsonServerMessage = new JSONObject();
+
 				clientMessage = reader.readLine();
+
+				jsonClientMessage = new JSONObject(clientMessage);
+				action = jsonClientMessage.getString("action");
+				System.out.println(action);
+
+				switch (action) {
+				case "login": {
+					String username = jsonClientMessage.getString("username");
+					String password = jsonClientMessage.getString("password");
+
+					try {
+						int idUser = server.loginUser(username, password);
+
+						if (idUser == -1)
+							jsonServerMessage.put("message", "user not found");
+						else {
+							this.username = server.database.getUser(idUser).getString("username");
+						}
+
+					} catch (UserInexistantException e) {
+						e.printStackTrace();
+						jsonServerMessage.put("message", "user not found");
+					} catch (SQLException e) {
+						e.printStackTrace();
+					}
+
+				}
+					break;
+
+				case "register": {
+					String username = jsonClientMessage.getString("username");
+					String password = jsonClientMessage.getString("password");
+
+					try {
+						int idUser = server.database.addUser(username, password);
+
+						jsonServerMessage.put("idUser", idUser);
+					} catch (SQLException e) {
+						e.printStackTrace();
+					}
+				}
+					break;
+
+				case "updateUser":
+
+					break;
+
+				case "deleteUser":
+
+					break;
+
+				case "send":
+
+					break;
+
+				case "updateMessage":
+
+					break;
+
+				case "deleteMessage":
+
+					break;
+
+				default:
+					break;
+				}
+
 				serverMessage = "[" + username + "]: " + clientMessage;
 				server.broadcast(serverMessage, this);
 
-			} while (!clientMessage.equals("bye"));
+			} while (!action.equals("disconnect"));
 
-			server.disconnectUser(user);
+			// server.disconnectUser(username);
 			socket.close();
 
 			serverMessage = username + " has left.";
@@ -76,11 +154,4 @@ public class UserThread extends Thread {
 		writer.println(message);
 	}
 
-	public User getUser() {
-		return user;
-	}
-	
-	
-	
-	
 }

@@ -27,97 +27,176 @@ class DatabaseTest {
 
 	@Test
 	void testInsertUser() {
+		int count = -1;
 		try {
-			// empty user table
-			assertEquals(0, database.count("user"));
+			count = database.count("user");
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		// empty user table
+		assertEquals(0, count);
 
+		ResultSet res;
+		try {
 			// addding one user
 			database.addUser("arnest", "");
-			ResultSet res = database.getUser(1);
+			res = database.getUser(1);
 			assertEquals("arnest", res.getString("username"));
-			assertEquals(1, database.count("user"));
-
-			// addding another user
-			database.addUser("leo", "");
-			assertEquals(2, database.count("user"));
 		} catch (SQLException e) {
+			e.printStackTrace();
 		}
+
+		try {
+			count = database.count("user");
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		assertEquals(1, count);
+
+		// addding another user
+		try {
+			database.addUser("leo", "");
+			count = database.count("user");
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		assertEquals(2, count);
+
 	}
 
 	@Test
 	void testGetUsers() {
+		ResultSet res = null;
+		String username = "";
 		try {
 			database.addUser("arnest", "");
 			database.addUser("leo", "");
 			database.addUser("max", "");
 
-			ResultSet res = database.getUsers();
-
+			res = database.getUsers();
 			res.next();
-			assertEquals("arnest", res.getString("username"));
-			res.next();
-			assertEquals("leo", res.getString("username"));
-			res.next();
-			assertEquals("max", res.getString("username"));
-
+			username = res.getString("username");
 		} catch (SQLException e) {
+			e.printStackTrace();
 		}
+
+		assertEquals("arnest", username);
+
+		try {
+			res.next();
+			username = res.getString("username");
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+
+		assertEquals("leo", username);
+
+		try {
+			res.next();
+			username = res.getString("username");
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		assertEquals("max", username);
+
 	}
 
 	@Test
 	void testGetUserByUsername() {
+		ResultSet res = null;
+		String username = "";
+		int id = -1;
+
 		try {
 			database.addUser("arnest", "");
 			database.addUser("max", "");
 
-			ResultSet res = database.getUser("max");
-			assertEquals("max", res.getInt("username"));
-			assertEquals(2, res.getInt("idUser"));
+			res = database.getUser("max");
+			username = res.getString("username");
+			id = res.getInt("idUser");
 
 		} catch (SQLException e) {
+			e.printStackTrace();
 		}
+
+		assertEquals("max", username);
+		assertEquals(2, id);
 	}
 
 	@Test
 	void testModifyUser() {
+		ResultSet res = null;
+		String username = "";
+
 		try {
 			database.addUser("arnest", "");
-			ResultSet res = database.getUser(1);
-			assertEquals("arnest", res.getString("username"));
-
-			database.modifyUserUsername(1, "Arnest");
-
 			res = database.getUser(1);
-			assertEquals("Arnest", res.getString("username"));
+			username = res.getString("username");
 		} catch (SQLException e) {
 		}
+		assertEquals("arnest", username);
+
+		try {
+			database.modifyUserUsername(1, "Arnest");
+			res = database.getUser(1);
+
+			username = res.getString("username");
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+
+		assertEquals("Arnest", username);
 	}
 
 	@Test
 	void testDeleteUser() {
+		int count = -1;
+
 		try {
 			database.addUser("arnest", "");
 			database.addUser("leo", "");
-			assertEquals(2, database.count("user"));
-
-			database.deleteUser("arnest");
-			assertEquals(1, database.count("user"));
+			count = database.count("user");
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
+		assertEquals(2, count);
+
+		try {
+			database.deleteUser("arnest");
+			count = database.count("user");
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		assertEquals(1, count);
 	}
 
 	@Test
 	void testAddConversation() {
-		try {
-			database.addConversation();
+		int count = -1;
+		int idConv = -1;
 
+		try {
+			count = database.count("conversation");
 		} catch (SQLException e) {
+			e.printStackTrace();
 		}
+		assertEquals(0, count);
+
+		try {
+			idConv= (int) database.addConversation();
+			count = database.count("conversation");
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		
+		assertEquals(1, idConv);
+		assertEquals(1, count);
+
 	}
 
 	@Test
 	void testAddGetMessage() {
+		String message = "";
 		try {
 			database.addUser("arnest", "");
 			database.addConversation();
@@ -125,14 +204,18 @@ class DatabaseTest {
 			database.addMessage(1, 1, "heyy");
 
 			ResultSet res = database.getMessage(1);
-			assertEquals("heyy", res.getString("content"));
+			message = res.getString("content");
 		} catch (Exception e) {
-
+			e.printStackTrace();
 		}
+		assertEquals("heyy", message);
 	}
 
 	@Test
 	void testGetConversationMessages() {
+		String message = "";
+		ResultSet res = null;
+
 		try {
 			database.addUser("arnest", "");
 			database.addUser("leo", "");
@@ -142,18 +225,27 @@ class DatabaseTest {
 			database.addMessage(1, 1, "heyy leo");
 			database.addMessage(1, 2, "heyy arnest");
 
-			ResultSet res = database.getConversationMessages(1);
+			res = database.getConversationMessages(1);
 
 			res.next();
-			assertEquals("heyy leo", res.getString("contenu"));
-			res.next();
-			assertEquals("heyy arnest", res.getString("contenu"));
+			message = res.getString("content");
 		} catch (SQLException e) {
+			e.printStackTrace();
 		}
+		assertEquals("heyy leo", message);
+
+		try {
+			res.next();
+			message = res.getString("content");
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		assertEquals("heyy arnest", message);
 	}
 
 	@Test
 	void testDeleteMessage() {
+		String message = "";
 		try {
 			database.addUser("arnest", "");
 			database.addUser("leo", "");
@@ -169,9 +261,11 @@ class DatabaseTest {
 
 			res.next();
 			res.next();
-			assertEquals("Message supprimé", res.getString("contenu"));
-		} catch (SQLException e) {
-		}
 
+			message = res.getString("content");
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		assertEquals("Message supprimé", message);
 	}
 }
