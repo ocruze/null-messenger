@@ -86,7 +86,6 @@ public class Database {
 		String query = "SELECT * FROM " + tableName;
 
 		Statement stmt = conn.createStatement();
-		// stmt.setString(1, tableName);
 
 		ResultSet res;
 		res = stmt.executeQuery(query);
@@ -97,7 +96,14 @@ public class Database {
 		}
 
 		return i;
+	}
 
+	public int getLastInsertId() throws SQLException {
+		String query = "SELECT last_insert_rowid();";
+
+		Statement stmt = conn.createStatement();
+		ResultSet res = stmt.executeQuery(query);
+		return res.getInt(1);
 	}
 
 	/**
@@ -124,7 +130,7 @@ public class Database {
 
 		PreparedStatement stmt = conn.prepareStatement(query);
 		stmt.setInt(1, idUser);
-		return stmt.executeQuery(query);
+		return stmt.executeQuery();
 	}
 
 	/**
@@ -135,11 +141,11 @@ public class Database {
 	 * @throws SQLException
 	 */
 	public ResultSet getUser(String username) throws SQLException {
-		String query = "SELECT * FROM user WHERE username = ?";
+		String query = "SELECT * FROM user WHERE username LIKE ?";
 
 		PreparedStatement stmt = conn.prepareStatement(query);
 		stmt.setString(1, username);
-		return stmt.executeQuery(query);
+		return stmt.executeQuery();
 	}
 
 	/**
@@ -147,15 +153,18 @@ public class Database {
 	 * 
 	 * @param username
 	 * @param password
+	 * @return 
 	 * @throws SQLException
 	 */
-	public void addUser(String username, String password) throws SQLException {
+	public int addUser(String username, String password) throws SQLException {
 		String query = "INSERT INTO user (username, password) VALUES (?,?);";
 
 		PreparedStatement stmt = conn.prepareStatement(query);
 		stmt.setString(1, username);
 		stmt.setString(2, password);
 		stmt.execute();
+		
+		return getLastInsertId();
 	}
 
 	/**
@@ -192,12 +201,15 @@ public class Database {
 	/**
 	 * Crée une nouvelle conversation
 	 * 
+	 * @return
 	 * @throws SQLException
 	 */
-	public void addConversation() throws SQLException {
+	public long addConversation() throws SQLException {
 		String query = "INSERT INTO conversation VALUES (NULL);";
 		Statement stmt = conn.createStatement();
 		stmt.execute(query);
+
+		return getLastInsertId();
 	}
 
 	/**
@@ -233,11 +245,11 @@ public class Database {
 	 * @throws SQLException
 	 */
 	public ResultSet getMessage(int idMessage) throws SQLException {
-		String query = "SELECT * FROM message WHERE idUser = ?;";
+		String query = "SELECT * FROM message WHERE idMessage = ?;";
 
 		PreparedStatement stmt = conn.prepareStatement(query);
 		stmt.setInt(1, idMessage);
-		return stmt.executeQuery(query);
+		return stmt.executeQuery();
 	}
 
 	/**
@@ -252,7 +264,7 @@ public class Database {
 
 		PreparedStatement stmt = conn.prepareStatement(query);
 		stmt.setInt(1, idConversation);
-		return stmt.executeQuery(query);
+		return stmt.executeQuery();
 	}
 
 	/**
@@ -262,7 +274,7 @@ public class Database {
 	 * @throws SQLException
 	 */
 	public void deleteMessage(int idMessage) throws SQLException {
-		String query = "UPDATE message SET contenu = ? WHERE idMessage = ?;";
+		String query = "UPDATE message SET content = ? WHERE idMessage = ?;";
 
 		PreparedStatement stmt = conn.prepareStatement(query);
 		stmt.setString(1, "Message supprimé");
@@ -278,7 +290,7 @@ public class Database {
 	 * @throws SQLException
 	 */
 	public void deleteMessage(int idConversation, int idSender) throws SQLException {
-		String query = "UPDATE message SET contenu = ? WHERE idSender = ? AND idConversation = ?;";
+		String query = "UPDATE message SET content = ? WHERE idSender = ? AND idConversation = ?;";
 
 		PreparedStatement stmt = conn.prepareStatement(query);
 		stmt.setString(1, "Message supprimé");
