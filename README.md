@@ -25,7 +25,7 @@
 ##Descriptions
 
 Nous avons pour projet de créer une application permettant de communiquer avec une ou plusieurs personne. Il suffit de remplir un formulaire avec son prénom,
-mot de passe, adresse IP et le numéro de port. On pourra obserser les anciens messages et les supprimer.
+mot de passe, adresse IP et le numéro de port. On pourra observer les anciens messages et les supprimer.
 
 ##Technologies
 
