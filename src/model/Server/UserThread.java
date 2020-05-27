@@ -51,9 +51,17 @@ public class UserThread extends Thread {
 			do {
 				jsonServerMessage = new JSONObject();
 
-				clientMessage = reader.readLine();
+				clientMessage = "";
+//				for (int i = 0; i < 10; i++) {
+//					System.out.println(reader.readLine());
+//					
+//				}
+				
+//				System.out.println("clientMessage : " + clientMessage);
 
-				jsonClientMessage = new JSONObject(clientMessage);
+				jsonClientMessage = new JSONObject(reader.readLine());
+				System.out.println(jsonClientMessage.toString());
+				
 				action = jsonClientMessage.getString("action");
 				System.out.println(action);
 

@@ -2,20 +2,20 @@ package window.model;
 
 public class ModelConnection {
 
-	private String username;
-	private String password;
+	private static String username;
+	private static String password;
 	private int port;
 	private String ip;
 	
 	public ModelConnection() {}
-	public String getUsername() {
-		return username;
+	public static String getUsername() {
+		return ModelConnection.username;
 	}
 	public void setUsername(String username) {
 		this.username = username;
 	}
-	public String getPassword() {
-		return password;
+	public static String getPassword() {
+		return ModelConnection.password;
 	}
 	public void setPassword(String password) {
 		this.password = password;

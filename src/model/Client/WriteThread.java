@@ -33,19 +33,26 @@ public class WriteThread extends Thread {
 		Scanner saisie = new Scanner(System.in);
 		// System.out.print("Enter your name: ");
 		// String userName = saisie.nextLine();
-		String userName = model.Client.ChatClient.getUserName();
+		String userName = window.model.ModelConnection.getUsername();
+		String password = window.model.ModelConnection.getPassword();
+		
 		client.setUserName(userName);
 		writer.println(userName);
 
 		JSONObject jsonClientMessage = null;
 
 		do {
+			System.out.println(userName);
+			
 			// System.out.print("[" + userName + "] :");
 			jsonClientMessage = new JSONObject();
+			jsonClientMessage.put("action", "login");
 			jsonClientMessage.put("username", userName);
+			jsonClientMessage.put("password", password);
 			// text = saisie.nextLine();
-
-			writer.println(jsonClientMessage.toString());
+			
+			System.out.println(jsonClientMessage.toString());
+			writer.println(jsonClientMessage.toString().replace('\n', ' ').replace('\r', ' ') + '\n');
 
 		} while (!jsonClientMessage.getString("action").equals("disconnect"));
 
