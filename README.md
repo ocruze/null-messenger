@@ -1,4 +1,6 @@
+<p align="center">
 ![1_ZGRXE9ReZsawGHtEn0kpmQ](/uploads/13a2960bbe34ab35bd2a1c7c949a0e07/1_ZGRXE9ReZsawGHtEn0kpmQ.jpeg)
+</p>
 
 <h1 align="center">Chat Room
 
