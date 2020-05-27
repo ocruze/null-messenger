@@ -26,7 +26,7 @@ public class Database {
 		this(FILENAME_DATABASE);
 	}
 
-	protected Database(String filenameDatabase) {
+	public Database(String filenameDatabase) {
 		this.filenameDatabase = filenameDatabase;
 
 		try {

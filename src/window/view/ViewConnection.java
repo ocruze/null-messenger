@@ -187,7 +187,7 @@ public class ViewConnection extends JFrame {
 		Matcher m = p.matcher(field.getText()); 
 
 		if(!m.matches() && !type.equals(FieldType.USERNAME) && !type.equals(FieldType.PASSWORD)) {
-			message.showMessageDialog(null, "Le champ "+ type.name().toLowerCase()+" ne repecte pas le crit�re demand�", "Erreur", JOptionPane.ERROR_MESSAGE);
+			message.showMessageDialog(null, "Le champ "+ type.name().toLowerCase()+" ne repecte pas le critère demandé", "Erreur", JOptionPane.ERROR_MESSAGE);
 		}
 	
 		if(!field.getText().equals("") && !(field instanceof JPasswordField)) {
@@ -201,7 +201,7 @@ public class ViewConnection extends JFrame {
 			}
 		}
 		else {
-			message.showMessageDialog(null, "Le champ "+ type.name().toLowerCase()+" n'est pas renseign�", "Erreur", JOptionPane.ERROR_MESSAGE);
+			message.showMessageDialog(null, "Le champ "+ type.name().toLowerCase()+" n'est pas renseigné", "Erreur", JOptionPane.ERROR_MESSAGE);
 		}
 		return null;
 
