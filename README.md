@@ -1,11 +1,10 @@
 ![1_ZGRXE9ReZsawGHtEn0kpmQ](/uploads/13a2960bbe34ab35bd2a1c7c949a0e07/1_ZGRXE9ReZsawGHtEn0kpmQ.jpeg)
 
-<h1 align="center">Chat Room
 
 <div align="center">
   <!-- Codenvy -->
   <a href="https://codenvy.io.com/">
-    <img src="https://img.shields.io/badge/Cloud-Codenvy-00305b.svg?longCache=true&style=flat-square"
+    <img src="https://www.google.com/url?sa=i&url=https%3A%2F%2Fmedium.com%2F%40ciceronechelmu%2Fbest-chat-room-for-stranger-e5a22f0e3296&psig=AOvVaw0SQl3IjTdZvp-W-hH3OJCG&ust=1590681728756000&source=images&cd=vfe&ved=0CAIQjRxqFwoTCIDm36211OkCFQAAAAAdAAAAABAD"
       alt="Codenvy" />
   </a>
   <!-- License -->
