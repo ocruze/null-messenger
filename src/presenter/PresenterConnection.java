@@ -1,43 +1,36 @@
 package presenter;
 
 import model.client.Client;
-import model.gui.ModelConnection;
 import view.ViewConnection;
 
 public class PresenterConnection {
 
 	public ViewConnection view;
-	public ModelConnection model;
 	public Client client;
 
-	public PresenterConnection(ViewConnection view, ModelConnection model) {
+	public PresenterConnection(ViewConnection view, Client client) {
 		this.view = view;
-		this.model = model;
-		this.client = null;
+		this.client = client;
 	}
 
 	public void login() {
-
-		this.client = new Client(model.getIp(), model.getPort());
 		this.client.execute();
-
-		// System.out.println("Login :" +model.getUsername());
-
 	}
 
 	public void setPassword(String password) {
-		model.setPassword(password);
+		client.setPassword(password);
 	}
 
 	public void setUsername(String username) {
-		model.setUsername(username);
+		client.setUserName(username);
 	}
 
 	public void setPort(int port) {
-		model.setPort(port);
+		client.setPort(port);
 	}
 
-	public void setIp(String ip) {
-		model.setIp(ip);
+	public void setIp(String hostname) {
+		client.setHostName(hostname);
 	}
+	
 }

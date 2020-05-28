@@ -4,15 +4,23 @@ import java.io.IOException;
 import java.net.Socket;
 import java.net.UnknownHostException;
 
+import presenter.PresenterConnection;
+
 public class Client {
 	private String hostname;
 	private int port;
-	private static String userName;
+	private String userName;
+	private PresenterConnection presenter;
+	private  String password;
 
+	
 	public Client(String hostname, int port) {
 		this.hostname = hostname;
 		this.port = port;
-		Client.userName = null;
+	}
+	
+	public Client() {
+		
 	}
 
 	public void execute() {
@@ -20,7 +28,8 @@ public class Client {
 		WriteThread writeThread;
 
 		try {
-			Socket socket = new Socket(hostname, port);
+			
+			Socket socket = new Socket(getHostName(), getPort());
 
 			System.out.println("Connected to the chat server");
 
@@ -38,12 +47,34 @@ public class Client {
 
 	}
 
-	void setUserName(String userName) {
-		Client.userName = userName;
+	public PresenterConnection getPresenter() {
+		return presenter;
 	}
 
-	static String getUserName() {
-		return Client.userName;
+
+	public String getUserName() {
+		return password;
 	}
+	public void setUserName(String username) {
+		this.userName = username;
+	}
+	public String getPassword() {
+		return password;
+	}
+	public void setPassword(String password) {
+		this.password = password;
+	}
+	public int getPort() {
+		return this.port;
+	}
+	public void setPort(int port) {
+		this.port = port;
+	}
+	public String getHostName() {
+		return this.hostname;
+	}
+	public void setHostName(String hostname) {
+		this.hostname = hostname;
+	} 
 
 }

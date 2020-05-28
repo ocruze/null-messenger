@@ -47,6 +47,7 @@ public class ViewConnection extends JFrame {
 	{
 	        this.presenter = presenter;
 	}
+	
 	public void init() {
 		setBackground(Color.WHITE);
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -115,7 +116,7 @@ public class ViewConnection extends JFrame {
                 presenter.login();
         	} catch (Exception e2) {
         		JOptionPane message = new JOptionPane();
-        		message.showMessageDialog(null, "Une erreur s'est produite", "Erreur", JOptionPane.ERROR_MESSAGE);
+        		message.showMessageDialog(null, "Une erreur s'est produite : " +e2.getMessage(), "Erreur", JOptionPane.ERROR_MESSAGE);
 			}
         });
 		contentPane.add(loginButton);
@@ -179,13 +180,14 @@ public class ViewConnection extends JFrame {
 		case PORT :
 			p = Pattern.compile("[0-9]+") ; 
 			break;
-		case IP:
+		/**case IP:
 			p = Pattern.compile("[0-9]+([.][0-9]+)*") ; 
 			break;
+			**/
 		}
 		Matcher m = p.matcher(field.getText()); 
 
-		if(!m.matches() && !type.equals(FieldType.USERNAME) && !type.equals(FieldType.PASSWORD)) {
+		if(!m.matches() && !type.equals(FieldType.USERNAME) && !type.equals(FieldType.PASSWORD) && !type.equals(FieldType.IP)) {
 			message.showMessageDialog(null, "Le champ "+ type.name().toLowerCase()+" ne repecte pas le critère demandé", "Erreur", JOptionPane.ERROR_MESSAGE);
 		}
 	

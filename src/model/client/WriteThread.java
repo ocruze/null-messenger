@@ -33,8 +33,8 @@ public class WriteThread extends Thread {
 		Scanner saisie = new Scanner(System.in);
 		// System.out.print("Enter your name: ");
 		// String userName = saisie.nextLine();
-		String userName = model.client.Client.getUserName();
-		String password = model.gui.ModelConnection.getPassword();
+		String userName = client.getUserName();
+		String password = client.getPassword();
 		
 		client.setUserName(userName);
 //		writer.println(userName);
