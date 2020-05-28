@@ -37,7 +37,7 @@ public class WriteThread extends Thread {
 		String password = model.gui.ModelConnection.getPassword();
 		
 		client.setUserName(userName);
-		writer.println(userName);
+//		writer.println(userName);
 
 		JSONObject jsonClientMessage = null;
 
