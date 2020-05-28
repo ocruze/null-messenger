@@ -40,19 +40,27 @@ public class WriteThread extends Thread {
 //		writer.println(userName);
 
 		JSONObject jsonClientMessage = null;
-
+		// System.out.print("[" + userName + "] :");
+		jsonClientMessage = new JSONObject();
+		jsonClientMessage.put("username", userName);
+		jsonClientMessage.put("password", password);
+		jsonClientMessage.put("action", "login");
+		// text = saisie.nextLine();
+		writer.println(jsonClientMessage.toString());
+		/**
 		do {
-			// System.out.print("[" + userName + "] :");
-			jsonClientMessage = new JSONObject();
-			jsonClientMessage.put("username", userName);
-			jsonClientMessage.put("password", password);
-			jsonClientMessage.put("action", "login");
-			// text = saisie.nextLine();
-
-			writer.println(jsonClientMessage.toString());
+		
+			//writer.println(jsonClientMessage.toString());
 
 		} while (!jsonClientMessage.getString("action").equals("disconnect"));
-
+		**/
+		jsonClientMessage = new JSONObject();
+		jsonClientMessage.put("username", userName);
+		jsonClientMessage.put("action", "disconnect");
+		// text = saisie.nextLine();
+		writer.println(jsonClientMessage.toString());
+		
+		
 		try {
 			socket.close();
 			saisie.close();
