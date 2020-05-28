@@ -53,7 +53,7 @@ public class Client {
 
 
 	public String getUserName() {
-		return password;
+		return userName;
 	}
 	public void setUserName(String username) {
 		this.userName = username;
