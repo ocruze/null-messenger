@@ -23,6 +23,8 @@ public class DatabaseTest {
 
 	@AfterEach
 	void tearDown() throws Exception {
+		database.closeConnection();
+		
 		File file = new File("NullMessengerTest.db");
 		file.delete();
 	}

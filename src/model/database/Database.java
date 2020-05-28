@@ -37,7 +37,7 @@ public class Database {
 		}
 	}
 
-	private Connection initConnection() throws SQLException {
+	private Connection initConnection() {
 		String url = "jdbc:sqlite:" + filenameDatabase;
 		System.out.println(url);
 		File tmp = new File(filenameDatabase);
@@ -56,6 +56,26 @@ public class Database {
 		}
 	}
 
+	public boolean closeConnection() {
+		boolean isClosed = false;
+
+		if (conn != null)
+			try {
+				conn.close();
+				isClosed = conn.isClosed();
+				conn = null;
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+
+		return isClosed;
+	}
+
+	private void initConnectionIfClosed() {
+		if (conn == null)
+			initConnection();
+	}
+
 	private void initStructure() throws SQLException {
 		String query = "SELECT name FROM sqlite_master WHERE type='table' AND name='user'";
 		Statement stmt = conn.createStatement();
@@ -67,6 +87,8 @@ public class Database {
 	}
 
 	private void createSchema() throws SQLException {
+		initConnectionIfClosed();
+
 		String query = "";
 
 		try {
@@ -83,6 +105,8 @@ public class Database {
 	}
 
 	public int count(String tableName) throws SQLException {
+		initConnectionIfClosed();
+
 		String query = "SELECT * FROM " + tableName;
 
 		Statement stmt = conn.createStatement();
@@ -99,6 +123,8 @@ public class Database {
 	}
 
 	public int getLastInsertId() throws SQLException {
+		initConnectionIfClosed();
+
 		String query = "SELECT last_insert_rowid();";
 
 		Statement stmt = conn.createStatement();
@@ -113,6 +139,8 @@ public class Database {
 	 * @throws SQLException
 	 */
 	public ResultSet getUsers() throws SQLException {
+		initConnectionIfClosed();
+
 		String query = "SELECT * FROM user";
 		Statement stmt = conn.createStatement();
 		return stmt.executeQuery(query);
@@ -126,6 +154,8 @@ public class Database {
 	 * @throws SQLException
 	 */
 	public ResultSet getUser(int idUser) throws SQLException {
+		initConnectionIfClosed();
+
 		String query = "SELECT * FROM user WHERE idUser = ?";
 
 		PreparedStatement stmt = conn.prepareStatement(query);
@@ -141,6 +171,8 @@ public class Database {
 	 * @throws SQLException
 	 */
 	public ResultSet getUser(String username) throws SQLException {
+		initConnectionIfClosed();
+
 		String query = "SELECT * FROM user WHERE username LIKE ?";
 
 		PreparedStatement stmt = conn.prepareStatement(query);
@@ -153,17 +185,19 @@ public class Database {
 	 * 
 	 * @param username
 	 * @param password
-	 * @return 
+	 * @return
 	 * @throws SQLException
 	 */
 	public int addUser(String username, String password) throws SQLException {
+		initConnectionIfClosed();
+
 		String query = "INSERT INTO user (username, password) VALUES (?,?);";
 
 		PreparedStatement stmt = conn.prepareStatement(query);
 		stmt.setString(1, username);
 		stmt.setString(2, password);
 		stmt.execute();
-		
+
 		return getLastInsertId();
 	}
 
@@ -175,6 +209,8 @@ public class Database {
 	 * @throws SQLException
 	 */
 	public void modifyUserUsername(int idUser, String newUsername) throws SQLException {
+		initConnectionIfClosed();
+
 		String query = "UPDATE user SET username = ? WHERE idUser = ?;";
 
 		PreparedStatement stmt = conn.prepareStatement(query);
@@ -191,6 +227,8 @@ public class Database {
 	 * @throws SQLException
 	 */
 	public void deleteUser(String username) throws SQLException {
+		initConnectionIfClosed();
+
 		String query = "DELETE FROM user WHERE username LIKE ?;";
 
 		PreparedStatement stmt = conn.prepareStatement(query);
@@ -205,6 +243,8 @@ public class Database {
 	 * @throws SQLException
 	 */
 	public long addConversation() throws SQLException {
+		initConnectionIfClosed();
+
 		String query = "INSERT INTO conversation VALUES (NULL);";
 		Statement stmt = conn.createStatement();
 		stmt.execute(query);
@@ -221,6 +261,8 @@ public class Database {
 	 * @throws SQLException
 	 */
 	public void addMessage(int idConversation, int idSender, String content) throws SQLException {
+		initConnectionIfClosed();
+
 		String query = "INSERT INTO message (content, idSender, idConversation, date) VALUES (?,?,?,?);";
 
 		PreparedStatement stmt = conn.prepareStatement(query);
@@ -245,6 +287,8 @@ public class Database {
 	 * @throws SQLException
 	 */
 	public ResultSet getMessage(int idMessage) throws SQLException {
+		initConnectionIfClosed();
+
 		String query = "SELECT * FROM message WHERE idMessage = ?;";
 
 		PreparedStatement stmt = conn.prepareStatement(query);
@@ -260,6 +304,8 @@ public class Database {
 	 * @throws SQLException
 	 */
 	public ResultSet getConversationMessages(int idConversation) throws SQLException {
+		initConnectionIfClosed();
+
 		String query = "SELECT * FROM message WHERE idConversation = ? ORDER BY date ASC;";
 
 		PreparedStatement stmt = conn.prepareStatement(query);
@@ -274,6 +320,8 @@ public class Database {
 	 * @throws SQLException
 	 */
 	public void deleteMessage(int idMessage) throws SQLException {
+		initConnectionIfClosed();
+
 		String query = "UPDATE message SET content = ? WHERE idMessage = ?;";
 
 		PreparedStatement stmt = conn.prepareStatement(query);
@@ -290,6 +338,8 @@ public class Database {
 	 * @throws SQLException
 	 */
 	public void deleteMessage(int idConversation, int idSender) throws SQLException {
+		initConnectionIfClosed();
+
 		String query = "UPDATE message SET content = ? WHERE idSender = ? AND idConversation = ?;";
 
 		PreparedStatement stmt = conn.prepareStatement(query);
