@@ -1,18 +1,18 @@
-package model.Client;
+package model.client;
 
 import java.io.IOException;
 import java.net.Socket;
 import java.net.UnknownHostException;
 
-public class ChatClient {
+public class Client {
 	private String hostname;
 	private int port;
 	private static String userName;
 
-	public ChatClient(String hostname, int port) {
+	public Client(String hostname, int port) {
 		this.hostname = hostname;
 		this.port = port;
-		ChatClient.userName = null;
+		Client.userName = null;
 	}
 
 	public void execute() {
@@ -39,11 +39,11 @@ public class ChatClient {
 	}
 
 	void setUserName(String userName) {
-		ChatClient.userName = userName;
+		Client.userName = userName;
 	}
 
 	static String getUserName() {
-		return ChatClient.userName;
+		return Client.userName;
 	}
 
 }

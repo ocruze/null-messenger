@@ -1,4 +1,4 @@
-package model.Entity;
+package model.entity;
 import java.util.Calendar;
 import java.util.Date;
 

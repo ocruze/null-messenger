@@ -1,4 +1,4 @@
-package model.Server;
+package model.server;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -11,16 +11,16 @@ import java.sql.SQLException;
 
 import org.json.JSONObject;
 
-import model.Exception.UserInexistantException;
+import exceptions.UserInexistantException;
 
 public class UserThread extends Thread {
 	private Socket socket;
-	private ChatServer server;
+	private Server server;
 	private PrintWriter writer;
 	private String username;
 	// private User user;
 
-	public UserThread(Socket socket, ChatServer server) {
+	public UserThread(Socket socket, Server server) {
 		this.socket = socket;
 		this.server = server;
 	}
@@ -33,7 +33,7 @@ public class UserThread extends Thread {
 			OutputStream output = socket.getOutputStream();
 			writer = new PrintWriter(output, true);
 
-			printUsers();
+			// printUsers();
 
 //			String username = reader.readLine();
 //			user = server.addUser(username);
@@ -120,14 +120,14 @@ public class UserThread extends Thread {
 				}
 
 				serverMessage = "[" + username + "]: " + clientMessage;
-				server.broadcast(serverMessage, this);
+				// server.broadcast(serverMessage, this);
 
 			} while (!action.equals("disconnect"));
 
 			socket.close();
 
 			serverMessage = username + " has left.";
-			server.broadcast(serverMessage, this);
+//			server.broadcast(serverMessage, this);
 
 		} catch (IOException ex) {
 			System.out.println("Error in UserThread: " + ex.getMessage());

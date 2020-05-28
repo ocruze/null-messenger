@@ -1,4 +1,4 @@
-package model.Entity;
+package model.entity;
 
 public class User {
 

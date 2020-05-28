@@ -10,9 +10,9 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import model.Database.Database;
+import model.database.Database;
 
-class DatabaseTest {
+public class DatabaseTest {
 
 	private Database database;
 
@@ -185,12 +185,12 @@ class DatabaseTest {
 		assertEquals(0, count);
 
 		try {
-			idConv= (int) database.addConversation();
+			idConv = (int) database.addConversation();
 			count = database.count("conversation");
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
-		
+
 		assertEquals(1, idConv);
 		assertEquals(1, count);
 

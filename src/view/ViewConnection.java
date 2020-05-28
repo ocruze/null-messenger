@@ -3,25 +3,24 @@ package view;
 import java.awt.Button;
 import java.awt.Color;
 import java.awt.Font;
+import java.awt.event.ActionEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionAdapter;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.swing.ImageIcon;
 import javax.swing.JFrame;
-import javax.swing.JPanel;
-import javax.swing.border.EmptyBorder;
-
-import window.presenter.PresenterConnection;
-
-import javax.swing.JTextField;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
+import javax.swing.JPanel;
 import javax.swing.JPasswordField;
+import javax.swing.JTextField;
 import javax.swing.SwingConstants;
-import java.awt.event.ActionEvent;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+import javax.swing.border.EmptyBorder;
+
+import presenter.PresenterConnection;
 
 public class ViewConnection extends JFrame {
 	private static final long serialVersionUID = 1L;
@@ -92,7 +91,7 @@ public class ViewConnection extends JFrame {
 		});
 		label.setBounds(-38, 0, 420, 290);
 		label.setVerticalAlignment(SwingConstants.TOP);
-		label.setIcon(new ImageIcon(ViewConnection.class.getResource("/window/image/Chatrooms.png")));
+		label.setIcon(new ImageIcon(ViewConnection.class.getResource("/img/Chatrooms.png")));
 		panel.add(label);
 
 		JLabel lblWeGotYou = new JLabel(" TO CHAT ROOM");

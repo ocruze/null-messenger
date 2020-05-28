@@ -1,25 +1,25 @@
-package window.presenter;
+package presenter;
 
-import model.Client.ChatClient;
-import window.model.ModelConnection;
-import window.view.ViewConnection;
+import model.client.Client;
+import model.gui.ModelConnection;
+import view.ViewConnection;
 
 public class PresenterConnection {
 
 	public ViewConnection view;
 	public ModelConnection model;
-	public ChatClient chatclient;
+	public Client client;
 
 	public PresenterConnection(ViewConnection view, ModelConnection model) {
 		this.view = view;
 		this.model = model;
-		this.chatclient = null;
+		this.client = null;
 	}
 
 	public void login() {
 
-		this.chatclient = new ChatClient(model.getIp(), model.getPort());
-		this.chatclient.execute();
+		this.client = new Client(model.getIp(), model.getPort());
+		this.client.execute();
 
 		// System.out.println("Login :" +model.getUsername());
 

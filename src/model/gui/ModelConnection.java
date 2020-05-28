@@ -1,9 +1,10 @@
+package model.gui;
 public class ModelConnection {
 
-	private String username;
-	private String password;
-	private int port;
-	private String ip;
+	private static String username;
+	private static String password;
+	private static int port;
+	private static String ip;
 	
 	public ModelConnection() {}
 	public String getUsername() {
@@ -12,19 +13,19 @@ public class ModelConnection {
 	public void setUsername(String username) {
 		this.username = username;
 	}
-	public String getPassword() {
+	public static String getPassword() {
 		return password;
 	}
 	public void setPassword(String password) {
 		this.password = password;
 	}
-	public int getPort() {
+	public static int getPort() {
 		return port;
 	}
 	public void setPort(int port) {
 		this.port = port;
 	}
-	public String getIp() {
+	public static String getIp() {
 		return ip;
 	}
 	public void setIp(String ip) {

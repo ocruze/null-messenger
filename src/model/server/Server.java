@@ -1,4 +1,4 @@
-package model.Server;
+package model.server;
 
 import java.io.IOException;
 import java.net.ServerSocket;
@@ -8,17 +8,17 @@ import java.sql.SQLException;
 import java.util.HashSet;
 import java.util.Set;
 
-import model.Database.Database;
-import model.Entity.User;
-import model.Exception.UserInexistantException;
+import exceptions.UserInexistantException;
+import model.database.Database;
+import model.entity.User;
 
-public class ChatServer {
+public class Server {
 	private int port;
 	Database database;
 	private Set<User> users = new HashSet<>();
 	private Set<UserThread> userThreads = new HashSet<>();
 
-	public ChatServer(int port) {
+	public Server(int port) {
 		this.port = port;
 		this.database = new Database();
 	}
@@ -47,13 +47,13 @@ public class ChatServer {
 	/**
 	 * Delivers a message from one user to others (broadcasting)
 	 */
-	void broadcast(String message, UserThread excludeUser) {
-		for (UserThread aUser : userThreads) {
-			if (aUser != excludeUser) {
-				aUser.sendMessage(message);
-			}
-		}
-	}
+//	void broadcast(String message, UserThread excludeUser) {
+//		for (UserThread aUser : userThreads) {
+//			if (aUser != excludeUser) {
+//				aUser.sendMessage(message);
+//			}
+//		}
+//	}
 
 	/**
 	 * 

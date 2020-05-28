@@ -1,4 +1,4 @@
-package model.Database;
+package model.database;
 
 import java.io.File;
 import java.io.IOException;

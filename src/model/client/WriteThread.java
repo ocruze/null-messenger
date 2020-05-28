@@ -1,4 +1,4 @@
-package model.Client;
+package model.client;
 
 import java.io.IOException;
 import java.io.OutputStream;
@@ -11,9 +11,9 @@ import org.json.JSONObject;
 public class WriteThread extends Thread {
 	private PrintWriter writer;
 	private Socket socket;
-	private ChatClient client;
+	private Client client;
 
-	public WriteThread(Socket socket, ChatClient client) {
+	public WriteThread(Socket socket, Client client) {
 		this.socket = socket;
 		this.client = client;
 
@@ -33,7 +33,9 @@ public class WriteThread extends Thread {
 		Scanner saisie = new Scanner(System.in);
 		// System.out.print("Enter your name: ");
 		// String userName = saisie.nextLine();
-		String userName = model.Client.ChatClient.getUserName();
+		String userName = model.client.Client.getUserName();
+		String password = model.gui.ModelConnection.getPassword();
+		
 		client.setUserName(userName);
 		writer.println(userName);
 
@@ -43,6 +45,8 @@ public class WriteThread extends Thread {
 			// System.out.print("[" + userName + "] :");
 			jsonClientMessage = new JSONObject();
 			jsonClientMessage.put("username", userName);
+			jsonClientMessage.put("password", password);
+			jsonClientMessage.put("action", "login");
 			// text = saisie.nextLine();
 
 			writer.println(jsonClientMessage.toString());

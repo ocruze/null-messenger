@@ -1,6 +1,6 @@
-package model.Exception;
+package exceptions;
 
-public class UserInexistantException extends Exception{
+public class UserInexistantException extends Exception {
 
 	/**
 	 * 
