@@ -1,8 +1,7 @@
-import model.Server.ChatServer;
 import java.util.Scanner;
 
-
-public class Server {
+public class LaunchServer {
+	
 	public static void main(String[] args) {
 		Scanner saisie = new Scanner(System.in);
 
@@ -11,7 +10,7 @@ public class Server {
 
 		saisie.close();
 
-		ChatServer server = new ChatServer(port);
+		Server server = new Server(port);
 		server.execute();
 	}
 }

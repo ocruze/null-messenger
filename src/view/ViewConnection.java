@@ -1,4 +1,4 @@
-package window.view;
+package view;
 
 import java.awt.Button;
 import java.awt.Color;

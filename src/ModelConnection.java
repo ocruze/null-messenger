@@ -1,5 +1,3 @@
-package window.model;
-
 public class ModelConnection {
 
 	private String username;
