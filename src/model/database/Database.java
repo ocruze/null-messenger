@@ -13,6 +13,8 @@ import java.sql.Statement;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+import exceptions.UnknownUserException;
+
 public class Database {
 
 	private final static String FILENAME_DATABASE = "NullMessenger.db";
@@ -169,15 +171,23 @@ public class Database {
 	 * @param username
 	 * @return
 	 * @throws SQLException
+	 * @throws UnknownUserException
 	 */
-	public ResultSet getUser(String username) throws SQLException {
+	public ResultSet getUser(String username) throws SQLException, UnknownUserException {
 		initConnectionIfClosed();
 
 		String query = "SELECT * FROM user WHERE username LIKE ?";
 
 		PreparedStatement stmt = conn.prepareStatement(query);
 		stmt.setString(1, username);
-		return stmt.executeQuery();
+
+		ResultSet res = stmt.executeQuery();
+
+		if (res.isClosed()) {
+			throw new UnknownUserException();
+		}
+
+		return res;
 	}
 
 	/**

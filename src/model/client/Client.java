@@ -4,31 +4,39 @@ import java.io.IOException;
 import java.net.Socket;
 import java.net.UnknownHostException;
 
+import org.json.JSONObject;
+
 import presenter.PresenterConnection;
 
 public class Client {
 	private String hostname;
 	private int port;
-	private String userName;
+	private String username;
 	private PresenterConnection presenter;
-	private  String password;
+	private String password;
 
-	
+	private ReadThread readThread;
+	private WriteThread writeThread;
+
+	private boolean loggedIn = false;
+
+	private JSONObject json;
+
 	public Client(String hostname, int port) {
 		this.hostname = hostname;
 		this.port = port;
 	}
-	
+
 	public Client() {
-		
+
 	}
 
 	public void execute() {
-		ReadThread readThread;
-		WriteThread writeThread;
+		readThread = null;
+		writeThread = null;
 
 		try {
-			
+
 			Socket socket = new Socket(getHostName(), getPort());
 
 			System.out.println("Connected to the chat server");
@@ -51,30 +59,50 @@ public class Client {
 		return presenter;
 	}
 
+	public String getUsername() {
+		return username;
+	}
 
-	public String getUserName() {
-		return userName;
-	}
 	public void setUserName(String username) {
-		this.userName = username;
+		this.username = username;
 	}
+
 	public String getPassword() {
 		return password;
 	}
+
 	public void setPassword(String password) {
 		this.password = password;
 	}
+
 	public int getPort() {
 		return this.port;
 	}
+
 	public void setPort(int port) {
 		this.port = port;
 	}
+
 	public String getHostName() {
 		return this.hostname;
 	}
+
 	public void setHostName(String hostname) {
 		this.hostname = hostname;
-	} 
+	}
+
+	public boolean login() {
+		writeThread.login();
+		return loggedIn = readThread.login();
+
+	}
+
+	public JSONObject getJson() {
+		return json;
+	}
+
+	public void setJson(JSONObject json) {
+		this.json = json;
+	}
 
 }

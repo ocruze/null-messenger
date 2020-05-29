@@ -10,6 +10,7 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import exceptions.UnknownUserException;
 import model.database.Database;
 
 public class DatabaseTest {
@@ -24,7 +25,7 @@ public class DatabaseTest {
 	@AfterEach
 	void tearDown() throws Exception {
 		database.closeConnection();
-		
+
 		File file = new File("NullMessengerTest.db");
 		file.delete();
 	}
@@ -119,7 +120,7 @@ public class DatabaseTest {
 			username = res.getString("username");
 			id = res.getInt("idUser");
 
-		} catch (SQLException e) {
+		} catch (SQLException | UnknownUserException e) {
 			e.printStackTrace();
 		}
 

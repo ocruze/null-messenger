@@ -8,7 +8,7 @@ import java.sql.SQLException;
 import java.util.HashSet;
 import java.util.Set;
 
-import exceptions.UserInexistantException;
+import exceptions.UnknownUserException;
 import model.database.Database;
 import model.entity.User;
 
@@ -60,12 +60,15 @@ public class Server {
 	 * @param username
 	 * @param password
 	 * @return
-	 * @throws UserInexistantException
+	 * @throws UnknownUserException
 	 */
-	int loginUser(String username, String password) throws UserInexistantException {
+	int loginUser(String username, String password) throws UnknownUserException {
 		ResultSet res = null;
 		try {
 			res = database.getUser(username);
+
+			if (res.isClosed())
+				return -1;
 
 			String pwd = res.getString("password");
 
@@ -73,12 +76,12 @@ public class Server {
 				return res.getInt("idUser");
 			}
 
-			throw new UserInexistantException();
+			throw new UnknownUserException();
 
 		} catch (SQLException e) {
 			e.printStackTrace();
+			return -1;
 		}
-		return -1;
 	}
 
 	int registerUser(String username, String password) {
@@ -90,14 +93,12 @@ public class Server {
 		return -1;
 	}
 
-	User getUser(String username) {
-		return users.stream().filter(x -> x.getUsername().equals(username)).findFirst().get();
-	}
-
-	User addUser(String username) {
-		User newUser = new User(username);
-		boolean added = users.add(newUser);
-		return added ? newUser : null;
+	boolean sendMessage(String sender, String recipient, String message) {
+		// on sait que sender existe
+		// faut vérifier si recipient existe
+		
+		
+		return false;
 	}
 
 	UserThread getUserThread(User user) {
@@ -107,9 +108,9 @@ public class Server {
 		return null;
 	}
 
-	UserThread getUserThread(String username) {
-		return getUserThread(getUser(username));
-	}
+//	UserThread getUserThread(String username) {
+//		return getUserThread(getUser(username));
+//	}
 
 	/**
 	 * When a client is disconneted, removes the associated username and UserThread

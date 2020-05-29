@@ -11,13 +11,15 @@ import java.sql.SQLException;
 
 import org.json.JSONObject;
 
-import exceptions.UserInexistantException;
+import exceptions.UnknownUserException;
 
 public class UserThread extends Thread {
 	private Socket socket;
 	private Server server;
 	private PrintWriter writer;
+	private BufferedReader reader;
 	private String username;
+
 	// private User user;
 
 	public UserThread(Socket socket, Server server) {
@@ -28,7 +30,7 @@ public class UserThread extends Thread {
 	public void run() {
 		try {
 			InputStream input = socket.getInputStream();
-			BufferedReader reader = new BufferedReader(new InputStreamReader(input));
+			reader = new BufferedReader(new InputStreamReader(input));
 
 			OutputStream output = socket.getOutputStream();
 			writer = new PrintWriter(output, true);
@@ -56,12 +58,12 @@ public class UserThread extends Thread {
 //					System.out.println(reader.readLine());
 //					
 //				}
-				
+
 //				System.out.println("clientMessage : " + clientMessage);
 
 				jsonClientMessage = new JSONObject(reader.readLine());
 				System.out.println(jsonClientMessage.toString());
-				
+
 				action = jsonClientMessage.getString("action");
 				System.out.println(action);
 
@@ -73,19 +75,21 @@ public class UserThread extends Thread {
 					try {
 						int idUser = server.loginUser(username, password);
 
-						if (idUser == -1)
-							jsonServerMessage.put("message", "user not found");
-						else {
+						if (idUser == -1) { // user non trouvé
+							jsonServerMessage.put("code", "404");
+							jsonServerMessage.put("message", "NOT FOUND");
+						} else {
 							this.username = server.database.getUser(idUser).getString("username");
+							jsonServerMessage.put("idUser", idUser + "");
+							jsonServerMessage.put("code", "200");
+							jsonServerMessage.put("message", "OK");
 						}
 
-					} catch (UserInexistantException e) {
+					} catch (UnknownUserException | SQLException e) {
 						e.printStackTrace();
-						jsonServerMessage.put("message", "user not found");
-					} catch (SQLException e) {
-						e.printStackTrace();
+						jsonServerMessage.put("code", "404");
+						jsonServerMessage.put("message", "NOT FOUND");
 					}
-
 				}
 					break;
 
@@ -96,9 +100,19 @@ public class UserThread extends Thread {
 					try {
 						int idUser = server.database.addUser(username, password);
 
-						jsonServerMessage.put("idUser", idUser);
+						if (idUser != -1) {
+							jsonServerMessage.put("idUser", idUser);
+							jsonServerMessage.put("code", "200");
+							jsonServerMessage.put("message", "OK");
+						} else {
+							jsonServerMessage.put("code", "500");
+							jsonServerMessage.put("message", "INTERNAL SERVER ERROR");
+						}
+
 					} catch (SQLException e) {
 						e.printStackTrace();
+						jsonServerMessage.put("code", "500");
+						jsonServerMessage.put("message", e.getMessage());
 					}
 				}
 					break;
@@ -111,8 +125,14 @@ public class UserThread extends Thread {
 
 					break;
 
-				case "send":
-
+				case "send": {
+					String sender = jsonClientMessage.getString("sender");
+					String recipient = jsonClientMessage.getString("recipient");
+					String message = jsonClientMessage.getString("message");
+					String idConversation = jsonClientMessage.getString("idConversation"); // A VOIR
+					
+					
+				}
 					break;
 
 				case "updateMessage":
@@ -127,8 +147,9 @@ public class UserThread extends Thread {
 					break;
 				}
 
-				serverMessage = "[" + username + "]: " + clientMessage;
-				// server.broadcast(serverMessage, this);
+//				serverMessage = "[" + username + "]: " + clientMessage;
+
+				send(jsonServerMessage);
 
 			} while (!action.equals("disconnect"));
 
@@ -142,4 +163,13 @@ public class UserThread extends Thread {
 			ex.printStackTrace();
 		}
 	}
+
+	void send(JSONObject jsonMessage) {
+		writer.println(jsonMessage.toString());
+	}
+
+	JSONObject receive() throws IOException {
+		return new JSONObject(reader.readLine());
+	}
+
 }
