@@ -1,0 +1,12 @@
+stages:
+    -build
+    -test
+    
+
+build:
+    stages:build
+    script:
+        -echo "Bulding"
+        -mkdir build
+        -touch build/info.txt
+        
