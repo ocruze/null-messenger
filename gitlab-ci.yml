@@ -1,8 +1,11 @@
-
-
 image: java:latest
 
 stages:
   - build
   - test
   - deploy 
+  
+  
+  build:
+    stages: build
+    script: 
