@@ -8,4 +8,4 @@ stages:
   
   build:
     stages: build
-    script: https://gitlab.com/rokare/null-messenger/-/blob/develop/src/test/javac DatabaseTest.java
+    script: echo " GG ça marche"
