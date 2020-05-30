@@ -1,0 +1,14 @@
+image: openjdk:11
+
+before_script:
+   - apt-get upate
+   - apt-get -y install ant
+
+stages:
+   - test
+   
+ci_test:
+   stage: test
+   script:
+      - cd src/test
+      - ant clean build DatabaseTest

@@ -94,7 +94,7 @@ public class UserThread extends Thread {
 					break;
 
 				case Constants.VALUE_ACTION_REGISTER: {
-					String username = jsonClientMessage.getString(Constants.KEY_ID_USER);
+					String username = jsonClientMessage.getString(Constants.KEY_USERNAME);
 					String password = jsonClientMessage.getString(Constants.KEY_PASSWORD);
 
 					int idUser = server.registerUser(username, password);
