@@ -190,8 +190,9 @@ public class UserThread extends Thread {
 				}
 
 //				serverMessage = "[" + username + "]: " + clientMessage;
-
+				jsonServerMessage.put(Constants.KEY_CLIENT_ACTION, action);
 				send(jsonServerMessage);
+				
 
 			} while (!action.equals(Constants.VALUE_ACTION_DISCONNECT));
 

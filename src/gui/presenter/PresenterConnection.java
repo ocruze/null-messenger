@@ -16,6 +16,7 @@ public class PresenterConnection implements IPresenter{
 	private Client client;
 	private ModelConnection model;
 	//private boolean isLogIn;
+	private boolean clientNotRegister;
 
 	public Consumer<Window> changeWindow;
 
@@ -31,6 +32,7 @@ public class PresenterConnection implements IPresenter{
 		this.view = view;
 		this.model = model;
 		this.client = client;
+		this.clientNotRegister = false;
 		init();
 	}
 
@@ -40,8 +42,19 @@ public class PresenterConnection implements IPresenter{
 	}
 
 	public void onRequestFailure(JSONObject json) {
-		System.out.println("ONREQUESTFAILURE");
-		this.view.needRegister();
+		switch(json.getString(Constants.KEY_MESSAGE).toString()) {
+		case Constants.VALUE_ERROR_USER_NOT_FOUND:
+			this.view.needRegister();
+			break;
+		case Constants.VALUE_ERROR_USER_ALREADY_EXIST:
+			this.view.userAlreadyExist();
+			break;
+		case Constants.VALUE_ERROR_PASSWORD_INCORRECT:
+			break;
+		
+		}
+		//System.out.println("ONREQUESTFAILURE");
+		
 	}
 
 	public void onRequestSuccess(JSONObject json) {
@@ -50,6 +63,11 @@ public class PresenterConnection implements IPresenter{
 		case Constants.VALUE_ACTION_LOGIN:
 			connectionAccepted();
 			break;
+		
+		case Constants.VALUE_ACTION_REGISTER:
+			client.setWantRegister(false);
+			registerSuccess();
+			break;
 
 		default:
 			break;
@@ -57,6 +75,9 @@ public class PresenterConnection implements IPresenter{
 		// System.out.println("ONREQUEST_SUCCESS");
 	}
 
+	public void registerSuccess() {
+		this.view.registerSuccess();
+	}
 	public void connectionAccepted() {
 		this.view.prepareWindowChanged();
 		changeWindow(Window.Conversation);
@@ -76,7 +97,8 @@ public class PresenterConnection implements IPresenter{
 		this.client.setUserName(model.getUserName());
 		this.client.setPort(model.getPort());
 		this.client.setPassword(model.getPassword());
-		this.client.register();
+		this.client.setWantRegister(true);
+		this.client.execute();
 	}
 
 	public void setPassword(String password) {
@@ -98,8 +120,6 @@ public class PresenterConnection implements IPresenter{
 	public Client getClient() {
 		return this.client;
 	}
-
-
 
 
 }

@@ -21,10 +21,19 @@ public class Client {
 	private WriteThread writeThread;
 
 	private boolean loggedIn = false;
+	private boolean isRegister = false;
 	private JSONObject json;
-
+	private boolean wantRegister;
 	private Consumer<JSONObject> onRequestSuccess;
 	private Consumer<JSONObject> onRequestFailed;
+
+	public boolean isWantRegister() {
+		return wantRegister;
+	}
+
+	public void setWantRegister(boolean wantRegister) {
+		this.wantRegister = wantRegister;
+	}
 
 	public void setOnRequestFailed(Consumer<JSONObject> onRequestFailed) {
 		this.onRequestFailed = onRequestFailed;
@@ -110,10 +119,42 @@ public class Client {
 	public void setHostName(String hostname) {
 		this.hostname = hostname;
 	}
-
+	/**
 	public void register() {
-		writeThread.register();
+	
+		readThread = null;
+		writeThread = null;
+		
+		try {
+			Socket socket = new Socket(this.hostname, this.port);
+			readThread = new ReadThread(socket, this);
+			writeThread = new WriteThread(socket, this);
+			readThread.start();
+			writeThread.start();
+			writeThread.register();
+			writeThread.join();
+			readThread.join();
+		} catch (UnknownHostException ex) {
+			System.out.println("Server not found: " + ex.getMessage());
+		} catch (IOException ex) {
+			System.out.println("I/O Error: " + ex.getMessage());
+		} catch (Exception e) {
+			System.out.println(e.getMessage());
+			e.printStackTrace();
+		}
+		
+		if(readThread == null || writeThread == null) {
+			execute();
+		}
+		
+		
 	}
+	**/
+	public boolean register() {
+		writeThread.register();
+		return isRegister = readThread.register();
+	}
+	
 
 	public boolean login() {
 		writeThread.login();

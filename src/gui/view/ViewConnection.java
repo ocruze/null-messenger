@@ -127,10 +127,10 @@ public class ViewConnection extends JFrame {
 		registerButton.addActionListener((ActionEvent e) -> {
 			try {
 				presenter.setPassword(getValueField(passwordField, FieldType.PASSWORD));
-				// presenter.setIp(getValueField(ipField, FieldType.IP));
+				presenter.setHostName(getValueField(ipField, FieldType.IP));
 				presenter.setUsername(getValueField(usernameField, FieldType.USERNAME));
-				// presenter.setPort(Integer.parseInt(getValueField(portField,
-				// FieldType.PORT)));
+				presenter.setPort(Integer.parseInt(getValueField(portField,
+				FieldType.PORT)));
 				presenter.register();
 			} catch (Exception e2) {
 				JOptionPane message = new JOptionPane();
@@ -195,6 +195,16 @@ public class ViewConnection extends JFrame {
 	public void needRegister() {
 		JOptionPane message = new JOptionPane();
 		message.showMessageDialog(null, "Please register before signing in", "Info", JOptionPane.WARNING_MESSAGE);
+	}
+	
+	public void registerSuccess() {
+		JOptionPane message = new JOptionPane();
+		message.showMessageDialog(null, "you have been successfully register", "Info", JOptionPane.INFORMATION_MESSAGE);
+	}
+	
+	public void userAlreadyExist() {
+		JOptionPane message = new JOptionPane();
+		message.showMessageDialog(null, "A user with this username already exists", "Info", JOptionPane.WARNING_MESSAGE);
 	}
 
 	public String getValueField(JTextField field, FieldType type) throws Exception {
