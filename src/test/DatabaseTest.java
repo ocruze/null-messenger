@@ -47,7 +47,7 @@ public class DatabaseTest {
 			database.addUser("arnest", "");
 			res = database.getUser(1);
 			assertEquals("arnest", res.getString("username"));
-		} catch (SQLException e) {
+		} catch (SQLException | UnknownUserException e) {
 			e.printStackTrace();
 		}
 
@@ -137,7 +137,7 @@ public class DatabaseTest {
 			database.addUser("arnest", "");
 			res = database.getUser(1);
 			username = res.getString("username");
-		} catch (SQLException e) {
+		} catch (SQLException | UnknownUserException e) {
 		}
 		assertEquals("arnest", username);
 
@@ -146,7 +146,7 @@ public class DatabaseTest {
 			res = database.getUser(1);
 
 			username = res.getString("username");
-		} catch (SQLException e) {
+		} catch (SQLException | UnknownUserException e) {
 			e.printStackTrace();
 		}
 
@@ -157,42 +157,26 @@ public class DatabaseTest {
 	void testDeleteUser() {
 		int count = -1;
 
-		try {
-			database.addUser("arnest", "");
-			database.addUser("leo", "");
-			count = database.count("user");
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
+		database.addUser("arnest", "");
+		database.addUser("leo", "");
+		count = database.count("user");
 		assertEquals(2, count);
 
-		try {
-			database.deleteUser("arnest");
-			count = database.count("user");
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
+		database.deleteUser("arnest");
+		count = database.count("user");
 		assertEquals(1, count);
 	}
 
 	@Test
-	void testAddConversation() {
+	void testAddConversation() throws SQLException {
 		int count = -1;
 		int idConv = -1;
 
-		try {
-			count = database.count("conversation");
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
+		count = database.count("conversation");
 		assertEquals(0, count);
 
-		try {
-			idConv = (int) database.addConversation();
-			count = database.count("conversation");
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
+		idConv = (int) database.addConversation();
+		count = database.count("conversation");
 
 		assertEquals(1, idConv);
 		assertEquals(1, count);

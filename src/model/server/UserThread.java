@@ -7,8 +7,10 @@ import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.net.Socket;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import exceptions.UnknownUserException;
@@ -79,7 +81,7 @@ public class UserThread extends Thread {
 							jsonServerMessage.put("code", "404");
 							jsonServerMessage.put("message", "NOT FOUND");
 						} else {
-							this.username = server.database.getUser(idUser).getString("username");
+							this.username = server.getDatabase().getUser(idUser).getString("username");
 							jsonServerMessage.put("idUser", idUser + "");
 							jsonServerMessage.put("code", "200");
 							jsonServerMessage.put("message", "OK");
@@ -97,22 +99,15 @@ public class UserThread extends Thread {
 					String username = jsonClientMessage.getString("username");
 					String password = jsonClientMessage.getString("password");
 
-					try {
-						int idUser = server.database.addUser(username, password);
+					int idUser = server.registerUser(username, password);
 
-						if (idUser != -1) {
-							jsonServerMessage.put("idUser", idUser);
-							jsonServerMessage.put("code", "200");
-							jsonServerMessage.put("message", "OK");
-						} else {
-							jsonServerMessage.put("code", "500");
-							jsonServerMessage.put("message", "INTERNAL SERVER ERROR");
-						}
-
-					} catch (SQLException e) {
-						e.printStackTrace();
+					if (idUser != -1) {
+						jsonServerMessage.put("idUser", idUser);
+						jsonServerMessage.put("code", "200");
+						jsonServerMessage.put("message", "OK");
+					} else {
 						jsonServerMessage.put("code", "500");
-						jsonServerMessage.put("message", e.getMessage());
+						jsonServerMessage.put("message", "INTERNAL SERVER ERROR");
 					}
 				}
 					break;
@@ -129,9 +124,60 @@ public class UserThread extends Thread {
 					String sender = jsonClientMessage.getString("sender");
 					String recipient = jsonClientMessage.getString("recipient");
 					String message = jsonClientMessage.getString("message");
-					String idConversation = jsonClientMessage.getString("idConversation"); // A VOIR
-					
-					
+
+					ResultSet resSender = server.getUser(sender);
+
+					ResultSet resRecipient = server.getUser(recipient);
+					UserThread threadRecipient = null;
+
+					String idConversation = "";
+					int idConv = -1;
+					int idSender = -1, idRecipient = -1;
+
+					// si user recipient existe
+					if (resRecipient != null) {
+						// sauvegarde du message dans la BD
+						try {
+							idSender = resSender.getInt("idUser");
+							idRecipient = resRecipient.getInt("idUser");
+						} catch (SQLException e1) {
+							e1.printStackTrace();
+						}
+
+						try {
+							idConversation = jsonClientMessage.getString("idConversation");
+							idConv = Integer.parseInt(idConversation);
+
+						} catch (JSONException e) {
+							idConv = server.getPrivateConversationId(idSender, idRecipient);
+						}
+						if (idConv == -1)
+							idConv = server.getDatabase().addConversation();
+
+						server.getDatabase().addMessage(idConv, idSender, message);
+
+						// si user connecté, on l'envoie le msg, sinon rien
+						threadRecipient = server.getUserThread(recipient);
+						if (threadRecipient != null) {
+
+							jsonServerMessage.put("action", "receive");
+							jsonServerMessage.put("sender", sender);
+							jsonServerMessage.put("recipient", recipient);
+							jsonServerMessage.put("content", message);
+							jsonServerMessage.put("message", "OK");
+							jsonServerMessage.put("code", 200);
+
+							threadRecipient.send(jsonServerMessage);
+						}
+
+						jsonServerMessage = new JSONObject();
+						jsonServerMessage.put("code", 201);
+						jsonServerMessage.put("message", "OK");
+
+					} else {
+						jsonServerMessage.put("code", 404);
+						jsonServerMessage.put("message", "RECIPIENT USER NOT FOUND");
+					}
 				}
 					break;
 
@@ -155,8 +201,9 @@ public class UserThread extends Thread {
 
 			socket.close();
 
-			serverMessage = username + " has left.";
+//			serverMessage = username + " has left.";
 //			server.broadcast(serverMessage, this);
+			server.disconnectUser(this);
 
 		} catch (IOException ex) {
 			System.out.println("Error in UserThread: " + ex.getMessage());
@@ -165,11 +212,41 @@ public class UserThread extends Thread {
 	}
 
 	void send(JSONObject jsonMessage) {
+		System.out.println("Server says : " + jsonMessage.toString());
 		writer.println(jsonMessage.toString());
 	}
 
 	JSONObject receive() throws IOException {
 		return new JSONObject(reader.readLine());
+	}
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((username == null) ? 0 : username.hashCode());
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		UserThread other = (UserThread) obj;
+		if (username == null) {
+			if (other.username != null)
+				return false;
+		} else if (!username.equals(other.username))
+			return false;
+		return true;
+	}
+
+	public String getUsername() {
+		return username;
 	}
 
 }

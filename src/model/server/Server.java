@@ -14,7 +14,7 @@ import model.entity.User;
 
 public class Server {
 	private int port;
-	Database database;
+	private Database database;
 	private Set<User> users = new HashSet<>();
 	private Set<UserThread> userThreads = new HashSet<>();
 
@@ -67,7 +67,7 @@ public class Server {
 		try {
 			res = database.getUser(username);
 
-			if (res.isClosed())
+			if (res == null)
 				return -1;
 
 			String pwd = res.getString("password");
@@ -85,49 +85,44 @@ public class Server {
 	}
 
 	int registerUser(String username, String password) {
+		return database.addUser(username, password);
+	}
+
+	ResultSet getUser(int idUser) {
 		try {
-			return database.addUser(username, password);
-		} catch (SQLException e) {
+			return database.getUser(idUser);
+		} catch (UnknownUserException e) {
 			e.printStackTrace();
+			return null;
 		}
-		return -1;
 	}
 
-	boolean sendMessage(String sender, String recipient, String message) {
-		// on sait que sender existe
-		// faut vérifier si recipient existe
-		
-		
-		return false;
+	ResultSet getUser(String username) {
+		try {
+			return database.getUser(username);
+		} catch (UnknownUserException e) {
+			e.printStackTrace();
+			return null;
+		}
 	}
 
-	UserThread getUserThread(User user) {
-		// TODO
-		// return userThreads.stream().filter(x ->
-		// x.getUser().equals(user)).findFirst().get();
-		return null;
+	int getPrivateConversationId(int idUser1, int idUser2) {
+		return database.getPrivateConversationId(idUser1, idUser2);
 	}
 
-//	UserThread getUserThread(String username) {
-//		return getUserThread(getUser(username));
-//	}
+	UserThread getUserThread(String username) {
+		return userThreads.stream().filter(x -> x.getUsername().equals(username)).findFirst().get();
+	}
 
 	/**
 	 * When a client is disconneted, removes the associated username and UserThread
 	 */
-	boolean disconnectUser(User user) {
-		return userThreads.remove(getUserThread(user));
+	boolean disconnectUser(UserThread userThread) {
+		return userThreads.remove(userThread);
 	}
 
-	/**
-	 * Returns true if there are other users connected (not count the currently
-	 * connected user)
-	 */
-	boolean hasUsers() {
-		return !this.users.isEmpty();
+	Database getDatabase() {
+		return database;
 	}
 
-	public Set<User> getUsers() {
-		return users;
-	}
 }

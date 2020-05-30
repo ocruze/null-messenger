@@ -106,46 +106,79 @@ public class Database {
 		}
 	}
 
-	public int count(String tableName) throws SQLException {
+	/**
+	 * Retourne le nombre d'éléments dans une table
+	 * 
+	 * @param tableName
+	 * @return
+	 */
+	public int count(String tableName) {
 		initConnectionIfClosed();
 
 		String query = "SELECT * FROM " + tableName;
 
-		Statement stmt = conn.createStatement();
+		Statement stmt;
+		try {
+			stmt = conn.createStatement();
+			ResultSet res;
+			res = stmt.executeQuery(query);
 
-		ResultSet res;
-		res = stmt.executeQuery(query);
+			int i = 0;
+			while (res.next()) {
+				i++;
+			}
 
-		int i = 0;
-		while (res.next()) {
-			i++;
+			return i;
+		} catch (SQLException e) {
+			e.printStackTrace();
+			return -1;
 		}
 
-		return i;
 	}
 
-	public int getLastInsertId() throws SQLException {
+	/**
+	 * Retourne l'id du dernier élément ajouté dans une table
+	 * 
+	 * @return
+	 */
+	public int getLastInsertId() {
 		initConnectionIfClosed();
 
 		String query = "SELECT last_insert_rowid();";
 
-		Statement stmt = conn.createStatement();
-		ResultSet res = stmt.executeQuery(query);
-		return res.getInt(1);
+		Statement stmt;
+		try {
+			stmt = conn.createStatement();
+			ResultSet res = stmt.executeQuery(query);
+			return res.getInt(1);
+		} catch (SQLException e) {
+			e.printStackTrace();
+			return -1;
+		}
 	}
 
 	/**
 	 * Récupèrer tous les utilisateurs
 	 * 
 	 * @return
-	 * @throws SQLException
 	 */
-	public ResultSet getUsers() throws SQLException {
+	public ResultSet getUsers() {
 		initConnectionIfClosed();
 
 		String query = "SELECT * FROM user";
-		Statement stmt = conn.createStatement();
-		return stmt.executeQuery(query);
+		try {
+			Statement stmt = conn.createStatement();
+
+			ResultSet res = stmt.executeQuery(query);
+			if (res.isClosed()) {
+				return null;
+			}
+
+			return res;
+		} catch (SQLException e) {
+			e.printStackTrace();
+			return null;
+		}
 	}
 
 	/**
@@ -153,16 +186,28 @@ public class Database {
 	 * 
 	 * @param idUser
 	 * @return
-	 * @throws SQLException
+	 * @throws UnknownUserException
 	 */
-	public ResultSet getUser(int idUser) throws SQLException {
+	public ResultSet getUser(int idUser) throws UnknownUserException {
 		initConnectionIfClosed();
 
 		String query = "SELECT * FROM user WHERE idUser = ?";
 
-		PreparedStatement stmt = conn.prepareStatement(query);
-		stmt.setInt(1, idUser);
-		return stmt.executeQuery();
+		PreparedStatement stmt;
+		try {
+			stmt = conn.prepareStatement(query);
+			stmt.setInt(1, idUser);
+			ResultSet res = stmt.executeQuery();
+			if (res.isClosed()) {
+				throw new UnknownUserException();
+			}
+
+			return res;
+		} catch (SQLException e) {
+			e.printStackTrace();
+			return null;
+		}
+
 	}
 
 	/**
@@ -170,24 +215,29 @@ public class Database {
 	 * 
 	 * @param username
 	 * @return
-	 * @throws SQLException
 	 * @throws UnknownUserException
 	 */
-	public ResultSet getUser(String username) throws SQLException, UnknownUserException {
+	public ResultSet getUser(String username) throws UnknownUserException {
 		initConnectionIfClosed();
 
 		String query = "SELECT * FROM user WHERE username LIKE ?";
 
-		PreparedStatement stmt = conn.prepareStatement(query);
-		stmt.setString(1, username);
+		PreparedStatement stmt;
+		try {
+			stmt = conn.prepareStatement(query);
+			stmt.setString(1, username);
 
-		ResultSet res = stmt.executeQuery();
+			ResultSet res = stmt.executeQuery();
 
-		if (res.isClosed()) {
-			throw new UnknownUserException();
+			if (res.isClosed()) {
+				throw new UnknownUserException();
+			}
+
+			return res;
+		} catch (SQLException e) {
+			e.printStackTrace();
+			return null;
 		}
-
-		return res;
 	}
 
 	/**
@@ -196,19 +246,24 @@ public class Database {
 	 * @param username
 	 * @param password
 	 * @return
-	 * @throws SQLException
 	 */
-	public int addUser(String username, String password) throws SQLException {
+	public int addUser(String username, String password) {
 		initConnectionIfClosed();
 
 		String query = "INSERT INTO user (username, password) VALUES (?,?);";
 
-		PreparedStatement stmt = conn.prepareStatement(query);
-		stmt.setString(1, username);
-		stmt.setString(2, password);
-		stmt.execute();
+		PreparedStatement stmt;
+		try {
+			stmt = conn.prepareStatement(query);
+			stmt.setString(1, username);
+			stmt.setString(2, password);
+			stmt.execute();
+			return getLastInsertId();
+		} catch (SQLException e) {
+			e.printStackTrace();
+			return -1;
+		}
 
-		return getLastInsertId();
 	}
 
 	/**
@@ -216,17 +271,21 @@ public class Database {
 	 * 
 	 * @param username
 	 * @param password
-	 * @throws SQLException
 	 */
-	public void modifyUserUsername(int idUser, String newUsername) throws SQLException {
+	public void modifyUserUsername(int idUser, String newUsername) {
 		initConnectionIfClosed();
 
 		String query = "UPDATE user SET username = ? WHERE idUser = ?;";
 
-		PreparedStatement stmt = conn.prepareStatement(query);
-		stmt.setString(1, newUsername);
-		stmt.setInt(2, idUser);
-		stmt.execute();
+		PreparedStatement stmt;
+		try {
+			stmt = conn.prepareStatement(query);
+			stmt.setString(1, newUsername);
+			stmt.setInt(2, idUser);
+			stmt.execute();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
 
 	}
 
@@ -234,32 +293,64 @@ public class Database {
 	 * Supprime un utilisateur
 	 * 
 	 * @param username
-	 * @throws SQLException
 	 */
-	public void deleteUser(String username) throws SQLException {
+	public void deleteUser(String username) {
 		initConnectionIfClosed();
 
 		String query = "DELETE FROM user WHERE username LIKE ?;";
 
-		PreparedStatement stmt = conn.prepareStatement(query);
-		stmt.setString(1, username);
-		stmt.execute();
+		PreparedStatement stmt;
+		try {
+			stmt = conn.prepareStatement(query);
+			stmt.setString(1, username);
+			stmt.execute();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
 	}
 
 	/**
 	 * Crée une nouvelle conversation
 	 * 
 	 * @return
-	 * @throws SQLException
 	 */
-	public long addConversation() throws SQLException {
+	public int addConversation() {
 		initConnectionIfClosed();
 
 		String query = "INSERT INTO conversation VALUES (NULL);";
-		Statement stmt = conn.createStatement();
-		stmt.execute(query);
+		Statement stmt;
+		try {
+			stmt = conn.createStatement();
+			stmt.execute(query);
+			return getLastInsertId();
+		} catch (SQLException e) {
+			e.printStackTrace();
+			return -1;
+		}
 
-		return getLastInsertId();
+	}
+
+	public int getPrivateConversationId(int idUser1, int idUser2) {
+		initConnectionIfClosed();
+
+		String query = "SELECT (SELECT DISTINCT(idconversation) FROM message WHERE idSender = ?) AND (SELECT DISTINCT(idconversation) FROM message WHERE idSender = ?)";
+		PreparedStatement stmt;
+		try {
+			stmt = conn.prepareStatement(query);
+			stmt.setInt(1, idUser1);
+			stmt.setInt(2, idUser1);
+			ResultSet res = stmt.executeQuery();
+
+			if (res.isClosed()) {
+				return -1;
+			}
+
+			return res.getInt("idConversation");
+		} catch (SQLException e) {
+			e.printStackTrace();
+			return -1;
+		}
+
 	}
 
 	/**
@@ -268,25 +359,34 @@ public class Database {
 	 * @param idConversation
 	 * @param idSender
 	 * @param content
-	 * @throws SQLException
+	 * @return
 	 */
-	public void addMessage(int idConversation, int idSender, String content) throws SQLException {
+	public int addMessage(int idConversation, int idSender, String content) {
 		initConnectionIfClosed();
 
 		String query = "INSERT INTO message (content, idSender, idConversation, date) VALUES (?,?,?,?);";
 
-		PreparedStatement stmt = conn.prepareStatement(query);
-		stmt.setString(1, content);
-		stmt.setInt(2, idSender);
-		stmt.setInt(3, idConversation);
+		PreparedStatement stmt;
+		try {
+			stmt = conn.prepareStatement(query);
+			stmt.setString(1, content);
+			stmt.setInt(2, idSender);
+			stmt.setInt(3, idConversation);
 
-		String pattern = "yyyy-MM-dd HH:mm:ss";
-		SimpleDateFormat simpleDateFormat = new SimpleDateFormat(pattern);
-		String date = simpleDateFormat.format(new Date());
+			String pattern = "yyyy-MM-dd HH:mm:ss";
+			SimpleDateFormat simpleDateFormat = new SimpleDateFormat(pattern);
+			String date = simpleDateFormat.format(new Date());
 
-		stmt.setString(4, date);
+			stmt.setString(4, date);
 
-		stmt.execute();
+			stmt.execute();
+
+			return getLastInsertId();
+		} catch (SQLException e) {
+			e.printStackTrace();
+			return -1;
+		}
+
 	}
 
 	/**
@@ -294,16 +394,28 @@ public class Database {
 	 * 
 	 * @param idMessage
 	 * @return
-	 * @throws SQLException
 	 */
-	public ResultSet getMessage(int idMessage) throws SQLException {
+	public ResultSet getMessage(int idMessage) {
 		initConnectionIfClosed();
 
 		String query = "SELECT * FROM message WHERE idMessage = ?;";
 
-		PreparedStatement stmt = conn.prepareStatement(query);
-		stmt.setInt(1, idMessage);
-		return stmt.executeQuery();
+		PreparedStatement stmt;
+		try {
+			stmt = conn.prepareStatement(query);
+			stmt.setInt(1, idMessage);
+
+			ResultSet res = stmt.executeQuery();
+
+			if (res.isClosed()) {
+				return null;
+			}
+
+			return res;
+		} catch (SQLException e) {
+			e.printStackTrace();
+			return null;
+		}
 	}
 
 	/**
@@ -311,33 +423,49 @@ public class Database {
 	 * 
 	 * @param idConversation
 	 * @return
-	 * @throws SQLException
 	 */
-	public ResultSet getConversationMessages(int idConversation) throws SQLException {
+	public ResultSet getConversationMessages(int idConversation) {
 		initConnectionIfClosed();
 
 		String query = "SELECT * FROM message WHERE idConversation = ? ORDER BY date ASC;";
 
-		PreparedStatement stmt = conn.prepareStatement(query);
-		stmt.setInt(1, idConversation);
-		return stmt.executeQuery();
+		PreparedStatement stmt;
+		try {
+			stmt = conn.prepareStatement(query);
+			stmt.setInt(1, idConversation);
+
+			ResultSet res = stmt.executeQuery();
+
+			if (res.isClosed()) {
+				return null;
+			}
+
+			return res;
+		} catch (SQLException e) {
+			e.printStackTrace();
+			return null;
+		}
 	}
 
 	/**
 	 * Met à jour le contenu du message à "Message supprimé"
 	 * 
 	 * @param idMessage
-	 * @throws SQLException
 	 */
-	public void deleteMessage(int idMessage) throws SQLException {
+	public void deleteMessage(int idMessage) {
 		initConnectionIfClosed();
 
 		String query = "UPDATE message SET content = ? WHERE idMessage = ?;";
 
-		PreparedStatement stmt = conn.prepareStatement(query);
-		stmt.setString(1, "Message supprimé");
-		stmt.setInt(2, idMessage);
-		stmt.execute();
+		PreparedStatement stmt;
+		try {
+			stmt = conn.prepareStatement(query);
+			stmt.setString(1, "Message supprimé");
+			stmt.setInt(2, idMessage);
+			stmt.execute();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
 	}
 
 	/**
@@ -345,17 +473,21 @@ public class Database {
 	 * 
 	 * @param idConversation
 	 * @param idSender
-	 * @throws SQLException
 	 */
-	public void deleteMessage(int idConversation, int idSender) throws SQLException {
+	public void deleteMessage(int idConversation, int idSender) {
 		initConnectionIfClosed();
 
 		String query = "UPDATE message SET content = ? WHERE idSender = ? AND idConversation = ?;";
 
-		PreparedStatement stmt = conn.prepareStatement(query);
-		stmt.setString(1, "Message supprimé");
-		stmt.setInt(2, idSender);
-		stmt.setInt(3, idConversation);
-		stmt.execute();
+		PreparedStatement stmt;
+		try {
+			stmt = conn.prepareStatement(query);
+			stmt.setString(1, "Message supprimé");
+			stmt.setInt(2, idSender);
+			stmt.setInt(3, idConversation);
+			stmt.execute();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
 	}
 }
