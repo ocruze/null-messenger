@@ -1,9 +1,11 @@
-package view;
+package gui.view;
 
 import java.awt.Button;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
+import java.awt.event.ComponentEvent;
+import java.awt.event.ComponentListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionAdapter;
@@ -20,7 +22,8 @@ import javax.swing.JTextField;
 import javax.swing.SwingConstants;
 import javax.swing.border.EmptyBorder;
 
-import presenter.PresenterConnection;
+
+import gui.presenter.PresenterConnection;
 
 public class ViewConnection extends JFrame {
 	private static final long serialVersionUID = 1L;
@@ -110,7 +113,7 @@ public class ViewConnection extends JFrame {
         {
         	try {
         	 	presenter.setPassword(getValueField(passwordField, FieldType.PASSWORD));
-            	presenter.setIp(getValueField(ipField, FieldType.IP));
+            	presenter.setHostName(getValueField(ipField, FieldType.IP));
             	presenter.setUsername(getValueField(usernameField, FieldType.USERNAME));
             	presenter.setPort(Integer.parseInt(getValueField(portField, FieldType.PORT)));
                 presenter.login();
@@ -120,6 +123,29 @@ public class ViewConnection extends JFrame {
 			}
         });
 		contentPane.add(loginButton);
+		
+		
+		
+		Button registerButton = new Button("Register");
+		registerButton.setForeground(Color.WHITE);
+		registerButton.setBackground(Color.GRAY);
+		registerButton.setBounds(395, 403, 283, 36);
+		registerButton.addActionListener((ActionEvent e) ->
+        {
+        	try {
+        	 	presenter.setPassword(getValueField(passwordField, FieldType.PASSWORD));
+            	//presenter.setIp(getValueField(ipField, FieldType.IP));
+            	presenter.setUsername(getValueField(usernameField, FieldType.USERNAME));
+            	//presenter.setPort(Integer.parseInt(getValueField(portField, FieldType.PORT)));
+                presenter.register();
+        	} catch (Exception e2) {
+        		JOptionPane message = new JOptionPane();
+        		message.showMessageDialog(null, "Une erreur s'est produite : " +e2.getMessage(), "Erreur", JOptionPane.ERROR_MESSAGE);
+			}
+        });
+		contentPane.add(registerButton);
+		
+		
 		
 		usernameField = new JTextField();
 		usernameField.setBounds(395, 83, 283, 36);
@@ -170,7 +196,10 @@ public class ViewConnection extends JFrame {
 		contentPane.add(lbl_close);
 	}
 	
-	
+	public void needRegister() {
+		JOptionPane message = new JOptionPane();
+		message.showMessageDialog(null, "Please register before signing in", "Info", JOptionPane.WARNING_MESSAGE);
+	}
 	public String getValueField(JTextField field, FieldType type) throws Exception {
 		//String value = "";
 		

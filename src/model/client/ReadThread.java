@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.Socket;
+import java.util.function.Consumer;
 
 import org.json.JSONObject;
 
@@ -12,6 +13,8 @@ public class ReadThread extends Thread {
 	private BufferedReader reader;
 	private Socket socket;
 	private Client client;
+	private JSONObject json;
+
 
 	public ReadThread(Socket socket, Client client) {
 		this.socket = socket;
@@ -34,6 +37,11 @@ public class ReadThread extends Thread {
 				jsonServerMessage = receive();
 
 				// prints the username after displaying the server's message
+				
+				if(jsonServerMessage.getString("code").equals("404")) {
+					
+					client.onRequestFailed(jsonServerMessage);
+				}
 				if (client.getUsername() != null) {
 					System.out.print("[" + client.getUsername() + "]: ");
 				}
