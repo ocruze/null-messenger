@@ -10,7 +10,9 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import exceptions.UnknownUserException;
 import model.database.Database;
+import util.Constants;
 
 public class DatabaseTest {
 
@@ -24,7 +26,7 @@ public class DatabaseTest {
 	@AfterEach
 	void tearDown() throws Exception {
 		database.closeConnection();
-		
+
 		File file = new File("NullMessengerTest.db");
 		file.delete();
 	}
@@ -45,8 +47,8 @@ public class DatabaseTest {
 			// addding one user
 			database.addUser("arnest", "");
 			res = database.getUser(1);
-			assertEquals("arnest", res.getString("username"));
-		} catch (SQLException e) {
+			assertEquals("arnest", res.getString(Constants.KEY_USERNAME));
+		} catch (SQLException | UnknownUserException e) {
 			e.printStackTrace();
 		}
 
@@ -79,7 +81,7 @@ public class DatabaseTest {
 
 			res = database.getUsers();
 			res.next();
-			username = res.getString("username");
+			username = res.getString(Constants.KEY_USERNAME);
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
@@ -88,7 +90,7 @@ public class DatabaseTest {
 
 		try {
 			res.next();
-			username = res.getString("username");
+			username = res.getString(Constants.KEY_USERNAME);
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
@@ -97,7 +99,7 @@ public class DatabaseTest {
 
 		try {
 			res.next();
-			username = res.getString("username");
+			username = res.getString(Constants.KEY_USERNAME);
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
@@ -116,10 +118,10 @@ public class DatabaseTest {
 			database.addUser("max", "");
 
 			res = database.getUser("max");
-			username = res.getString("username");
-			id = res.getInt("idUser");
+			username = res.getString(Constants.KEY_USERNAME);
+			id = res.getInt(Constants.KEY_ID_USER);
 
-		} catch (SQLException e) {
+		} catch (SQLException | UnknownUserException e) {
 			e.printStackTrace();
 		}
 
@@ -135,8 +137,8 @@ public class DatabaseTest {
 		try {
 			database.addUser("arnest", "");
 			res = database.getUser(1);
-			username = res.getString("username");
-		} catch (SQLException e) {
+			username = res.getString(Constants.KEY_USERNAME);
+		} catch (SQLException | UnknownUserException e) {
 		}
 		assertEquals("arnest", username);
 
@@ -144,8 +146,8 @@ public class DatabaseTest {
 			database.modifyUserUsername(1, "Arnest");
 			res = database.getUser(1);
 
-			username = res.getString("username");
-		} catch (SQLException e) {
+			username = res.getString(Constants.KEY_USERNAME);
+		} catch (SQLException | UnknownUserException e) {
 			e.printStackTrace();
 		}
 
@@ -156,42 +158,26 @@ public class DatabaseTest {
 	void testDeleteUser() {
 		int count = -1;
 
-		try {
-			database.addUser("arnest", "");
-			database.addUser("leo", "");
-			count = database.count("user");
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
+		database.addUser("arnest", "");
+		database.addUser("leo", "");
+		count = database.count("user");
 		assertEquals(2, count);
 
-		try {
-			database.deleteUser("arnest");
-			count = database.count("user");
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
+		database.deleteUser("arnest");
+		count = database.count("user");
 		assertEquals(1, count);
 	}
 
 	@Test
-	void testAddConversation() {
+	void testAddConversation() throws SQLException {
 		int count = -1;
 		int idConv = -1;
 
-		try {
-			count = database.count("conversation");
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
+		count = database.count("conversation");
 		assertEquals(0, count);
 
-		try {
-			idConv = (int) database.addConversation();
-			count = database.count("conversation");
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
+		idConv = (int) database.addConversation();
+		count = database.count("conversation");
 
 		assertEquals(1, idConv);
 		assertEquals(1, count);

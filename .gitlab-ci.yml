@@ -1,0 +1,17 @@
+image: openjdk:11
+
+stages:
+   - build
+   - test
+
+ci_build:
+   stage: build
+   script:
+      - javac -cp "bin/:lib/*" -sourcepath src/ -d bin/ src/LaunchServer.java
+      - javac -cp "bin/:lib/*" -sourcepath src/ -d bin/ src/LaunchClientGUI.java
+   
+ci_test:
+   stage: test
+   script:
+      - javac -cp "bin/:lib/*" -sourcepath src/ -d bin/ src/test/*.java
+      - java -jar lib/junit.jar --class-path "bin:lib/sqlite-jdbc-3.31.1.jar:json-20200518.jar" --scan-class-path
