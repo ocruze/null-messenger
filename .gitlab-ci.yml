@@ -11,8 +11,8 @@ stages:
 ci_build:
    stage: build
    script:
-      - javac -cp lib/*.jar src/LaunchServer.java
-      - javac -cp lib/*.jar src/LaunchClientGUI.java
+      - javac -cp bin/ src/LaunchServer.java
+      - javac -cp bin/ src/LaunchClientGUI.java
    
 ci_test:
    stage: test
