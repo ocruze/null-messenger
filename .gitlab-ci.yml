@@ -1,9 +1,5 @@
 image: openjdk:11
 
-before_script:
-   - apt-get update
-   - apt-get -y install ant
-
 stages:
    - build
    - test
@@ -17,5 +13,5 @@ ci_build:
 ci_test:
    stage: test
    script:
-      - cd src/test
-      - ant clean build DatabaseTest
+      - javac -cp "bin/:lib/*" -sourcepath src/ -d bin/ src/test/*.java
+      - java -jar lib/junit.jar --class-path "bin:lib/sqlite-jdbc-3.31.1.jar:json-20200518.jar" --scan-class-path
