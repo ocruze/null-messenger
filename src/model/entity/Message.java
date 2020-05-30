@@ -12,6 +12,12 @@ public class Message {
 		this.sender = sender;
 		date = Calendar.getInstance().getTime();
 	}
+	public Message(String message, User sender, Date date) {
+		this.message = message;
+		this.sender = sender;
+		this.date = date;
+	}
+	
 
 	public User getSender() {
 		return sender;

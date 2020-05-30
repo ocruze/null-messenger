@@ -10,7 +10,7 @@ public class PresenterConnection {
 	private ViewConnection view;
 	private Client client;
 	private ModelConnection model;
-
+	private boolean isLogIn;
 	
 
 	public PresenterConnection(ViewConnection view, ModelConnection model, Client client) {
@@ -22,6 +22,7 @@ public class PresenterConnection {
 
 	public void init() {
 		client.setOnRequestFailed((json) -> onRequestFailure(json));
+		client.setOnRequestSuccess((json) -> onRequestSuccess(json));
 	}
 	
 	public void onRequestFailure(JSONObject json){
@@ -64,5 +65,18 @@ public class PresenterConnection {
 	public void setHostName(String hostname) {
 		model.setHostName(hostname);
 	}
+	public Client getClient() {
+		return this.client;
+	}
+
+	public boolean isLogIn() {
+		return isLogIn;
+	}
+
+	public void setLogIn(boolean isLogIn) {
+		this.isLogIn = isLogIn;
+	}
+	
+	
 	
 }

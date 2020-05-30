@@ -10,4 +10,15 @@ public class Conversation {
 		messages = new ArrayList<>();
 		participants = new ArrayList<>();
 	}
+	
+	public List<Message> getMessages()
+	{
+		return this.messages;
+	}
+	
+	public List<User> getParticipants() 
+	{
+		return this.participants;
+	}
+	
 }

@@ -3,8 +3,6 @@ package model.client;
 import java.io.IOException;
 import java.net.Socket;
 import java.net.UnknownHostException;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.function.Consumer;
 
 import org.json.JSONObject;
@@ -12,55 +10,51 @@ import org.json.JSONObject;
 import gui.presenter.PresenterConnection;
 
 public class Client {
-	
+
 	private String hostname;
 	private int port;
 	private String username;
 	private PresenterConnection presenter;
 	private String password;
-	
+	private int idUser;
 	private ReadThread readThread;
 	private WriteThread writeThread;
 
 	private boolean loggedIn = false;
 	private JSONObject json;
-	
-	
+
 	private Consumer<JSONObject> onRequestSuccess;
 	private Consumer<JSONObject> onRequestFailed;
-	
-	
-	public void setOnRequestFailed(Consumer<JSONObject> onRequestFailed){
+
+	public void setOnRequestFailed(Consumer<JSONObject> onRequestFailed) {
 		this.onRequestFailed = onRequestFailed;
 	}
-	
-	public void setOnRequestSuccess(Consumer<JSONObject> onRequestSuccess){
+
+	public void setOnRequestSuccess(Consumer<JSONObject> onRequestSuccess) {
 		this.onRequestSuccess = onRequestSuccess;
 	}
-	
-	
+
 	public void onRequestFailed(JSONObject json) {
 		this.onRequestFailed.accept(json);
 	}
+
 	public void onRequestSuccess(JSONObject json) {
 		this.onRequestSuccess.accept(json);
 	}
-	
-	
+
 	/**
-	public Client(String hostname, int port) {
-		this.hostname = hostname;
-		this.port = port;
-	}**/
+	 * public Client(String hostname, int port) { this.hostname = hostname;
+	 * this.port = port; }
+	 **/
 
 	public Client() {
-		
+
 	}
 
 	public void execute() {
 		readThread = null;
 		writeThread = null;
-		///onRequestFailed(jsonServerMessage);
+		/// onRequestFailed(jsonServerMessage);
 		try {
 
 			Socket socket = new Socket(getHostName(), getPort());
@@ -81,7 +75,6 @@ public class Client {
 
 	}
 
-	
 	public PresenterConnection getPresenter() {
 		return presenter;
 	}
@@ -117,10 +110,11 @@ public class Client {
 	public void setHostName(String hostname) {
 		this.hostname = hostname;
 	}
-	
+
 	public void register() {
 		writeThread.register();
 	}
+
 	public boolean login() {
 		writeThread.login();
 		return loggedIn = readThread.login();
@@ -135,5 +129,12 @@ public class Client {
 		this.json = json;
 	}
 
+	public int getIdUser() {
+		return idUser;
+	}
+
+	public void setIdUser(int idUser) {
+		this.idUser = idUser;
+	}
 
 }
