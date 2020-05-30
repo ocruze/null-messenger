@@ -3,38 +3,66 @@ package model.client;
 import java.io.IOException;
 import java.net.Socket;
 import java.net.UnknownHostException;
+import java.util.function.Consumer;
 
-import presenter.PresenterConnection;
+import org.json.JSONObject;
+
+import gui.presenter.PresenterConnection;
 
 public class Client {
+
 	private String hostname;
 	private int port;
-	private String userName;
+	private String username;
 	private PresenterConnection presenter;
-	private  String password;
+	private String password;
+	private int idUser;
+	private ReadThread readThread;
+	private WriteThread writeThread;
 
-	
-	public Client(String hostname, int port) {
-		this.hostname = hostname;
-		this.port = port;
+	private boolean loggedIn = false;
+	private JSONObject json;
+
+	private Consumer<JSONObject> onRequestSuccess;
+	private Consumer<JSONObject> onRequestFailed;
+
+	public void setOnRequestFailed(Consumer<JSONObject> onRequestFailed) {
+		this.onRequestFailed = onRequestFailed;
 	}
-	
+
+	public void setOnRequestSuccess(Consumer<JSONObject> onRequestSuccess) {
+		this.onRequestSuccess = onRequestSuccess;
+	}
+
+	public void onRequestFailed(JSONObject json) {
+		this.onRequestFailed.accept(json);
+	}
+
+	public void onRequestSuccess(JSONObject json) {
+		this.onRequestSuccess.accept(json);
+	}
+
+	/**
+	 * public Client(String hostname, int port) { this.hostname = hostname;
+	 * this.port = port; }
+	 **/
+
 	public Client() {
-		
+
 	}
 
 	public void execute() {
-		ReadThread readThread;
-		WriteThread writeThread;
-
+		readThread = null;
+		writeThread = null;
+		/// onRequestFailed(jsonServerMessage);
 		try {
-			
+
 			Socket socket = new Socket(getHostName(), getPort());
 
 			System.out.println("Connected to the chat server");
 
-			readThread = new ReadThread(socket, this);
-			writeThread = new WriteThread(socket, this);
+			this.readThread = new ReadThread(socket, this);
+			this.writeThread = new WriteThread(socket, this);
 
 			readThread.start();
 			writeThread.start();
@@ -51,30 +79,62 @@ public class Client {
 		return presenter;
 	}
 
+	public String getUsername() {
+		return username;
+	}
 
-	public String getUserName() {
-		return userName;
-	}
 	public void setUserName(String username) {
-		this.userName = username;
+		this.username = username;
 	}
+
 	public String getPassword() {
 		return password;
 	}
+
 	public void setPassword(String password) {
 		this.password = password;
 	}
+
 	public int getPort() {
 		return this.port;
 	}
+
 	public void setPort(int port) {
 		this.port = port;
 	}
+
 	public String getHostName() {
 		return this.hostname;
 	}
+
 	public void setHostName(String hostname) {
 		this.hostname = hostname;
-	} 
+	}
+
+	public void register() {
+		writeThread.register();
+	}
+
+	public boolean login() {
+		writeThread.login();
+		return loggedIn = readThread.login();
+
+	}
+
+	public JSONObject getJson() {
+		return json;
+	}
+
+	public void setJson(JSONObject json) {
+		this.json = json;
+	}
+
+	public int getIdUser() {
+		return idUser;
+	}
+
+	public void setIdUser(int idUser) {
+		this.idUser = idUser;
+	}
 
 }
