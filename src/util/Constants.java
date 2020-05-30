@@ -29,6 +29,7 @@ public class Constants {
 	// Statuts ou type d'erreur
 	public final static String VALUE_MESSAGE_OK = "ok";
 	public final static String VALUE_ERROR_USER_NOT_FOUND = "userNotFound";
+	public final static String VALUE_ERROR_USER_ALREADY_EXIST = "userAlreadyExist";
 	public final static String VALUE_ERROR_PASSWORD_INCORRECT = "passwordIncorrect";
 	public final static String VALUE_ERROR_INTERNAL = "internalServerError";
 

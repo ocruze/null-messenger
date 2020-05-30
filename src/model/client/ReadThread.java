@@ -37,9 +37,9 @@ public class ReadThread extends Thread {
 				jsonServerMessage = receive();
 
 				if (!jsonServerMessage.getString(Constants.KEY_MESSAGE).equals(Constants.VALUE_MESSAGE_OK)) {
+					System.out.println(jsonServerMessage);
 					client.onRequestFailed(jsonServerMessage);
-				}
-				if (client.getUsername() != null) {
+				}else {
 					client.onRequestSuccess(jsonServerMessage);
 				}
 
@@ -56,6 +56,17 @@ public class ReadThread extends Thread {
 	}
 
 	boolean login() {
+		try {
+			JSONObject jsonMessage = receive();
+			System.out.println(jsonMessage.toString());
+			return (jsonMessage.getString(Constants.KEY_MESSAGE).equals(Constants.VALUE_MESSAGE_OK));
+
+		} catch (IOException e) {
+			e.printStackTrace();
+			return false;
+		}
+	}
+	boolean register() {
 		try {
 			JSONObject jsonMessage = receive();
 			System.out.println(jsonMessage.toString());

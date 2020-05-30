@@ -37,6 +37,11 @@ public class WriteThread extends Thread {
 
 		JSONObject jsonClientMessage = null;
 
+		if(client.isWantRegister()) {
+			while (!client.register() || !client.isWantRegister()) {
+			}
+		}
+		
 		while (!client.login()) {
 		}
 
