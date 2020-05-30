@@ -188,7 +188,10 @@ public class ViewConnection extends JFrame {
 		lbl_close.setBounds(691, 0, 37, 27);
 		contentPane.add(lbl_close);
 	}
-
+	public void prepareWindowChanged() {
+		//this.setUndecorated(false);
+		this.setVisible(false);
+	}
 	public void needRegister() {
 		JOptionPane message = new JOptionPane();
 		message.showMessageDialog(null, "Please register before signing in", "Info", JOptionPane.WARNING_MESSAGE);

@@ -45,6 +45,7 @@ public class ViewConversation {
 	 */
 	public ViewConversation() {
 		initialize();
+		this.frame.setVisible(true);
 	}
 
 	public void setPresenter(PresenterConversation presenterConversation) {

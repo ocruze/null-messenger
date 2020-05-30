@@ -42,7 +42,6 @@ public class PresenterConversation {
 
 	public void setListConversations(List<Conversation> listConversations) {
 		this.model.setListConversations(listConversations);
-		;
 	}
 
 	public String getUserName() {
