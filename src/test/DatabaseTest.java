@@ -12,6 +12,7 @@ import org.junit.jupiter.api.Test;
 
 import exceptions.UnknownUserException;
 import model.database.Database;
+import util.Constants;
 
 public class DatabaseTest {
 
@@ -46,7 +47,7 @@ public class DatabaseTest {
 			// addding one user
 			database.addUser("arnest", "");
 			res = database.getUser(1);
-			assertEquals("arnest", res.getString("username"));
+			assertEquals("arnest", res.getString(Constants.KEY_USERNAME));
 		} catch (SQLException | UnknownUserException e) {
 			e.printStackTrace();
 		}
@@ -80,7 +81,7 @@ public class DatabaseTest {
 
 			res = database.getUsers();
 			res.next();
-			username = res.getString("username");
+			username = res.getString(Constants.KEY_USERNAME);
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
@@ -89,7 +90,7 @@ public class DatabaseTest {
 
 		try {
 			res.next();
-			username = res.getString("username");
+			username = res.getString(Constants.KEY_USERNAME);
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
@@ -98,7 +99,7 @@ public class DatabaseTest {
 
 		try {
 			res.next();
-			username = res.getString("username");
+			username = res.getString(Constants.KEY_USERNAME);
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
@@ -117,8 +118,8 @@ public class DatabaseTest {
 			database.addUser("max", "");
 
 			res = database.getUser("max");
-			username = res.getString("username");
-			id = res.getInt("idUser");
+			username = res.getString(Constants.KEY_USERNAME);
+			id = res.getInt(Constants.KEY_ID_USER);
 
 		} catch (SQLException | UnknownUserException e) {
 			e.printStackTrace();
@@ -136,7 +137,7 @@ public class DatabaseTest {
 		try {
 			database.addUser("arnest", "");
 			res = database.getUser(1);
-			username = res.getString("username");
+			username = res.getString(Constants.KEY_USERNAME);
 		} catch (SQLException | UnknownUserException e) {
 		}
 		assertEquals("arnest", username);
@@ -145,7 +146,7 @@ public class DatabaseTest {
 			database.modifyUserUsername(1, "Arnest");
 			res = database.getUser(1);
 
-			username = res.getString("username");
+			username = res.getString(Constants.KEY_USERNAME);
 		} catch (SQLException | UnknownUserException e) {
 			e.printStackTrace();
 		}

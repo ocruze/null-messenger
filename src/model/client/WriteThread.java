@@ -8,6 +8,8 @@ import java.util.Map;
 
 import org.json.JSONObject;
 
+import util.Constants;
+
 public class WriteThread extends Thread {
 	private PrintWriter writer;
 	private Socket socket;
@@ -46,11 +48,9 @@ public class WriteThread extends Thread {
 				client.setJson(null);
 			}
 
-		} while (!jsonClientMessage.getString("action").equals("disconnect"));
+		} while (!jsonClientMessage.getString(Constants.KEY_CLIENT_ACTION).equals(Constants.VALUE_ACTION_DISCONNECT));
 
-		jsonClientMessage = new JSONObject();
-		jsonClientMessage.put("username", username);
-		jsonClientMessage.put("action", "disconnect");
+		disconnect();
 
 		try {
 			socket.close();
@@ -65,26 +65,26 @@ public class WriteThread extends Thread {
 
 	void login() {
 		JSONObject jsonMessage = new JSONObject();
-		jsonMessage.put("username", client.getUsername());
-		jsonMessage.put("password", client.getPassword());
-		jsonMessage.put("action", "login");
+		jsonMessage.put(Constants.KEY_USERNAME, client.getUsername());
+		jsonMessage.put(Constants.KEY_PASSWORD, client.getPassword());
+		jsonMessage.put(Constants.KEY_CLIENT_ACTION, Constants.VALUE_ACTION_LOGIN);
 
 		send(jsonMessage);
 	}
 
 	void register() {
 		JSONObject jsonMessage = new JSONObject();
-		jsonMessage.put("username", client.getUsername());
-		jsonMessage.put("password", client.getPassword());
-		jsonMessage.put("action", "register");
+		jsonMessage.put(Constants.KEY_USERNAME, client.getUsername());
+		jsonMessage.put(Constants.KEY_PASSWORD, client.getPassword());
+		jsonMessage.put(Constants.KEY_CLIENT_ACTION, Constants.VALUE_ACTION_REGISTER);
 
 		send(jsonMessage);
 	}
 
 	void disconnect() {
 		JSONObject jsonMessage = new JSONObject();
-		jsonMessage.put("username", client.getUsername());
-		jsonMessage.put("action", "disconnect");
+		jsonMessage.put(Constants.KEY_USERNAME, client.getUsername());
+		jsonMessage.put(Constants.KEY_CLIENT_ACTION, Constants.VALUE_ACTION_DISCONNECT);
 
 		send(jsonMessage);
 	}

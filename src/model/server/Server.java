@@ -11,6 +11,7 @@ import java.util.Set;
 import exceptions.UnknownUserException;
 import model.database.Database;
 import model.entity.User;
+import util.Constants;
 
 public class Server {
 	private int port;
@@ -70,10 +71,10 @@ public class Server {
 			if (res == null)
 				return -1;
 
-			String pwd = res.getString("password");
+			String pwd = res.getString(Constants.KEY_PASSWORD);
 
 			if (pwd.equals(password)) {
-				return res.getInt("idUser");
+				return res.getInt(Constants.KEY_ID_USER);
 			}
 
 			throw new UnknownUserException();

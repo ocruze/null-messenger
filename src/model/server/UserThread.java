@@ -14,6 +14,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import exceptions.UnknownUserException;
+import util.Constants;
 
 public class UserThread extends Thread {
 	private Socket socket;
@@ -66,48 +67,43 @@ public class UserThread extends Thread {
 				jsonClientMessage = new JSONObject(reader.readLine());
 				System.out.println(jsonClientMessage.toString());
 
-				action = jsonClientMessage.getString("action");
+				action = jsonClientMessage.getString(Constants.KEY_CLIENT_ACTION);
 				System.out.println(action);
 
 				switch (action) {
-				case "login": {
-					String username = jsonClientMessage.getString("username");
-					String password = jsonClientMessage.getString("password");
+				case Constants.VALUE_ACTION_LOGIN: {
+					String username = jsonClientMessage.getString(Constants.KEY_USERNAME);
+					String password = jsonClientMessage.getString(Constants.KEY_PASSWORD);
 
 					try {
 						int idUser = server.loginUser(username, password);
 
 						if (idUser == -1) { // user non trouvé
-							jsonServerMessage.put("code", "404");
-							jsonServerMessage.put("message", "NOT FOUND");
+							jsonServerMessage.put(Constants.KEY_MESSAGE, Constants.VALUE_ERROR_USER_NOT_FOUND);
 						} else {
-							this.username = server.getDatabase().getUser(idUser).getString("username");
-							jsonServerMessage.put("idUser", idUser + "");
-							jsonServerMessage.put("code", "200");
-							jsonServerMessage.put("message", "OK");
+							this.username = server.getDatabase().getUser(idUser).getString(Constants.KEY_USERNAME);
+							jsonServerMessage.put(Constants.KEY_ID_USER, idUser + "");
+							jsonServerMessage.put(Constants.KEY_MESSAGE, Constants.VALUE_MESSAGE_OK);
 						}
 
 					} catch (UnknownUserException | SQLException e) {
 						e.printStackTrace();
-						jsonServerMessage.put("code", "404");
-						jsonServerMessage.put("message", "NOT FOUND");
+						jsonServerMessage.put(Constants.KEY_MESSAGE, Constants.VALUE_ERROR_USER_NOT_FOUND);
 					}
 				}
 					break;
 
-				case "register": {
-					String username = jsonClientMessage.getString("username");
-					String password = jsonClientMessage.getString("password");
+				case Constants.VALUE_ACTION_REGISTER: {
+					String username = jsonClientMessage.getString(Constants.KEY_ID_USER);
+					String password = jsonClientMessage.getString(Constants.KEY_PASSWORD);
 
 					int idUser = server.registerUser(username, password);
 
 					if (idUser != -1) {
-						jsonServerMessage.put("idUser", idUser);
-						jsonServerMessage.put("code", "200");
-						jsonServerMessage.put("message", "OK");
+						jsonServerMessage.put(Constants.KEY_ID_USER, idUser);
+						jsonServerMessage.put(Constants.KEY_MESSAGE, Constants.VALUE_MESSAGE_OK);
 					} else {
-						jsonServerMessage.put("code", "500");
-						jsonServerMessage.put("message", "INTERNAL SERVER ERROR");
+						jsonServerMessage.put(Constants.KEY_MESSAGE, Constants.VALUE_ERROR_INTERNAL);
 					}
 				}
 					break;
@@ -120,10 +116,10 @@ public class UserThread extends Thread {
 
 					break;
 
-				case "send": {
-					String sender = jsonClientMessage.getString("sender");
-					String recipient = jsonClientMessage.getString("recipient");
-					String message = jsonClientMessage.getString("message");
+				case Constants.VALUE_ACTION_SEND_MESSAGE: {
+					String sender = jsonClientMessage.getString(Constants.KEY_USERNAME_SENDER);
+					String recipient = jsonClientMessage.getString(Constants.KEY_USERNAME_RECIPIENT);
+					String message = jsonClientMessage.getString(Constants.KEY_MESSAGE_CONTENT);
 
 					ResultSet resSender = server.getUser(sender);
 
@@ -138,14 +134,14 @@ public class UserThread extends Thread {
 					if (resRecipient != null) {
 						// sauvegarde du message dans la BD
 						try {
-							idSender = resSender.getInt("idUser");
-							idRecipient = resRecipient.getInt("idUser");
+							idSender = resSender.getInt(Constants.KEY_ID_USER);
+							idRecipient = resRecipient.getInt(Constants.KEY_ID_USER);
 						} catch (SQLException e1) {
 							e1.printStackTrace();
 						}
 
 						try {
-							idConversation = jsonClientMessage.getString("idConversation");
+							idConversation = jsonClientMessage.getString(Constants.KEY_ID_CONVERSATION);
 							idConv = Integer.parseInt(idConversation);
 
 						} catch (JSONException e) {
@@ -160,23 +156,23 @@ public class UserThread extends Thread {
 						threadRecipient = server.getUserThread(recipient);
 						if (threadRecipient != null) {
 
-							jsonServerMessage.put("action", "receive");
-							jsonServerMessage.put("sender", sender);
-							jsonServerMessage.put("recipient", recipient);
-							jsonServerMessage.put("content", message);
-							jsonServerMessage.put("message", "OK");
-							jsonServerMessage.put("code", 200);
+							jsonServerMessage.put(Constants.KEY_CLIENT_ACTION, Constants.VALUE_ACTION_RECEIVE_MESSAGE);
+							jsonServerMessage.put(Constants.KEY_USERNAME_SENDER, sender);
+							jsonServerMessage.put(Constants.KEY_USERNAME_RECIPIENT, recipient);
+							jsonServerMessage.put(Constants.KEY_MESSAGE_CONTENT, message);
+							jsonServerMessage.put(Constants.KEY_MESSAGE, Constants.VALUE_MESSAGE_OK);
 
 							threadRecipient.send(jsonServerMessage);
 						}
 
 						jsonServerMessage = new JSONObject();
-						jsonServerMessage.put("code", 201);
-						jsonServerMessage.put("message", "OK");
+						jsonServerMessage.put(Constants.KEY_CLIENT_ACTION, Constants.VALUE_ACTION_SEND_MESSAGE);
+						jsonServerMessage.put(Constants.KEY_MESSAGE, Constants.VALUE_MESSAGE_OK);
 
 					} else {
-						jsonServerMessage.put("code", 404);
-						jsonServerMessage.put("message", "RECIPIENT USER NOT FOUND");
+						jsonServerMessage = new JSONObject();
+						jsonServerMessage.put(Constants.KEY_CLIENT_ACTION, Constants.VALUE_ACTION_SEND_MESSAGE);
+						jsonServerMessage.put(Constants.KEY_MESSAGE, Constants.VALUE_ERROR_USER_NOT_FOUND);
 					}
 				}
 					break;
@@ -197,7 +193,7 @@ public class UserThread extends Thread {
 
 				send(jsonServerMessage);
 
-			} while (!action.equals("disconnect"));
+			} while (!action.equals(Constants.VALUE_ACTION_DISCONNECT));
 
 			socket.close();
 

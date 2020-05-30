@@ -5,16 +5,16 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.Socket;
-import java.util.function.Consumer;
 
 import org.json.JSONObject;
+
+import util.Constants;
 
 public class ReadThread extends Thread {
 	private BufferedReader reader;
 	private Socket socket;
 	private Client client;
 	private JSONObject json;
-
 
 	public ReadThread(Socket socket, Client client) {
 		this.socket = socket;
@@ -36,15 +36,13 @@ public class ReadThread extends Thread {
 			try {
 				jsonServerMessage = receive();
 
-				// prints the username after displaying the server's message
-				
-				if(jsonServerMessage.getString("code").equals("404")) {
-					
+				if (!jsonServerMessage.getString(Constants.KEY_MESSAGE).equals(Constants.VALUE_MESSAGE_OK)) {
 					client.onRequestFailed(jsonServerMessage);
 				}
 				if (client.getUsername() != null) {
-					System.out.print("[" + client.getUsername() + "]: ");
+					client.onRequestSuccess(jsonServerMessage);
 				}
+
 			} catch (IOException ex) {
 				System.out.println("Error reading from server: " + ex.getMessage());
 				ex.printStackTrace();
@@ -61,7 +59,7 @@ public class ReadThread extends Thread {
 		try {
 			JSONObject jsonMessage = receive();
 			System.out.println(jsonMessage.toString());
-			return (jsonMessage.getString("message").equals("OK"));
+			return (jsonMessage.getString(Constants.KEY_MESSAGE).equals(Constants.VALUE_MESSAGE_OK));
 
 		} catch (IOException e) {
 			e.printStackTrace();

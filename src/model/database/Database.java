@@ -14,6 +14,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import exceptions.UnknownUserException;
+import util.Constants;
 
 public class Database {
 
@@ -345,7 +346,7 @@ public class Database {
 				return -1;
 			}
 
-			return res.getInt("idConversation");
+			return res.getInt(Constants.KEY_ID_CONVERSATION);
 		} catch (SQLException e) {
 			e.printStackTrace();
 			return -1;
@@ -460,7 +461,7 @@ public class Database {
 		PreparedStatement stmt;
 		try {
 			stmt = conn.prepareStatement(query);
-			stmt.setString(1, "Message supprimé");
+			stmt.setString(1, Constants.VALUE_DELETED_MESSAGE);
 			stmt.setInt(2, idMessage);
 			stmt.execute();
 		} catch (SQLException e) {
@@ -482,7 +483,7 @@ public class Database {
 		PreparedStatement stmt;
 		try {
 			stmt = conn.prepareStatement(query);
-			stmt.setString(1, "Message supprimé");
+			stmt.setString(1, Constants.VALUE_DELETED_MESSAGE);
 			stmt.setInt(2, idSender);
 			stmt.setInt(3, idConversation);
 			stmt.execute();
