@@ -1,11 +1,18 @@
 image: openjdk:11
 
 before_script:
-   - apt-get upate
+   - apt-get update
    - apt-get -y install ant
 
 stages:
+   - build
    - test
+
+ci_build:
+   stage: build
+   script:
+      - javac -cp lib/*.jar src/LaunchServer.java
+      - javac -cp lib/*.jar src/LaunchClientGUI.java
    
 ci_test:
    stage: test
