@@ -10,6 +10,7 @@ import java.net.Socket;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -123,6 +124,32 @@ public class UserThread extends Thread {
 
 					break;
 
+				case Constants.VALUE_ACTION_GET_CONNECTED_USERS:
+
+					break;
+
+				case Constants.VALUE_ACTION_GET_USERS:
+					ResultSet res = server.getDatabase().getUsers();
+
+					JSONObject json = new JSONObject();
+					JSONArray users = new JSONArray();
+					try {
+						while (res.next()) {
+							JSONObject user = new JSONObject();
+							user.put(Constants.KEY_ID_USER, res.getString(1));
+							user.put(Constants.KEY_USERNAME, res.getString(2));
+
+							users.put(user);
+						}
+						json.put(Constants.KEY_USERS, users);
+						jsonServerMessage.put(Constants.KEY_MESSAGE, Constants.VALUE_MESSAGE_OK);
+					} catch (SQLException e) {
+						e.printStackTrace();
+						jsonServerMessage.put(Constants.KEY_MESSAGE, Constants.VALUE_ERROR_INTERNAL);
+					}
+
+					break;
+
 				case Constants.VALUE_ACTION_SEND_MESSAGE: {
 					String sender = jsonClientMessage.getString(Constants.KEY_USERNAME_SENDER);
 					String recipient = jsonClientMessage.getString(Constants.KEY_USERNAME_RECIPIENT);
@@ -163,7 +190,6 @@ public class UserThread extends Thread {
 						threadRecipient = server.getUserThread(recipient);
 						if (threadRecipient != null) {
 
-							jsonServerMessage.put(Constants.KEY_CLIENT_ACTION, Constants.VALUE_ACTION_RECEIVE_MESSAGE);
 							jsonServerMessage.put(Constants.KEY_USERNAME_SENDER, sender);
 							jsonServerMessage.put(Constants.KEY_USERNAME_RECIPIENT, recipient);
 							jsonServerMessage.put(Constants.KEY_MESSAGE_CONTENT, message);
@@ -173,12 +199,10 @@ public class UserThread extends Thread {
 						}
 
 						jsonServerMessage = new JSONObject();
-						jsonServerMessage.put(Constants.KEY_CLIENT_ACTION, Constants.VALUE_ACTION_SEND_MESSAGE);
 						jsonServerMessage.put(Constants.KEY_MESSAGE, Constants.VALUE_MESSAGE_OK);
 
 					} else {
 						jsonServerMessage = new JSONObject();
-						jsonServerMessage.put(Constants.KEY_CLIENT_ACTION, Constants.VALUE_ACTION_SEND_MESSAGE);
 						jsonServerMessage.put(Constants.KEY_MESSAGE, Constants.VALUE_ERROR_USER_NOT_FOUND);
 					}
 				}

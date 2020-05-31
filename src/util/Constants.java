@@ -21,6 +21,8 @@ public class Constants {
 	public final static String KEY_USERNAME_SENDER = "usernameSender";
 	public final static String KEY_USERNAME_RECIPIENT = "usernameRecipient";
 	public final static String KEY_MESSAGE_CONTENT = "messageContent";
+	
+	public final static String KEY_USERS = "users";
 
 	/**
 	 * Valeurs
@@ -41,7 +43,10 @@ public class Constants {
 	public final static String VALUE_ACTION_LOGIN = "login";
 	public final static String VALUE_ACTION_REGISTER = "register";
 	public final static String VALUE_ACTION_DISCONNECT = "disconnect";
+
 	public final static String VALUE_ACTION_SEND_MESSAGE = "sendMessage";
+	public final static String VALUE_ACTION_GET_CONNECTED_USERS = "getConnectedUsers";
+	public final static String VALUE_ACTION_GET_USERS = "getUsers";
 	public final static String VALUE_ACTION_RECEIVE_MESSAGE = "receiveMessage";
 	public final static String VALUE_ACTION_GET_LIST_CONVERSATION = "getListConversation";
 	public final static String VALUE_ACTION_GET_CONVERSATION_MESSAGES = "getConversationMessages";

@@ -109,6 +109,35 @@ public class Database {
 		}
 	}
 
+	public void addSomeUsers() {
+		initConnectionIfClosed();
+		
+		try {
+			addUser("arnest", "123456");
+			addUser("leo", "123456");
+			addUser("max", "123456");
+			addUser("arnaud", "123456");
+			addUser("hector", "123456");
+			addUser("baptiste", "123456");
+			addUser("guillaume", "123456");
+			addUser("alex", "123456");
+			addUser("arnold", "123456");
+			addUser("cedric", "123456");
+			addUser("ismael", "123456");
+			addUser("naunau", "123456");
+			addUser("leffy", "123456");
+			addUser("einstein", "123456");
+			addUser("albert", "123456");
+			addUser("robin", "123456");
+			addUser("jacques", "123456");
+			addUser("jean", "123456");
+			addUser("celine", "123456");
+			addUser("alice", "123456");
+		} catch (UserAlreadyRegisteredException | RegisterWithoutPasswordException e) {
+			e.printStackTrace();
+		}
+	}
+
 	/**
 	 * Retourne le nombre d'éléments dans une table
 	 * 
@@ -276,11 +305,12 @@ public class Database {
 	 * @param password
 	 * @return
 	 * @throws UserAlreadyRegisteredException
-	 * @throws RegisterWithoutPasswordException 
+	 * @throws RegisterWithoutPasswordException
 	 */
-	public int addUser(String username, String password) throws UserAlreadyRegisteredException, RegisterWithoutPasswordException {
+	public int addUser(String username, String password)
+			throws UserAlreadyRegisteredException, RegisterWithoutPasswordException {
 		initConnectionIfClosed();
-		
+
 		if (password.equals(""))
 			throw new RegisterWithoutPasswordException();
 
@@ -399,6 +429,30 @@ public class Database {
 		} catch (SQLException e) {
 			e.printStackTrace();
 			return false;
+		}
+	}
+
+	/**
+	 * Récupère les utilisateurs connectés
+	 * 
+	 * @return
+	 */
+	public ResultSet getConnectedUsers() {
+		initConnectionIfClosed();
+
+		String query = "SELECT * FROM connectedUser";
+		try {
+			Statement stmt = conn.createStatement();
+
+			ResultSet res = stmt.executeQuery(query);
+			if (res.isClosed()) {
+				return null;
+			}
+
+			return res;
+		} catch (SQLException e) {
+			e.printStackTrace();
+			return null;
 		}
 	}
 
