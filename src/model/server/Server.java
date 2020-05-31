@@ -9,6 +9,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 import exceptions.UnknownUserException;
+import exceptions.UserAlreadyRegisteredException;
 import model.database.Database;
 import model.entity.User;
 import util.Constants;
@@ -86,7 +87,11 @@ public class Server {
 	}
 
 	int registerUser(String username, String password) {
-		return database.addUser(username, password);
+		try {
+			return database.addUser(username, password);
+		} catch (UserAlreadyRegisteredException e) {
+			return -1;
+		}
 	}
 
 	ResultSet getUser(int idUser) {
