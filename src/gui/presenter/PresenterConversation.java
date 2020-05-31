@@ -1,26 +1,39 @@
 package gui.presenter;
 
 import java.util.List;
+import java.util.function.Consumer;
+
+import org.json.JSONObject;
 
 import gui.model.ModelConversation;
 import gui.view.ViewConversation;
 import model.client.Client;
+import model.client.UserSession;
 import model.entity.Conversation;
 import model.entity.User;
+import util.Constants;
 
-public class PresenterConversation {
+public class PresenterConversation implements IPresenter {
 	private ViewConversation view;
 	private ModelConversation model;
 	private Client client;
+	public Consumer<Window> changeWindow;
 
 	public PresenterConversation(ViewConversation view, ModelConversation model, Client client) {
 		this.view = view;
 		this.model = model;
 		this.client = client;
+		init();
+		LoadUsers();
 	}
 
-	public void CreateConversation() {
+	public void init() {
+		client.setOnRequestFailedConversation((json) -> onRequestFailureConversation(json));
+		client.setOnRequestSuccessConversation((json) -> onRequestSuccessConversation(json));
+	}
 
+	public void LoadUsers() {
+		client.getInvoker().loadUsers();
 	}
 
 	/**
@@ -58,6 +71,41 @@ public class PresenterConversation {
 
 	public void setIdUser(int idUser) {
 		this.model.setIdUser(idUser);
+	}
+
+	@Override
+	public void changeWindow(Window window) {
+		this.changeWindow.accept(window);
+
+	}
+
+	@Override
+	public void setChangeWindow(Consumer<Window> window) {
+		this.changeWindow = window;
+
+	}
+
+	
+	public void onRequestSuccessConversation(JSONObject json) {
+		switch (json.getString(Constants.KEY_CLIENT_ACTION)) {
+		case Constants.VALUE_ACTION_DISCONNECT:
+			UserSession.disconnect();
+			break;
+		case Constants.VALUE_ACTION_GET_USERS:
+			System.out.println("recover all users");
+			break;
+		
+		}
+
+	}
+
+	public void onRequestFailureConversation(JSONObject json) {
+		switch (json.getString(Constants.KEY_CLIENT_ACTION)) {
+		case Constants.VALUE_ACTION_GET_USERS:
+			System.out.println("bad");
+			break;
+
+		}
 	}
 
 }

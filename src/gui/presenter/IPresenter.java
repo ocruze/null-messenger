@@ -11,6 +11,5 @@ public interface IPresenter {
 	}
 	void changeWindow(Window window);
 	void setChangeWindow(Consumer<Window> window);
-	
 
 }
