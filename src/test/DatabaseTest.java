@@ -1,5 +1,7 @@
 package test;
 
+import static org.junit.Assert.assertThrows;
+import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -11,6 +13,7 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import exceptions.RegisterWithoutPasswordException;
 import exceptions.UnknownUserException;
 import exceptions.UserAlreadyRegisteredException;
 import model.database.Database;
@@ -47,7 +50,7 @@ public class DatabaseTest {
 		ResultSet res;
 		try {
 			// addding one user
-			database.addUser("arnest", "");
+			database.addUser("arnest", "test");
 			res = database.getUser(1);
 			assertEquals("arnest", res.getString(Constants.KEY_USERNAME));
 		} catch (SQLException | UnknownUserException | UserAlreadyRegisteredException e) {
@@ -63,7 +66,7 @@ public class DatabaseTest {
 
 		// addding another user
 		try {
-			database.addUser("leo", "");
+			database.addUser("leo", "test");
 			count = database.count("user");
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -74,22 +77,43 @@ public class DatabaseTest {
 
 	@Test
 	void testInsertUserAlreadyRegistered() {
-//		fail();
+		try {
+			database.addUser("arnest", "test");
+		} catch (UserAlreadyRegisteredException e) {
+			e.printStackTrace();
+		}
+		assertThrows(UserAlreadyRegisteredException.class, () -> {
+			database.addUser("arnest", "test");
+		});
 	}
 
 	@Test
-	void testLoginRegisterWithoutPassword() {
-//		fail();
+	void testRegisterWithoutPassword() {
+		assertThrows(RegisterWithoutPasswordException.class, () -> {
+			database.addUser("arnest", "");
+		});
+		
 	}
 	
 	@Test
 	void testAddConnectedUser() {
-		
+		try {
+			database.addUser("arnest", "test");
+		} catch(Exception e) {
+			e.printStackTrace();
+		}
+		assertTrue(database.addConnectedUser(1));
 	}
 	
 	@Test
 	void testDeletedConnectedUser() {
-		
+		try {
+			database.addUser("arnest", "test");
+		} catch(Exception e) {
+			e.printStackTrace();
+		}
+		database.addConnectedUser(1);
+		assertTrue(database.deleteConnectedUser(1));
 	}
 
 	@Test
@@ -97,9 +121,9 @@ public class DatabaseTest {
 		ResultSet res = null;
 		String username = "";
 		try {
-			database.addUser("arnest", "");
-			database.addUser("leo", "");
-			database.addUser("max", "");
+			database.addUser("arnest", "test");
+			database.addUser("leo", "test");
+			database.addUser("max", "test");
 
 			res = database.getUsers();
 			res.next();
@@ -136,8 +160,8 @@ public class DatabaseTest {
 		int id = -1;
 
 		try {
-			database.addUser("arnest", "");
-			database.addUser("max", "");
+			database.addUser("arnest", "test");
+			database.addUser("max", "test");
 
 			res = database.getUser("max");
 			username = res.getString(Constants.KEY_USERNAME);
@@ -157,7 +181,7 @@ public class DatabaseTest {
 		String username = "";
 
 		try {
-			database.addUser("arnest", "");
+			database.addUser("arnest", "test");
 			res = database.getUser(1);
 			username = res.getString(Constants.KEY_USERNAME);
 		} catch (SQLException | UnknownUserException | UserAlreadyRegisteredException e) {
@@ -181,8 +205,8 @@ public class DatabaseTest {
 		int count = -1;
 
 		try {
-			database.addUser("arnest", "");
-			database.addUser("leo", "");
+			database.addUser("arnest", "test");
+			database.addUser("leo", "test");
 		} catch (UserAlreadyRegisteredException e) {
 			e.printStackTrace();
 		}
@@ -214,7 +238,7 @@ public class DatabaseTest {
 	void testAddGetMessage() {
 		String message = "";
 		try {
-			database.addUser("arnest", "");
+			database.addUser("arnest", "test");
 			database.addConversation();
 
 			database.addMessage(1, 1, "heyy");
@@ -233,8 +257,8 @@ public class DatabaseTest {
 		ResultSet res = null;
 
 		try {
-			database.addUser("arnest", "");
-			database.addUser("leo", "");
+			database.addUser("arnest", "test");
+			database.addUser("leo", "test");
 
 			database.addConversation();
 
@@ -263,8 +287,8 @@ public class DatabaseTest {
 	void testDeleteMessage() {
 		String message = "";
 		try {
-			database.addUser("arnest", "");
-			database.addUser("leo", "");
+			database.addUser("arnest", "test");
+			database.addUser("leo", "test");
 
 			database.addConversation();
 
