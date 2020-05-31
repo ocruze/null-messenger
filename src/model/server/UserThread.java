@@ -26,6 +26,7 @@ public class UserThread extends Thread {
 	private PrintWriter writer;
 	private BufferedReader reader;
 	private String username;
+	private int idUser;
 
 	// private User user;
 
@@ -67,6 +68,7 @@ public class UserThread extends Thread {
 
 					try {
 						idUser = server.loginUser(username, password);
+						
 					} catch (UnknownUserException e) {
 						idUser = -1;
 					} catch (UserAlreadyLoggedInException e) {
@@ -80,7 +82,9 @@ public class UserThread extends Thread {
 					} else {
 						try {
 							this.username = server.getDatabase().getUser(idUser).getString(Constants.KEY_USERNAME);
+							this.idUser = idUser;
 							jsonServerMessage.put(Constants.KEY_ID_USER, idUser + "");
+							jsonServerMessage.put(Constants.KEY_USERNAME, username);
 							jsonServerMessage.put(Constants.KEY_MESSAGE, Constants.VALUE_MESSAGE_OK);
 						} catch (SQLException | UnknownUserException e) {
 							e.printStackTrace();
@@ -131,7 +135,7 @@ public class UserThread extends Thread {
 				case Constants.VALUE_ACTION_GET_USERS:
 					ResultSet res = server.getDatabase().getUsers();
 
-					JSONObject json = new JSONObject();
+//					JSONObject json = new JSONObject();
 					JSONArray users = new JSONArray();
 					try {
 						while (res.next()) {
@@ -141,7 +145,7 @@ public class UserThread extends Thread {
 
 							users.put(user);
 						}
-						json.put(Constants.KEY_USERS, users);
+						jsonServerMessage.put(Constants.KEY_USERS, users);
 						jsonServerMessage.put(Constants.KEY_MESSAGE, Constants.VALUE_MESSAGE_OK);
 					} catch (SQLException e) {
 						e.printStackTrace();
@@ -215,6 +219,10 @@ public class UserThread extends Thread {
 				case "deleteMessage":
 
 					break;
+					
+				case Constants.VALUE_ACTION_DISCONNECT:
+					jsonServerMessage.put(Constants.KEY_MESSAGE, Constants.VALUE_MESSAGE_OK);
+					break;
 
 				default:
 					break;
@@ -233,6 +241,7 @@ public class UserThread extends Thread {
 			server.disconnectUser(this);
 
 		} catch (IOException ex) {
+			server.disconnectUser(this);
 			System.out.println("Error in UserThread: " + ex.getMessage());
 			ex.printStackTrace();
 		}
@@ -274,6 +283,10 @@ public class UserThread extends Thread {
 
 	public String getUsername() {
 		return username;
+	}
+	
+	public int getIdUser() {
+		return idUser;
 	}
 
 }

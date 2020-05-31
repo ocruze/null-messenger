@@ -37,11 +37,3 @@ CREATE TABLE IF NOT EXISTS `message` (
     ON DELETE CASCADE
     ON UPDATE CASCADE
 );
-
-
--- -----------------------------------------------------
--- Table `connectedUser`
--- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `connectedUser` (
-  `idUser` NOT NULL UNIQUE
-);

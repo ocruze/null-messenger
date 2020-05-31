@@ -5,8 +5,12 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
+
+import org.json.JSONObject;
 
 import exceptions.RegisterWithoutPasswordException;
 import exceptions.UnknownUserException;
@@ -19,7 +23,8 @@ import util.Constants;
 public class Server {
 	private int port;
 	private Database database;
-	private Set<User> users = new HashSet<>();
+
+	private Map<Integer, String> connectedUsers = new HashMap<>();
 	private Set<UserThread> userThreads = new HashSet<>();
 
 	public Server(int port) {
@@ -77,13 +82,14 @@ public class Server {
 
 			int idUser = res.getInt(Constants.KEY_ID_USER);
 
-			if (database.isUserConnected(idUser)) {
+			if (isUserConnected(idUser)) {
 				throw new UserAlreadyLoggedInException();
 			}
 
 			String pwd = res.getString(Constants.KEY_PASSWORD);
 
 			if (pwd.equals(password)) {
+				connectedUsers.put(idUser, username);
 				return idUser;
 			}
 
@@ -130,11 +136,20 @@ public class Server {
 	 * When a client is disconneted, removes the associated username and UserThread
 	 */
 	boolean disconnectUser(UserThread userThread) {
+		connectedUsers.remove(userThread.getIdUser());
 		return userThreads.remove(userThread);
 	}
 
 	Database getDatabase() {
 		return database;
+	}
+
+	boolean isUserConnected(String username) {
+		return connectedUsers.values().contains(username);
+	}
+
+	boolean isUserConnected(int idUser) {
+		return connectedUsers.keySet().contains(idUser);
 	}
 
 }
