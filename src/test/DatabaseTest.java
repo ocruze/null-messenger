@@ -12,6 +12,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import exceptions.UnknownUserException;
+import exceptions.UserAlreadyRegisteredException;
 import model.database.Database;
 import util.Constants;
 
@@ -49,7 +50,7 @@ public class DatabaseTest {
 			database.addUser("arnest", "");
 			res = database.getUser(1);
 			assertEquals("arnest", res.getString(Constants.KEY_USERNAME));
-		} catch (SQLException | UnknownUserException e) {
+		} catch (SQLException | UnknownUserException | UserAlreadyRegisteredException e) {
 			e.printStackTrace();
 		}
 
@@ -71,15 +72,25 @@ public class DatabaseTest {
 
 	}
 
-//	@Test
-//	void testInsertUserAlreadyPresent() {
+	@Test
+	void testInsertUserAlreadyRegistered() {
 //		fail();
-//	}
-//
-//	@Test
-//	void testLoginRegisterWithoutPassword() {
+	}
+
+	@Test
+	void testLoginRegisterWithoutPassword() {
 //		fail();
-//	}
+	}
+	
+	@Test
+	void testAddConnectedUser() {
+		
+	}
+	
+	@Test
+	void testDeletedConnectedUser() {
+		
+	}
 
 	@Test
 	void testGetUsers() {
@@ -93,7 +104,7 @@ public class DatabaseTest {
 			res = database.getUsers();
 			res.next();
 			username = res.getString(Constants.KEY_USERNAME);
-		} catch (SQLException e) {
+		} catch (SQLException | UserAlreadyRegisteredException e) {
 			e.printStackTrace();
 		}
 
@@ -132,7 +143,7 @@ public class DatabaseTest {
 			username = res.getString(Constants.KEY_USERNAME);
 			id = res.getInt(Constants.KEY_ID_USER);
 
-		} catch (SQLException | UnknownUserException e) {
+		} catch (SQLException | UnknownUserException | UserAlreadyRegisteredException e) {
 			e.printStackTrace();
 		}
 
@@ -149,7 +160,7 @@ public class DatabaseTest {
 			database.addUser("arnest", "");
 			res = database.getUser(1);
 			username = res.getString(Constants.KEY_USERNAME);
-		} catch (SQLException | UnknownUserException e) {
+		} catch (SQLException | UnknownUserException | UserAlreadyRegisteredException e) {
 		}
 		assertEquals("arnest", username);
 
@@ -169,8 +180,12 @@ public class DatabaseTest {
 	void testDeleteUser() {
 		int count = -1;
 
-		database.addUser("arnest", "");
-		database.addUser("leo", "");
+		try {
+			database.addUser("arnest", "");
+			database.addUser("leo", "");
+		} catch (UserAlreadyRegisteredException e) {
+			e.printStackTrace();
+		}
 		count = database.count("user");
 		assertEquals(2, count);
 
@@ -230,7 +245,7 @@ public class DatabaseTest {
 
 			res.next();
 			message = res.getString("content");
-		} catch (SQLException e) {
+		} catch (SQLException | UserAlreadyRegisteredException e) {
 			e.printStackTrace();
 		}
 		assertEquals("heyy leo", message);
@@ -264,7 +279,7 @@ public class DatabaseTest {
 			res.next();
 
 			message = res.getString("content");
-		} catch (SQLException e) {
+		} catch (SQLException | UserAlreadyRegisteredException e) {
 			e.printStackTrace();
 		}
 		assertEquals("Message supprimé", message);

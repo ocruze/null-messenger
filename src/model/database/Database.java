@@ -14,6 +14,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import exceptions.UnknownUserException;
+import exceptions.UserAlreadyRegisteredException;
 import util.Constants;
 
 public class Database {
@@ -273,8 +274,9 @@ public class Database {
 	 * @param username
 	 * @param password
 	 * @return
+	 * @throws UserAlreadyRegisteredException
 	 */
-	public int addUser(String username, String password) {
+	public int addUser(String username, String password) throws UserAlreadyRegisteredException {
 		initConnectionIfClosed();
 
 		String query = "INSERT INTO user (username, password) VALUES (?,?);";
@@ -287,10 +289,10 @@ public class Database {
 			stmt.execute();
 			return getLastInsertId();
 		} catch (SQLException e) {
-			e.printStackTrace();
+			if (e.getErrorCode() == 19)
+				throw new UserAlreadyRegisteredException();
 			return -1;
 		}
-
 	}
 
 	/**
@@ -336,7 +338,13 @@ public class Database {
 		}
 	}
 
-	public int addConnectedUser(int idUser) {
+	/**
+	 * Ajoute l'utilisateur dans la table des utilisateurs connectés
+	 * 
+	 * @param idUser
+	 * @return
+	 */
+	public boolean addConnectedUser(int idUser) {
 		initConnectionIfClosed();
 
 		String query = "INSERT INTO connectedUser VALUES (?);";
@@ -346,17 +354,47 @@ public class Database {
 			stmt = conn.prepareStatement(query);
 			stmt.setInt(1, idUser);
 			stmt.execute();
-			return getLastInsertId();
+
+			return isUserConnected(idUser);
 		} catch (SQLException e) {
 			e.printStackTrace();
-			return -1;
+			return false;
 		}
 	}
-	
-	// public void 
 
-	public void deleteConnectedUser(int idUser) {
+	/**
+	 * Renvoie vrai si l'utilisateur est connecté
+	 * 
+	 * @param idUser
+	 * @return
+	 */
+	public boolean isUserConnected(int idUser) {
+		int count = count("(SELECT * FROM connectedUser WHERE idUser = " + idUser + ")");
+		return count == 1;
+	}
 
+	/**
+	 * Supprime l'utilisateur de la table des utilisateurs connectés
+	 * 
+	 * @param idUser
+	 * @return
+	 */
+	public boolean deleteConnectedUser(int idUser) {
+		initConnectionIfClosed();
+
+		String query = "DELETE FROM connectedUser WHERE idUser = ?;";
+
+		PreparedStatement stmt;
+		try {
+			stmt = conn.prepareStatement(query);
+			stmt.setInt(1, idUser);
+			stmt.execute();
+
+			return !isUserConnected(idUser);
+		} catch (SQLException e) {
+			e.printStackTrace();
+			return false;
+		}
 	}
 
 	/**
