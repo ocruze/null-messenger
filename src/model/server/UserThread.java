@@ -13,7 +13,10 @@ import java.sql.SQLException;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import exceptions.RegisterWithoutPasswordException;
 import exceptions.UnknownUserException;
+import exceptions.UserAlreadyLoggedInException;
+import exceptions.UserAlreadyRegisteredException;
 import util.Constants;
 
 public class UserThread extends Thread {
@@ -40,14 +43,6 @@ public class UserThread extends Thread {
 
 			// printUsers();
 
-//			String username = reader.readLine();
-//			user = server.addUser(username);
-
-//			String serverMessage = "New user connected: " + username;
-//			server.broadcast(serverMessage, this);
-			String serverMessage = "";
-
-			String clientMessage;
 			JSONObject jsonClientMessage;
 			JSONObject jsonServerMessage;
 
@@ -55,14 +50,6 @@ public class UserThread extends Thread {
 
 			do {
 				jsonServerMessage = new JSONObject();
-
-				clientMessage = "";
-//				for (int i = 0; i < 10; i++) {
-//					System.out.println(reader.readLine());
-//					
-//				}
-
-//				System.out.println("clientMessage : " + clientMessage);
 
 				jsonClientMessage = new JSONObject(reader.readLine());
 				System.out.println(jsonClientMessage.toString());
@@ -75,21 +62,30 @@ public class UserThread extends Thread {
 					String username = jsonClientMessage.getString(Constants.KEY_USERNAME);
 					String password = jsonClientMessage.getString(Constants.KEY_PASSWORD);
 
-					try {
-						int idUser = server.loginUser(username, password);
+					int idUser = -1;
 
-						if (idUser == -1) { // user non trouvé
-							jsonServerMessage.put(Constants.KEY_MESSAGE, Constants.VALUE_ERROR_USER_NOT_FOUND);
-						} else {
+					try {
+						idUser = server.loginUser(username, password);
+					} catch (UnknownUserException e) {
+						idUser = -1;
+					} catch (UserAlreadyLoggedInException e) {
+						idUser = -2;
+					}
+
+					if (idUser == -1) { // user non trouvé
+						jsonServerMessage.put(Constants.KEY_MESSAGE, Constants.VALUE_ERROR_USER_NOT_FOUND);
+					} else if (idUser == -2) { // user déjà connecté
+						jsonServerMessage.put(Constants.KEY_MESSAGE, Constants.VALUE_ERROR_USER_ALREADY_LOGGED_IN);
+					} else {
+						try {
 							this.username = server.getDatabase().getUser(idUser).getString(Constants.KEY_USERNAME);
 							jsonServerMessage.put(Constants.KEY_ID_USER, idUser + "");
 							jsonServerMessage.put(Constants.KEY_MESSAGE, Constants.VALUE_MESSAGE_OK);
+						} catch (SQLException | UnknownUserException e) {
+							e.printStackTrace();
 						}
-
-					} catch (UnknownUserException | SQLException e) {
-						e.printStackTrace();
-						jsonServerMessage.put(Constants.KEY_MESSAGE, Constants.VALUE_ERROR_USER_NOT_FOUND);
 					}
+
 				}
 					break;
 
@@ -97,11 +93,22 @@ public class UserThread extends Thread {
 					String username = jsonClientMessage.getString(Constants.KEY_USERNAME);
 					String password = jsonClientMessage.getString(Constants.KEY_PASSWORD);
 
-					int idUser = server.registerUser(username, password);
+					int idUser = -1;
+					try {
+						idUser = server.registerUser(username, password);
+					} catch (UserAlreadyRegisteredException e) {
+						idUser = -2;
+					} catch (RegisterWithoutPasswordException e) {
+						idUser = -3;
+					}
 
-					if (idUser != -1) {
+					if (idUser > 0) {
 						jsonServerMessage.put(Constants.KEY_ID_USER, idUser);
 						jsonServerMessage.put(Constants.KEY_MESSAGE, Constants.VALUE_MESSAGE_OK);
+					} else if (idUser == -2) {
+						jsonServerMessage.put(Constants.KEY_MESSAGE, Constants.VALUE_ERROR_USER_ALREADY_REGISTERED);
+					} else if (idUser == -3) {
+						jsonServerMessage.put(Constants.KEY_MESSAGE, Constants.VALUE_ERROR_NO_PASSWORD_PROVIDED);
 					} else {
 						jsonServerMessage.put(Constants.KEY_MESSAGE, Constants.VALUE_ERROR_INTERNAL);
 					}
@@ -192,7 +199,6 @@ public class UserThread extends Thread {
 //				serverMessage = "[" + username + "]: " + clientMessage;
 				jsonServerMessage.put(Constants.KEY_CLIENT_ACTION, action);
 				send(jsonServerMessage);
-				
 
 			} while (!action.equals(Constants.VALUE_ACTION_DISCONNECT));
 

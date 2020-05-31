@@ -13,6 +13,7 @@ import java.sql.Statement;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+import exceptions.RegisterWithoutPasswordException;
 import exceptions.UnknownUserException;
 import exceptions.UserAlreadyRegisteredException;
 import util.Constants;
@@ -275,9 +276,13 @@ public class Database {
 	 * @param password
 	 * @return
 	 * @throws UserAlreadyRegisteredException
+	 * @throws RegisterWithoutPasswordException 
 	 */
-	public int addUser(String username, String password) throws UserAlreadyRegisteredException {
+	public int addUser(String username, String password) throws UserAlreadyRegisteredException, RegisterWithoutPasswordException {
 		initConnectionIfClosed();
+		
+		if (password.equals(""))
+			throw new RegisterWithoutPasswordException();
 
 		String query = "INSERT INTO user (username, password) VALUES (?,?);";
 

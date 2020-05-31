@@ -46,7 +46,7 @@ public class PresenterConnection implements IPresenter{
 		case Constants.VALUE_ERROR_USER_NOT_FOUND:
 			this.view.needRegister();
 			break;
-		case Constants.VALUE_ERROR_USER_ALREADY_EXIST:
+		case Constants.VALUE_ERROR_USER_ALREADY_REGISTERED:
 			this.view.userAlreadyExist();
 			break;
 		case Constants.VALUE_ERROR_PASSWORD_INCORRECT:

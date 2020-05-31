@@ -8,7 +8,9 @@ import java.sql.SQLException;
 import java.util.HashSet;
 import java.util.Set;
 
+import exceptions.RegisterWithoutPasswordException;
 import exceptions.UnknownUserException;
+import exceptions.UserAlreadyLoggedInException;
 import exceptions.UserAlreadyRegisteredException;
 import model.database.Database;
 import model.entity.User;
@@ -63,8 +65,9 @@ public class Server {
 	 * @param password
 	 * @return
 	 * @throws UnknownUserException
+	 * @throws UserAlreadyLoggedInException
 	 */
-	int loginUser(String username, String password) throws UnknownUserException {
+	int loginUser(String username, String password) throws UnknownUserException, UserAlreadyLoggedInException {
 		ResultSet res = null;
 		try {
 			res = database.getUser(username);
@@ -72,10 +75,16 @@ public class Server {
 			if (res == null)
 				return -1;
 
+			int idUser = res.getInt(Constants.KEY_ID_USER);
+
+			if (database.isUserConnected(idUser)) {
+				throw new UserAlreadyLoggedInException();
+			}
+
 			String pwd = res.getString(Constants.KEY_PASSWORD);
 
 			if (pwd.equals(password)) {
-				return res.getInt(Constants.KEY_ID_USER);
+				return idUser;
 			}
 
 			throw new UnknownUserException();
@@ -86,12 +95,9 @@ public class Server {
 		}
 	}
 
-	int registerUser(String username, String password) {
-		try {
-			return database.addUser(username, password);
-		} catch (UserAlreadyRegisteredException e) {
-			return -1;
-		}
+	int registerUser(String username, String password)
+			throws UserAlreadyRegisteredException, RegisterWithoutPasswordException {
+		return database.addUser(username, password);
 	}
 
 	ResultSet getUser(int idUser) {
