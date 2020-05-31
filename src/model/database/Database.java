@@ -138,6 +138,32 @@ public class Database {
 	}
 
 	/**
+	 * Vide une table
+	 * 
+	 * @param tableName
+	 * @return
+	 */
+	public boolean emptyTable(String tableName) {
+		initConnectionIfClosed();
+
+		String query = "DELETE FROM " + tableName;
+		int count = -1;
+
+		Statement stmt;
+		try {
+			stmt = conn.createStatement();
+			stmt.executeQuery(query);
+
+			count = count("connectedUser");
+			return count == 0;
+		} catch (SQLException e) {
+			e.printStackTrace();
+			return false;
+		}
+
+	}
+
+	/**
 	 * Retourne l'id du dernier élément ajouté dans une table
 	 * 
 	 * @return
@@ -308,6 +334,29 @@ public class Database {
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
+	}
+
+	public int addConnectedUser(int idUser) {
+		initConnectionIfClosed();
+
+		String query = "INSERT INTO connectedUser VALUES (?);";
+
+		PreparedStatement stmt;
+		try {
+			stmt = conn.prepareStatement(query);
+			stmt.setInt(1, idUser);
+			stmt.execute();
+			return getLastInsertId();
+		} catch (SQLException e) {
+			e.printStackTrace();
+			return -1;
+		}
+	}
+	
+	// public void 
+
+	public void deleteConnectedUser(int idUser) {
+
 	}
 
 	/**

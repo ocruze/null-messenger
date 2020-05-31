@@ -1,5 +1,6 @@
 package test;
 
+import static org.junit.Assert.fail;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.io.File;
@@ -69,6 +70,16 @@ public class DatabaseTest {
 		assertEquals(2, count);
 
 	}
+
+//	@Test
+//	void testInsertUserAlreadyPresent() {
+//		fail();
+//	}
+//
+//	@Test
+//	void testLoginRegisterWithoutPassword() {
+//		fail();
+//	}
 
 	@Test
 	void testGetUsers() {
