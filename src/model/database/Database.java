@@ -111,7 +111,7 @@ public class Database {
 
 	public void addSomeUsers() {
 		initConnectionIfClosed();
-		
+
 		try {
 			addUser("arnest", "123456");
 			addUser("leo", "123456");
@@ -136,6 +136,21 @@ public class Database {
 		} catch (UserAlreadyRegisteredException | RegisterWithoutPasswordException e) {
 			e.printStackTrace();
 		}
+	}
+
+	public void createSomeConversations() {
+		initConnectionIfClosed();
+
+		int idConv = addConversation();
+
+		addMessage(idConv, 1, "hey max");
+		addMessage(idConv, 3, "hey arnest ça va ?");
+		addMessage(idConv, 1, "ouais et toi ?");
+		addMessage(idConv, 3, "super merci :)");
+
+		idConv = addConversation();
+		addMessage(idConv, 3, "hey alice comment vas ?");
+		addMessage(idConv, 20, "max quelle suprise!!!");
 	}
 
 	/**
@@ -374,65 +389,6 @@ public class Database {
 	}
 
 	/**
-	 * Ajoute l'utilisateur dans la table des utilisateurs connectés
-	 * 
-	 * @param idUser
-	 * @return
-	 */
-	public boolean addConnectedUser(int idUser) {
-		initConnectionIfClosed();
-
-		String query = "INSERT INTO connectedUser VALUES (?);";
-
-		PreparedStatement stmt;
-		try {
-			stmt = conn.prepareStatement(query);
-			stmt.setInt(1, idUser);
-			stmt.execute();
-
-			return isUserConnected(idUser);
-		} catch (SQLException e) {
-			e.printStackTrace();
-			return false;
-		}
-	}
-
-	/**
-	 * Renvoie vrai si l'utilisateur est connecté
-	 * 
-	 * @param idUser
-	 * @return
-	 */
-	public boolean isUserConnected(int idUser) {
-		int count = count("(SELECT * FROM connectedUser WHERE idUser = " + idUser + ")");
-		return count == 1;
-	}
-
-	/**
-	 * Supprime l'utilisateur de la table des utilisateurs connectés
-	 * 
-	 * @param idUser
-	 * @return
-	 */
-	public boolean deleteConnectedUser(int idUser) {
-		initConnectionIfClosed();
-
-		String query = "DELETE FROM connectedUser WHERE idUser = ?;";
-
-		PreparedStatement stmt;
-		try {
-			stmt = conn.prepareStatement(query);
-			stmt.setInt(1, idUser);
-			stmt.execute();
-
-			return !isUserConnected(idUser);
-		} catch (SQLException e) {
-			e.printStackTrace();
-			return false;
-		}
-	}
-
-	/**
 	 * Récupère les utilisateurs connectés
 	 * 
 	 * @return
@@ -497,7 +453,27 @@ public class Database {
 			e.printStackTrace();
 			return -1;
 		}
+	}
+	
+	public ResultSet getUserConversations(int idUser) {
+		initConnectionIfClosed();
+		
+		String query = "SELECT DISTINCT(idconversation) FROM message WHERE idSender = ?";
+		PreparedStatement stmt;
+		try {
+			stmt = conn.prepareStatement(query);
+			stmt.setInt(1, idUser);
+			ResultSet res = stmt.executeQuery();
 
+			if (res.isClosed()) {
+				return null;
+			}
+
+			return res;
+		} catch (SQLException e) {
+			e.printStackTrace();
+			return null;
+		}
 	}
 
 	/**
@@ -574,7 +550,7 @@ public class Database {
 	public ResultSet getConversationMessages(int idConversation) {
 		initConnectionIfClosed();
 
-		String query = "SELECT * FROM message WHERE idConversation = ? ORDER BY date ASC;";
+		String query = "SELECT idMessage,content,idSender,idConversation,date FROM message WHERE idConversation = ?;"; // ORDER BY date ASC
 
 		PreparedStatement stmt;
 		try {

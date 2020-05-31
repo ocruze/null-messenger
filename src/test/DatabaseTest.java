@@ -95,26 +95,26 @@ public class DatabaseTest {
 
 	}
 
-	@Test
-	void testAddConnectedUser() {
-		try {
-			database.addUser("arnest", "test");
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		assertTrue(database.addConnectedUser(1));
-	}
+//	@Test
+//	void testAddConnectedUser() {
+//		try {
+//			database.addUser("arnest", "test");
+//		} catch (Exception e) {
+//			e.printStackTrace();
+//		}
+//		assertTrue(database.addConnectedUser(1));
+//	}
 
-	@Test
-	void testDeletedConnectedUser() {
-		try {
-			database.addUser("arnest", "test");
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		database.addConnectedUser(1);
-		assertTrue(database.deleteConnectedUser(1));
-	}
+//	@Test
+//	void testDeletedConnectedUser() {
+//		try {
+//			database.addUser("arnest", "test");
+//		} catch (Exception e) {
+//			e.printStackTrace();
+//		}
+//		database.addConnectedUser(1);
+//		assertTrue(database.deleteConnectedUser(1));
+//	}
 
 	@Test
 	void testGetUsers() {

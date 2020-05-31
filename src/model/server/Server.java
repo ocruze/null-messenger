@@ -24,12 +24,15 @@ public class Server {
 	private int port;
 	private Database database;
 
-	private Map<Integer, String> connectedUsers = new HashMap<>();
-	private Set<UserThread> userThreads = new HashSet<>();
+	private Map<Integer, String> connectedUsers;
+	private Set<UserThread> userThreads;
 
 	public Server(int port) {
 		this.port = port;
 		this.database = new Database();
+
+		connectedUsers = new HashMap<>();
+		userThreads = new HashSet<>();
 	}
 
 	public void execute() {

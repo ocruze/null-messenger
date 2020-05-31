@@ -68,7 +68,7 @@ public class UserThread extends Thread {
 
 					try {
 						idUser = server.loginUser(username, password);
-						
+
 					} catch (UnknownUserException e) {
 						idUser = -1;
 					} catch (UserAlreadyLoggedInException e) {
@@ -132,7 +132,7 @@ public class UserThread extends Thread {
 
 					break;
 
-				case Constants.VALUE_ACTION_GET_USERS:
+				case Constants.VALUE_ACTION_GET_USERS: {
 					ResultSet res = server.getDatabase().getUsers();
 
 //					JSONObject json = new JSONObject();
@@ -151,7 +151,7 @@ public class UserThread extends Thread {
 						e.printStackTrace();
 						jsonServerMessage.put(Constants.KEY_MESSAGE, Constants.VALUE_ERROR_INTERNAL);
 					}
-
+				}
 					break;
 
 				case Constants.VALUE_ACTION_SEND_MESSAGE: {
@@ -212,6 +212,40 @@ public class UserThread extends Thread {
 				}
 					break;
 
+				case Constants.VALUE_ACTION_GET_CONVERSATIONS: {
+					ResultSet res = server.getDatabase().getUserConversations(3);
+
+					JSONArray jArrayConv = new JSONArray();
+					try {
+						while (res.next()) {
+							int idConversation = res.getInt(1);
+							ResultSet resMessages = server.getDatabase().getConversationMessages(idConversation);
+
+							JSONArray jArrayMessages = new JSONArray();
+
+							while (resMessages.next()) {
+								JSONObject message = new JSONObject();
+
+								message.put(Constants.KEY_ID_MESSAGE, resMessages.getInt(1));
+								message.put(Constants.KEY_MESSAGE_CONTENT, resMessages.getString(2));
+								message.put(Constants.KEY_ID_SENDER, resMessages.getInt(3));
+								message.put(Constants.KEY_ID_CONVERSATION, resMessages.getInt(4));
+								message.put(Constants.KEY_MESSANGE_DATE, resMessages.getString(5));
+
+								jArrayMessages.put(message);
+							}
+							jArrayConv.put(jArrayMessages);
+						}
+
+						jsonServerMessage.put(Constants.KEY_CONVERSATIONS, jArrayConv);
+						jsonServerMessage.put(Constants.KEY_MESSAGE, Constants.VALUE_MESSAGE_OK);
+					} catch (SQLException e) {
+						e.printStackTrace();
+						jsonServerMessage.put(Constants.KEY_MESSAGE, Constants.VALUE_ERROR_INTERNAL);
+					}
+				}
+					break;
+
 				case "updateMessage":
 
 					break;
@@ -219,7 +253,7 @@ public class UserThread extends Thread {
 				case "deleteMessage":
 
 					break;
-					
+
 				case Constants.VALUE_ACTION_DISCONNECT:
 					jsonServerMessage.put(Constants.KEY_MESSAGE, Constants.VALUE_MESSAGE_OK);
 					break;
@@ -240,7 +274,7 @@ public class UserThread extends Thread {
 //			server.broadcast(serverMessage, this);
 			server.disconnectUser(this);
 
-		} catch (IOException ex) {
+		} catch (Exception ex) {
 			server.disconnectUser(this);
 			System.out.println("Error in UserThread: " + ex.getMessage());
 			ex.printStackTrace();
@@ -284,7 +318,7 @@ public class UserThread extends Thread {
 	public String getUsername() {
 		return username;
 	}
-	
+
 	public int getIdUser() {
 		return idUser;
 	}
