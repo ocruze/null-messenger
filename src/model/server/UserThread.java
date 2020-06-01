@@ -213,7 +213,9 @@ public class UserThread extends Thread {
 					break;
 
 				case Constants.VALUE_ACTION_GET_CONVERSATIONS: {
-					ResultSet res = server.getDatabase().getUserConversations(3);
+					//to change or not?
+					int idUser = jsonClientMessage.getInt(Constants.KEY_ID_USER);
+					ResultSet res = server.getDatabase().getUserConversations(idUser);
 
 					JSONArray jArrayConv = new JSONArray();
 					try {

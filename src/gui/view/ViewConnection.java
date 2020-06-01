@@ -7,6 +7,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionAdapter;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -49,7 +51,12 @@ public class ViewConnection extends JFrame {
 
 	public void init() {
 		setBackground(Color.WHITE);
-		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		this.addWindowListener(new WindowAdapter() {
+		    public void windowClosing(WindowEvent e) {
+		    	presenter.disconnect();
+		    	//THANK YOU
+		    }
+		});
 		setBounds(100, 100, 729, 476);
 		contentPane = new JPanel();
 		contentPane.setBackground(Color.WHITE);

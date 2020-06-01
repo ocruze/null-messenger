@@ -44,7 +44,7 @@ commande:
 #.header on
 .mode  column
 for decribe table properly
-pragma table table_info('tableName');
+pragma table_info('tableName');
 */
 
 

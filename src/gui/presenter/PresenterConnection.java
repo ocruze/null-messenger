@@ -117,5 +117,10 @@ public class PresenterConnection implements IPresenter{
 		return this.client;
 	}
 
+	public void disconnect() {
+		this.client.getInvoker().disconnect(UserSession.getConnectedUsername());
+		
+	}
+
 
 }

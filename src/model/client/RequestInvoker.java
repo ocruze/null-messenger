@@ -53,6 +53,7 @@ public class RequestInvoker {
 	
 	public void loadConversations() {
 		JSONObject jsonMessage = new JSONObject();
+		jsonMessage.put(Constants.KEY_ID_USER, UserSession.getConnectedUserId());
 		jsonMessage.put(Constants.KEY_CLIENT_ACTION, Constants.VALUE_ACTION_GET_CONVERSATIONS);
 		send(jsonMessage);
 	}
