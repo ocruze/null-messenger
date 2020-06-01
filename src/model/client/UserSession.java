@@ -6,10 +6,13 @@ import java.util.concurrent.atomic.AtomicReference;
 public class UserSession {
 	private static AtomicReference<String> username;
 	private static AtomicInteger userId;
+	private static AtomicInteger conversationId;
+	
 	
 	static {
 		username = new AtomicReference<String>(null);
 		userId = new AtomicInteger(-1);
+		conversationId = new AtomicInteger(-1);
 	}
 	
 	private static void setUsername(String username) {
@@ -37,6 +40,18 @@ public class UserSession {
 	
 	public static boolean isConnected () {
 		return username.get() != null;
+	}
+	
+	public static int getConversationId() {
+		return conversationId.get();
+	}
+	
+	public static void setConversationId(int convId) {
+		conversationId.set(convId);
+	}
+	
+	public static void unsetConversationId() {
+		conversationId.set(-1);
 	}
 	
 	public static void disconnect() {

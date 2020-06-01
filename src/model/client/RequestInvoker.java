@@ -9,7 +9,6 @@ import java.util.List;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
-import model.entity.Conversation;
 import model.entity.User;
 import util.Constants;
 
@@ -73,7 +72,7 @@ public class RequestInvoker {
 		loadConversations();
 	}
 
-	public void sendMessage(String content, Conversation conversation) {
+	public void sendMessage(String content, int conversationId) {
 		JSONObject jsonMessage = new JSONObject();
 
 		jsonMessage.put(Constants.KEY_CLIENT_ACTION, Constants.VALUE_ACTION_SEND_MESSAGE);
@@ -81,8 +80,7 @@ public class RequestInvoker {
 		jsonMessage.put(Constants.KEY_ID_SENDER, UserSession.getConnectedUserId());
 		
 		jsonMessage.put(Constants.KEY_USERNAME_SENDER, UserSession.getConnectedUsername());
-		jsonMessage.put(Constants.KEY_ID_CONVERSATION, conversation.getIdConversation());
-		jsonMessage.put(Constants.KEY_RECIPIENTS, createJarrayUsers(conversation.getParticipants()));
+		jsonMessage.put(Constants.KEY_ID_CONVERSATION, conversationId);
 		send(jsonMessage);
 		
 		//loadConversations();

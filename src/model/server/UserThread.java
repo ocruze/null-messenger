@@ -183,9 +183,9 @@ public class UserThread extends Thread {
 //						}
 //					});
 
-					JSONArray listRecipients = jsonClientMessage.getJSONArray(Constants.KEY_RECIPIENTS);
+					//JSONArray listRecipients = jsonClientMessage.getJSONArray(Constants.KEY_RECIPIENTS);
 					Optional<Integer> idconv = Optional.of(jsonClientMessage.getInt(Constants.KEY_ID_CONVERSATION));
-					//setIdConvOptional(Optional.of(1));
+					// setIdConvOptional(Optional.of(1));
 					try {
 //						listRecipients.forEach(item -> {
 //
@@ -440,6 +440,7 @@ public class UserThread extends Thread {
 
 		jsonServerMessage = new JSONObject();
 		jsonServerMessage.put(Constants.KEY_MESSAGE, Constants.VALUE_MESSAGE_OK);
+		jsonServerMessage.put(Constants.KEY_ID_CONVERSATION, idConv);
 
 		return idConv;
 	}

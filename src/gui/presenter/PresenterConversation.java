@@ -50,8 +50,8 @@ public class PresenterConversation implements IPresenter {
 		client.getRequestInvoker().createConversation(model.getListParticipantsNewConv());
 	}
 
-	public void sendMessage(String content, Conversation conversation) {
-		client.getRequestInvoker().sendMessage(content, conversation);
+	public void sendMessage(String content, int conversationId) {
+		client.getRequestInvoker().sendMessage(content, conversationId);
 	}
 
 	/**
@@ -166,12 +166,20 @@ public class PresenterConversation implements IPresenter {
 					});
 					conversation.setMessages(listMessage);
 					conversation.setParticipants(listUser);
-
 					listConversation.add(conversation);
 				});
 
 				this.model.setListConversations(listConversation);
-				this.view.loadConversations(this.model.getListConversations());
+				this.view.loadConversations(listConversation);
+				
+				for(Conversation conv: this.model.getListConversations()) {
+					if(conv.getIdConversation() == UserSession.getConversationId()) {
+						System.out.println(conv.getMessages());
+						this.view.loadMessages(conv.getMessages());
+					}
+				}
+				
+//				this.view.loadConversations(this.model.getListConversations());
 //				this.view.loadMessages(this.model.get);
 
 			}
@@ -182,10 +190,10 @@ public class PresenterConversation implements IPresenter {
 		case Constants.VALUE_ACTION_SEND_MESSAGE:
 		case Constants.VALUE_ACTION_RECEIVE_MESSAGE:
 			this.client.getRequestInvoker().loadConversations();
-
 			break;
 		}
 
+		this.view.loadConversations(this.model.getListConversations());
 	}
 
 	public void onRequestFailureConversation(JSONObject json) {
@@ -196,5 +204,6 @@ public class PresenterConversation implements IPresenter {
 
 		}
 	}
+	
 
 }

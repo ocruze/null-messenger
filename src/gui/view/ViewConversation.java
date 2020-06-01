@@ -7,9 +7,10 @@ import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
-import java.awt.event.WindowEvent;
-import java.awt.event.WindowListener;
-import java.util.ArrayList;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.util.List;
 import java.util.Vector;
 
@@ -23,22 +24,16 @@ import javax.swing.JList;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
-import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 
 import gui.presenter.PresenterConversation;
-import gui.view.ViewConnection.FieldType;
 import model.client.UserSession;
 import model.entity.Conversation;
 import model.entity.Message;
 import model.entity.User;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import java.awt.event.KeyAdapter;
-import java.awt.event.KeyEvent;
 
 public class ViewConversation extends JFrame {
 
@@ -179,10 +174,13 @@ public class ViewConversation extends JFrame {
 			@Override
 			public void mouseClicked(MouseEvent e) {
 				Conversation conv = jListConversation.getSelectedValue();
-				System.out.println(conv.getClass().getName());
-
-				if (conv != null && conv.getMessages() != null && conv.getMessages().size() != 0)
+				
+				if (conv != null && conv.getMessages() != null && conv.getMessages().size() != 0) {
 					loadMessages(conv.getMessages());
+					UserSession.setConversationId(conv.getIdConversation());
+				}else {
+					UserSession.unsetConversationId();
+				}
 			}
 
 		});
@@ -317,10 +315,14 @@ public class ViewConversation extends JFrame {
 		this.validate();
 		this.repaint();
 	}
-
-	private void loadMessages(List<Message> listMessage) {
+	
+	
+	
+	public void loadMessages(List<Message> listMessage) {
 		jListMessage.removeAll();
 		jListMessage.setListData(new Vector<Message>(listMessage));
+		
+		
 		jListMessage.setCellRenderer(new DefaultListCellRenderer() {
 
 			private static final long serialVersionUID = -2663637240222087200L;
@@ -346,12 +348,17 @@ public class ViewConversation extends JFrame {
 
 	private void sendMessage() {
 		String message = messageTxt.getText();
-		messageTxt.setText("");
+		int convId = -1;
 
-		if (!message.equals(""))
-			System.out.println("Id CONVERSATION : " + jListConversation.getSelectedValue().getIdConversation());
-		presenter.sendMessage(message, jListConversation.getSelectedValue());
-
+		if (jListConversation.getSelectedValue() != null) {
+			convId = UserSession.getConversationId();
+		}else {
+			convId = jListConversation.getSelectedValue().getIdConversation();
+		}
+		
+		presenter.sendMessage(message, convId);
 	}
+	
+	
 
 }
