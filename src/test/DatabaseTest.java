@@ -176,31 +176,31 @@ public class DatabaseTest {
 		assertEquals(2, id);
 	}
 
-	@Test
-	void testModifyUser() {
-		ResultSet res = null;
-		String username = "";
-
-		try {
-			database.addUser("arnest", "test");
-			res = database.getUser(1);
-			username = res.getString(Constants.KEY_USERNAME);
-		} catch (SQLException | UnknownUserException | UserAlreadyRegisteredException
-				| RegisterWithoutPasswordException e) {
-		}
-		assertEquals("arnest", username);
-
-		try {
-			database.modifyUserUsername(1, "Arnest");
-			res = database.getUser(1);
-
-			username = res.getString(Constants.KEY_USERNAME);
-		} catch (SQLException | UnknownUserException e) {
-			e.printStackTrace();
-		}
-
-		assertEquals("Arnest", username);
-	}
+//	@Test
+//	void testModifyUser() {
+//		ResultSet res = null;
+//		String username = "";
+//
+//		try {
+//			database.addUser("arnest", "test");
+//			res = database.getUser(1);
+//			username = res.getString(Constants.KEY_USERNAME);
+//		} catch (SQLException | UnknownUserException | UserAlreadyRegisteredException
+//				| RegisterWithoutPasswordException e) {
+//		}
+//		assertEquals("arnest", username);
+//
+//		try {
+//			database.modifyUserUsername(1, "Arnest");
+//			res = database.getUser(1);
+//
+//			username = res.getString(Constants.KEY_USERNAME);
+//		} catch (SQLException | UnknownUserException e) {
+//			e.printStackTrace();
+//		}
+//
+//		assertEquals("Arnest", username);
+//	}
 
 	@Test
 	void testDeleteUser() {

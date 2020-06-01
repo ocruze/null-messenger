@@ -27,8 +27,8 @@ public class PresenterConversation implements IPresenter {
 		this.model = model;
 		this.client = client;
 		init();
-		LoadUsers();
-		LoadConversations();
+		loadUsers();
+		loadConversations();
 	}
 
 	public void init() {
@@ -36,18 +36,22 @@ public class PresenterConversation implements IPresenter {
 		client.setOnRequestSuccessConversation((json) -> onRequestSuccessConversation(json));
 	}
 
-	public void LoadUsers() {
-		client.getInvoker().loadUsers();
+	public void loadUsers() {
+		client.getRequestInvoker().loadUsers();
 	}
 
-	public void LoadConversations() {
-		client.getInvoker().loadConversations();
+	public void loadConversations() {
+		client.getRequestInvoker().loadConversations();
 	}
 
 	public void createConversation() {
 		model.getListParticipantsNewConv()
 				.add(new User(UserSession.getConnectedUserId(), UserSession.getConnectedUsername()));
-		client.getInvoker().createConversation(model.getListParticipantsNewConv());
+		client.getRequestInvoker().createConversation(model.getListParticipantsNewConv());
+	}
+
+	public void sendMessage(String content, Conversation conversation) {
+		client.getRequestInvoker().sendMessage(content, conversation);
 	}
 
 	/**
@@ -109,9 +113,11 @@ public class PresenterConversation implements IPresenter {
 
 	public void onRequestSuccessConversation(JSONObject json) {
 		switch (json.getString(Constants.KEY_CLIENT_ACTION)) {
+
 		case Constants.VALUE_ACTION_DISCONNECT:
 			UserSession.disconnect();
 			break;
+
 		case Constants.VALUE_ACTION_GET_USERS:
 			JSONArray jsonArray = json.getJSONArray(Constants.KEY_USERS);
 			List<User> listUsers = new ArrayList<User>();
@@ -125,11 +131,17 @@ public class PresenterConversation implements IPresenter {
 			this.model.setListUser(listUsers);
 			this.view.loadUsers(this.model.getListUser());
 			break;
+
 		case Constants.VALUE_ACTION_GET_CONVERSATIONS:
 			if (!json.getString(Constants.KEY_INFO).equals(Constants.VALUE_NONE_MESSAGE)) {
 
+				if (!json.keySet().contains(Constants.KEY_CONVERSATIONS)) {
+					break;
+				}
+
 				JSONArray jsonArrayConversation = json.getJSONArray(Constants.KEY_CONVERSATIONS);
 				List<Conversation> listConversation = new ArrayList<Conversation>();
+
 				// List<Message> listMessage = new ArrayList<Message>();
 
 				jsonArrayConversation.forEach(item -> {
@@ -160,13 +172,17 @@ public class PresenterConversation implements IPresenter {
 
 				this.model.setListConversations(listConversation);
 				this.view.loadConversations(this.model.getListConversations());
+//				this.view.loadMessages(this.model.get);
 
 			}
 			// System.out.println(this.model.getListConversations());
 			break;
 
 		case Constants.VALUE_ACTION_CREATE_CONVERSATION:
-			this.client.getInvoker().loadConversations();
+		case Constants.VALUE_ACTION_SEND_MESSAGE:
+		case Constants.VALUE_ACTION_RECEIVE_MESSAGE:
+			this.client.getRequestInvoker().loadConversations();
+
 			break;
 		}
 

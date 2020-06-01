@@ -1,5 +1,6 @@
 package gui.view;
 
+import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.GridBagConstraints;
@@ -12,6 +13,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Vector;
 
+import javax.swing.DefaultListCellRenderer;
 import javax.swing.GroupLayout;
 import javax.swing.GroupLayout.Alignment;
 import javax.swing.JButton;
@@ -29,9 +31,14 @@ import javax.swing.JTextField;
 
 import gui.presenter.PresenterConversation;
 import gui.view.ViewConnection.FieldType;
+import model.client.UserSession;
 import model.entity.Conversation;
 import model.entity.Message;
 import model.entity.User;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
 
 public class ViewConversation extends JFrame {
 
@@ -39,12 +46,13 @@ public class ViewConversation extends JFrame {
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
-	//private JFrame this;
+	// private JFrame this;
 	private JTextField convNameField;
 	private PresenterConversation presenter;
 	private JList<User> jListUser;
-	private JList<String> jListConversation;
+	private JList<Conversation> jListConversation;
 	private JList<Message> jListMessage;
+	private JTextArea messageTxt;
 
 	/**
 	 * Launch the application.
@@ -61,6 +69,7 @@ public class ViewConversation extends JFrame {
 	 */
 	public ViewConversation() {
 		super();
+		setResizable(false);
 		initialize();
 		this.setVisible(true);
 	}
@@ -73,7 +82,7 @@ public class ViewConversation extends JFrame {
 	 * Initialize the contents of the frame.
 	 */
 	private void initialize() {
-		//frame = new JFrame();
+		// frame = new JFrame();
 		this.setBounds(100, 100, 1360, 641);
 		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		GridBagLayout gridBagLayout = new GridBagLayout();
@@ -105,29 +114,26 @@ public class ViewConversation extends JFrame {
 
 		JButton btnCreateConv = new JButton("Create");
 		GroupLayout gl_leftPanel = new GroupLayout(newConvPanel);
-		btnCreateConv.addActionListener((ActionEvent e) -> {
-	            presenter.setListParticipantsNewConv(jListUser.getSelectedValuesList());
-	            presenter.createConversation();
-		});
-		gl_leftPanel.setHorizontalGroup(gl_leftPanel.createParallelGroup(Alignment.LEADING).addGroup(gl_leftPanel
+		gl_leftPanel.setHorizontalGroup(gl_leftPanel.createParallelGroup(Alignment.TRAILING).addGroup(gl_leftPanel
 				.createSequentialGroup()
 				.addGroup(gl_leftPanel.createParallelGroup(Alignment.LEADING)
+						.addGroup(gl_leftPanel.createSequentialGroup().addGap(26).addComponent(usersScrollPane,
+								GroupLayout.PREFERRED_SIZE, 239, GroupLayout.PREFERRED_SIZE))
 						.addGroup(gl_leftPanel.createSequentialGroup().addGap(25)
 								.addGroup(gl_leftPanel.createParallelGroup(Alignment.LEADING)
-										.addComponent(convNameField, GroupLayout.PREFERRED_SIZE, 169,
-												GroupLayout.PREFERRED_SIZE)
-										.addComponent(goupeName, GroupLayout.PREFERRED_SIZE, 122,
-												GroupLayout.PREFERRED_SIZE)))
-						.addGroup(gl_leftPanel.createSequentialGroup().addGap(26).addComponent(usersScrollPane,
-								GroupLayout.PREFERRED_SIZE, 239, GroupLayout.PREFERRED_SIZE)))
-				.addContainerGap(42, Short.MAX_VALUE))
-				.addGroup(Alignment.TRAILING,
-						gl_leftPanel.createSequentialGroup().addContainerGap(119, Short.MAX_VALUE)
-								.addComponent(btnCreateConv, GroupLayout.PREFERRED_SIZE, 77, GroupLayout.PREFERRED_SIZE)
-								.addGap(111))
-				.addGroup(gl_leftPanel.createSequentialGroup().addGap(83)
-						.addComponent(labelConvCreation, GroupLayout.PREFERRED_SIZE, 127, GroupLayout.PREFERRED_SIZE)
-						.addContainerGap(97, Short.MAX_VALUE)));
+										.addComponent(goupeName, GroupLayout.DEFAULT_SIZE, 240, Short.MAX_VALUE)
+										.addComponent(convNameField, GroupLayout.DEFAULT_SIZE, 240, Short.MAX_VALUE))))
+				.addGap(42))
+				.addGroup(Alignment.LEADING,
+						gl_leftPanel.createSequentialGroup().addGap(53)
+								.addComponent(labelConvCreation, GroupLayout.PREFERRED_SIZE, 173,
+										GroupLayout.PREFERRED_SIZE)
+								.addContainerGap(81, Short.MAX_VALUE))
+				.addGroup(Alignment.LEADING,
+						gl_leftPanel
+								.createSequentialGroup().addGap(77).addComponent(btnCreateConv,
+										GroupLayout.PREFERRED_SIZE, 138, GroupLayout.PREFERRED_SIZE)
+								.addContainerGap(92, Short.MAX_VALUE)));
 		gl_leftPanel.setVerticalGroup(gl_leftPanel.createParallelGroup(Alignment.LEADING)
 				.addGroup(gl_leftPanel.createSequentialGroup()
 						.addComponent(labelConvCreation, GroupLayout.PREFERRED_SIZE, 43, GroupLayout.PREFERRED_SIZE)
@@ -137,8 +143,12 @@ public class ViewConversation extends JFrame {
 								GroupLayout.PREFERRED_SIZE)
 						.addGap(34)
 						.addComponent(usersScrollPane, GroupLayout.PREFERRED_SIZE, 372, GroupLayout.PREFERRED_SIZE)
-						.addGap(18).addComponent(btnCreateConv).addContainerGap(30, Short.MAX_VALUE)));
-		
+						.addGap(18).addComponent(btnCreateConv).addContainerGap(41, Short.MAX_VALUE)));
+		btnCreateConv.addActionListener((ActionEvent e) -> {
+			presenter.setListParticipantsNewConv(jListUser.getSelectedValuesList());
+			presenter.createConversation();
+		});
+
 		jListUser = new JList<>();
 		usersScrollPane.setViewportView(jListUser);
 		newConvPanel.setLayout(gl_leftPanel);
@@ -165,6 +175,15 @@ public class ViewConversation extends JFrame {
 		conversationPanel.add(conversationScrollPane, gbc_centerScrollPane);
 
 		jListConversation = new JList<>();
+		jListConversation.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				Conversation conv = jListConversation.getSelectedValue();
+				System.out.println(conv.getClass().getName());
+				loadMessages(conv.getMessages());
+			}
+
+		});
 		conversationScrollPane.setViewportView(jListConversation);
 
 		JPanel messagePanel = new JPanel();
@@ -204,7 +223,15 @@ public class ViewConversation extends JFrame {
 		gbl_panel.rowWeights = new double[] { 1.0, Double.MIN_VALUE };
 		panel.setLayout(gbl_panel);
 
-		JTextArea messageTxt = new JTextArea();
+		messageTxt = new JTextArea();
+		messageTxt.addKeyListener(new KeyAdapter() {
+			@Override
+			public void keyPressed(KeyEvent e) {
+				if (e.getKeyCode() == KeyEvent.VK_ENTER) {
+					sendMessage();
+				}
+			}
+		});
 		messageTxt.setMaximumSize(new Dimension(1, 15));
 		messageTxt.setName("");
 		messageTxt.setToolTipText("Write a message");
@@ -216,6 +243,12 @@ public class ViewConversation extends JFrame {
 		panel.add(messageTxt, gbc_messageTxt);
 
 		JButton btnSend = new JButton("Send");
+		btnSend.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				sendMessage();
+			}
+		});
 		GridBagConstraints gbc_btnSend = new GridBagConstraints();
 		gbc_btnSend.fill = GridBagConstraints.BOTH;
 		gbc_btnSend.gridx = 1;
@@ -234,33 +267,89 @@ public class ViewConversation extends JFrame {
 		JMenuItem mntmDisconnect = new JMenuItem("Disconnect");
 		mnFile.add(mntmDisconnect);
 	}
-	
+
 	public void loadUsers(List<User> listUser) {
-		//System.out.println("im here");
+		// System.out.println("im here");
 		jListUser.setListData(new Vector<User>(listUser));
 		this.validate();
 		this.repaint();
 	}
-	
+
 	public void loadConversations(List<Conversation> listConversation) {
-		List<String> listParticipant = new ArrayList<String>();
-		List<String> newListConversation = new ArrayList<String>();
-		for(Conversation conv : listConversation) {
-			for(User user : conv.getParticipants()) {
-				listParticipant.add(user.getUsername());
+		if (listConversation == null || listConversation.size() == 0)
+			return;
+
+		jListConversation.removeAll();
+		jListConversation.setListData(new Vector<Conversation>(listConversation));
+		jListConversation.setCellRenderer(new DefaultListCellRenderer() {
+
+			private static final long serialVersionUID = -2663637240222087200L;
+
+			@Override
+			public Component getListCellRendererComponent(JList<?> list, Object value, int index, boolean isSelected,
+					boolean cellHasFocus) {
+				Component renderer = super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
+				if (renderer instanceof JLabel && value instanceof Conversation) {
+					Conversation conv = (Conversation) value;
+
+					List<User> participants = conv.getParticipants();
+					participants.removeIf(x -> x == null || x.getUsername().equals(UserSession.getConnectedUsername()));
+
+					String label = "";
+
+					if (participants.size() > 0) {
+
+						label = participants.get(0).getUsername();
+
+						for (int i = 1; i < participants.size(); i++) {
+							label += ", " + participants.get(i).getUsername();
+						}
+					}
+
+					((JLabel) renderer).setText(label);
+				}
+				return renderer;
 			}
-			newListConversation.add(listParticipant.toString());
-			listParticipant = new ArrayList<String>();
-		}
-		jListConversation.setListData(new Vector<String>(newListConversation));
+		});
+
 		this.validate();
 		this.repaint();
 	}
-	
-	public void loadMessages(List<Message> listMessage) {
+
+	private void loadMessages(List<Message> listMessage) {
+		jListMessage.removeAll();
 		jListMessage.setListData(new Vector<Message>(listMessage));
+		jListMessage.setCellRenderer(new DefaultListCellRenderer() {
+
+			private static final long serialVersionUID = -2663637240222087200L;
+
+			@Override
+			public Component getListCellRendererComponent(JList<?> list, Object value, int index, boolean isSelected,
+					boolean cellHasFocus) {
+				Component renderer = super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
+				if (renderer instanceof JLabel && value instanceof Message) {
+					Message message = (Message) value;
+
+					String label = "[" + message.getSender().getUsername() + "] : " + message.getContent();
+
+					((JLabel) renderer).setText(label);
+				}
+				return renderer;
+			}
+		});
+
 		this.validate();
 		this.repaint();
 	}
-	
+
+	private void sendMessage() {
+		String message = messageTxt.getText();
+		messageTxt.setText("");
+
+		if (!message.equals(""))
+			System.out.println("Id CONVERSATION : " + jListConversation.getSelectedValue().getIdConversation());
+			presenter.sendMessage(message, jListConversation.getSelectedValue());
+
+	}
+
 }

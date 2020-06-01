@@ -132,6 +132,8 @@ public class Database {
 			addUser("jacques", "123456");
 			addUser("jean", "123456");
 			addUser("celine", "123456");
+			addUser("marie", "123456");
+			addUser("natasha", "123456");
 			addUser("alice", "123456");
 		} catch (UserAlreadyRegisteredException | RegisterWithoutPasswordException e) {
 			e.printStackTrace();
@@ -293,7 +295,7 @@ public class Database {
 	public ResultSet getUser(String username) throws UnknownUserException {
 		initConnectionIfClosed();
 
-		String query = "SELECT * FROM user WHERE username LIKE ?";
+		String query = "SELECT * FROM user WHERE username LIKE ? ;";
 
 		PreparedStatement stmt;
 		try {
@@ -302,9 +304,9 @@ public class Database {
 
 			ResultSet res = stmt.executeQuery();
 
-			if (res.isClosed()) {
-				throw new UnknownUserException();
-			}
+//			if (res.isClosed()) {
+//				throw new UnknownUserException();
+//			}
 
 			return res;
 		} catch (SQLException e) {
@@ -354,7 +356,7 @@ public class Database {
 	public void modifyUserUsername(int idUser, String newUsername) {
 		initConnectionIfClosed();
 
-		String query = "UPDATE user SET username = ? WHERE idUser = ?;";
+		String query = "UPDATE user SET username = '?' WHERE idUser = ?;";
 
 		PreparedStatement stmt;
 		try {
@@ -396,7 +398,7 @@ public class Database {
 	public ResultSet getConnectedUsers() {
 		initConnectionIfClosed();
 
-		String query = "SELECT * FROM connectedUser";
+		String query = "SELECT * FROM connectedUser ;";
 		try {
 			Statement stmt = conn.createStatement();
 
@@ -420,7 +422,7 @@ public class Database {
 	public int addConversation() {
 		initConnectionIfClosed();
 
-		String query = "INSERT INTO conversation VALUES (NULL);";
+		String query = "INSERT INTO conversation VALUES (NULL) ;";
 		Statement stmt;
 		try {
 			stmt = conn.createStatement();
@@ -436,7 +438,7 @@ public class Database {
 	public int getPrivateConversationId(int idUser1, int idUser2) {
 		initConnectionIfClosed();
 
-		String query = "SELECT (SELECT DISTINCT(idConversation) FROM message WHERE idSender = ?) AND (SELECT DISTINCT(idConversation) FROM message WHERE idSender = ?)";
+		String query = "SELECT (SELECT DISTINCT(idConversation) FROM message WHERE idSender = ?) AND (SELECT DISTINCT(idConversation) FROM message WHERE idSender = ?) ;";
 		PreparedStatement stmt;
 		try {
 			stmt = conn.prepareStatement(query);
@@ -450,16 +452,16 @@ public class Database {
 
 			return res.getInt(Constants.KEY_ID_CONVERSATION);
 		} catch (SQLException e) {
-			//e.printStackTrace();
+			// e.printStackTrace();
 			System.out.println("conversation not found, a new will be created");
 			return -1;
 		}
 	}
-	
+
 	public ResultSet getUserConversations(int idUser) {
 		initConnectionIfClosed();
-		
-		String query = "SELECT DISTINCT(idconversation) FROM message WHERE idSender = ?";
+
+		String query = "SELECT DISTINCT(idconversation) FROM message WHERE idSender = ? ;";
 		PreparedStatement stmt;
 		try {
 			stmt = conn.prepareStatement(query);
@@ -551,7 +553,10 @@ public class Database {
 	public ResultSet getConversationMessages(int idConversation) {
 		initConnectionIfClosed();
 
-		String query = "SELECT idMessage,content,idSender,idConversation,date FROM message WHERE idConversation = ?;"; // ORDER BY date ASC
+		String query = "SELECT idMessage,content,idSender,idConversation,date FROM message WHERE idConversation = ?;"; // ORDER
+																														// BY
+																														// date
+																														// ASC
 
 		PreparedStatement stmt;
 		try {
@@ -569,6 +574,29 @@ public class Database {
 			e.printStackTrace();
 			return null;
 		}
+	}
+
+	public ResultSet getConversationParticipants(int idConversation) {
+		initConnectionIfClosed();
+
+		String query = "SELECT DISTINCT(idSender) FROM message WHERE idConversation = ? ;";
+		PreparedStatement stmt;
+		try {
+			stmt = conn.prepareStatement(query);
+			stmt.setInt(1, idConversation);
+
+			ResultSet res = stmt.executeQuery();
+
+			if (res.isClosed()) {
+				return null;
+			}
+
+			return res;
+		} catch (SQLException e) {
+			e.printStackTrace();
+			return null;
+		}
+
 	}
 
 	/**

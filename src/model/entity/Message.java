@@ -2,11 +2,11 @@ package model.entity;
 
 public class Message {
 	private User sender;
-	private String message;
+	private String content;
 	private String date;
 
-	public Message(String message, User sender, String date) {
-		this.message = message;
+	public Message(String content, User sender, String date) {
+		this.content = content;
 		this.sender = sender;
 		this.date = date;
 	}
@@ -15,8 +15,8 @@ public class Message {
 		return sender;
 	}
 
-	public String getMessage() {
-		return message;
+	public String getContent() {
+		return content;
 	}
 
 	public String getDate() {

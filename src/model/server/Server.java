@@ -132,7 +132,23 @@ public class Server {
 	}
 
 	UserThread getUserThread(String username) {
-		return userThreads.stream().filter(x -> x.getUsername().equals(username)).findFirst().get();
+//		UserThread userThread = userThreads.stream().filter(x -> x.getUsername().equals(username)).findFirst().get();
+		for(UserThread user : this.userThreads) {
+			if(user.getUsername().equals(username)) {
+				return user;
+			}
+		}
+		return null;
+	}
+
+	UserThread getUserThread(int idUser) {
+		UserThread userThread = userThreads.stream().filter(x -> x.getIdUser() == idUser).findFirst().get();
+		return userThread == null ? null : userThread;
+	}
+
+	public void userRefreshConversations(int idUser) throws IOException {
+		UserThread recipientThread = getUserThread(idUser);
+		recipientThread.receive();
 	}
 
 	/**

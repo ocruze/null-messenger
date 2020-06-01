@@ -58,7 +58,7 @@ public class Client {
 
 	}
 
-	public RequestInvoker getInvoker() {
+	public RequestInvoker getRequestInvoker() {
 		return this.requestInvoker;
 	}
 

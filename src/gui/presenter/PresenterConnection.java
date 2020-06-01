@@ -87,14 +87,14 @@ public class PresenterConnection implements IPresenter{
 		this.client.setHostName(model.getHostName());
 		this.client.setPort(model.getPort());
 		this.client.execute();
-		this.client.getInvoker().login(model.getUserName(), model.getPassword());
+		this.client.getRequestInvoker().login(model.getUserName(), model.getPassword());
 	}
 
 	public void register() {
 		this.client.setHostName(model.getHostName());
 		this.client.setPort(model.getPort());
 		this.client.execute();
-		this.client.getInvoker().register(model.getUserName(), model.getPassword());
+		this.client.getRequestInvoker().register(model.getUserName(), model.getPassword());
 	}
 
 	public void setPassword(String password) {
@@ -118,7 +118,7 @@ public class PresenterConnection implements IPresenter{
 	}
 
 	public void disconnect() {
-		this.client.getInvoker().disconnect(UserSession.getConnectedUsername());
+		this.client.getRequestInvoker().disconnect(UserSession.getConnectedUsername());
 		
 	}
 

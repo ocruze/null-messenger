@@ -28,7 +28,9 @@ public class Constants {
 	public final static String KEY_INFO = "info";
 	
 	public final static String KEY_USERS = "users";
-	public final static String KEY_CONVERSATIONS = "users";
+	public final static String KEY_CONVERSATIONS = "conversations";
+	public final static String KEY_RECIPIENTS = "recipients";
+	public final static String KEY_PARTICIPANTS = "participants";
 
 	/**
 	 * Valeurs
@@ -46,7 +48,6 @@ public class Constants {
 	public final static String VALUE_DELETED_MESSAGE = "Message supprimé";
 	public final static String VALUE_INCOMING_MESSAGE = "incommingMessage";
 	public final static String VALUE_NONE_MESSAGE = "noneMessage";
-	public final static String VALUE_PARTICIPANT = "participants";
 
 	// Actions
 	public final static String VALUE_ACTION_LOGIN = "login";
@@ -58,5 +59,6 @@ public class Constants {
 	public final static String VALUE_ACTION_GET_USERS = "getUsers";
 	public final static String VALUE_ACTION_RECEIVE_MESSAGE = "receiveMessage";
 	public final static String VALUE_ACTION_GET_CONVERSATIONS = "getConversations";
+	
 
 }
