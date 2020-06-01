@@ -7,25 +7,68 @@ import java.util.function.Consumer;
 
 import org.json.JSONObject;
 
+import gui.presenter.IPresenter.Window;
 import gui.presenter.PresenterConnection;
 
 public class Client {
 
 	private String hostname;
 	private int port;
-	private String username;
 	private PresenterConnection presenter;
-	private String password;
 	private int idUser;
 	private ReadThread readThread;
-	private WriteThread writeThread;
+	private RequestInvoker requestInvoker;
 
-	private boolean loggedIn = false;
-	private boolean isRegister = false;
 	private JSONObject json;
 	private boolean wantRegister;
+	private Window currentPresenter;
+
 	private Consumer<JSONObject> onRequestSuccess;
 	private Consumer<JSONObject> onRequestFailed;
+
+	private Consumer<JSONObject> onRequestSuccessConversation;
+	private Consumer<JSONObject> onRequestFailedConversation;
+
+	/**
+	 * public Client(String hostname, int port) { this.hostname = hostname;
+	 * this.port = port; }
+	 **/
+
+	public Client() {
+
+	}
+
+	public void execute() {
+		readThread = null;
+
+		try {
+			Socket socket = new Socket(getHostName(), getPort());
+
+			System.out.println("Connected to the chat server");
+
+			this.readThread = new ReadThread(socket, this);
+			this.requestInvoker = new RequestInvoker(socket);
+
+			readThread.start();
+		} catch (UnknownHostException ex) {
+			System.out.println("Server not found: " + ex.getMessage());
+		} catch (IOException ex) {
+			System.out.println("I/O Error: " + ex.getMessage());
+		}
+
+	}
+
+	public RequestInvoker getRequestInvoker() {
+		return this.requestInvoker;
+	}
+
+	public Window getCurrentPresenter() {
+		return currentPresenter;
+	}
+
+	public void setCurrentPresenter(Window currentPresenter) {
+		this.currentPresenter = currentPresenter;
+	}
 
 	public boolean isWantRegister() {
 		return wantRegister;
@@ -33,6 +76,22 @@ public class Client {
 
 	public void setWantRegister(boolean wantRegister) {
 		this.wantRegister = wantRegister;
+	}
+
+	public void setOnRequestFailedConversation(Consumer<JSONObject> onRequestFailed) {
+		this.onRequestFailedConversation = onRequestFailed;
+	}
+
+	public void setOnRequestSuccessConversation(Consumer<JSONObject> onRequestSuccess) {
+		this.onRequestSuccessConversation = onRequestSuccess;
+	}
+
+	public void onRequestFailedConversation(JSONObject json) {
+		this.onRequestFailedConversation.accept(json);
+	}
+
+	public void onRequestSuccessConversation(JSONObject json) {
+		this.onRequestSuccessConversation.accept(json);
 	}
 
 	public void setOnRequestFailed(Consumer<JSONObject> onRequestFailed) {
@@ -51,57 +110,8 @@ public class Client {
 		this.onRequestSuccess.accept(json);
 	}
 
-	/**
-	 * public Client(String hostname, int port) { this.hostname = hostname;
-	 * this.port = port; }
-	 **/
-
-	public Client() {
-
-	}
-
-	public void execute() {
-		readThread = null;
-		writeThread = null;
-		/// onRequestFailed(jsonServerMessage);
-		try {
-
-			Socket socket = new Socket(getHostName(), getPort());
-
-			System.out.println("Connected to the chat server");
-
-			this.readThread = new ReadThread(socket, this);
-			this.writeThread = new WriteThread(socket, this);
-
-			readThread.start();
-			writeThread.start();
-
-		} catch (UnknownHostException ex) {
-			System.out.println("Server not found: " + ex.getMessage());
-		} catch (IOException ex) {
-			System.out.println("I/O Error: " + ex.getMessage());
-		}
-
-	}
-
 	public PresenterConnection getPresenter() {
 		return presenter;
-	}
-
-	public String getUsername() {
-		return username;
-	}
-
-	public void setUserName(String username) {
-		this.username = username;
-	}
-
-	public String getPassword() {
-		return password;
-	}
-
-	public void setPassword(String password) {
-		this.password = password;
 	}
 
 	public int getPort() {
@@ -118,48 +128,6 @@ public class Client {
 
 	public void setHostName(String hostname) {
 		this.hostname = hostname;
-	}
-	/**
-	public void register() {
-	
-		readThread = null;
-		writeThread = null;
-		
-		try {
-			Socket socket = new Socket(this.hostname, this.port);
-			readThread = new ReadThread(socket, this);
-			writeThread = new WriteThread(socket, this);
-			readThread.start();
-			writeThread.start();
-			writeThread.register();
-			writeThread.join();
-			readThread.join();
-		} catch (UnknownHostException ex) {
-			System.out.println("Server not found: " + ex.getMessage());
-		} catch (IOException ex) {
-			System.out.println("I/O Error: " + ex.getMessage());
-		} catch (Exception e) {
-			System.out.println(e.getMessage());
-			e.printStackTrace();
-		}
-		
-		if(readThread == null || writeThread == null) {
-			execute();
-		}
-		
-		
-	}
-	**/
-	public boolean register() {
-		writeThread.register();
-		return isRegister = readThread.register();
-	}
-	
-
-	public boolean login() {
-		writeThread.login();
-		return loggedIn = readThread.login();
-
 	}
 
 	public JSONObject getJson() {

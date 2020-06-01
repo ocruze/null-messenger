@@ -6,12 +6,12 @@
 
 ### Sommaire
 
-* [Participants]
-* [Descriptions]
-* [Technologies]
-* [How to use]
-* [License]
-* [Another Information] 
+* `Participants`
+* `Descriptions`
+* `Technologies`
+* `How to use`
+* `License`
+* `Another Information`
 
 
 ## Participants
@@ -20,7 +20,7 @@
 * Galloy Anrnaud
 * Abensur Maxime
 * Godzien Hector
-* Cruze Arnest
+* Cruze Orka Arnest
 * Leffy Léo 
 
 
