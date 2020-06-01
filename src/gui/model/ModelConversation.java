@@ -49,6 +49,15 @@ public class ModelConversation {
 	public void setListConversations(List<Conversation> listConversations) {
 		this.listConversations = listConversations;
 	}
+	
+	public User getUser(int id) {
+		for(User user : this.listParticipantsNewConv) {
+			if(user.getIdUser() == id) {
+				return user;
+			}
+		}
+		return null;
+	}
 
 	public String getUserName() {
 		return userName;

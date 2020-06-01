@@ -50,6 +50,12 @@ public class RequestInvoker {
 		jsonMessage.put(Constants.KEY_CLIENT_ACTION, Constants.VALUE_ACTION_GET_USERS);
 		send(jsonMessage);
 	}
+	
+	public void loadConversations() {
+		JSONObject jsonMessage = new JSONObject();
+		jsonMessage.put(Constants.KEY_CLIENT_ACTION, Constants.VALUE_ACTION_GET_CONVERSATIONS);
+		send(jsonMessage);
+	}
 	public void disconnect(String username) {
 		JSONObject jsonMessage = new JSONObject();
 		jsonMessage.put(Constants.KEY_USERNAME, username);
