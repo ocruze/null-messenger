@@ -3,8 +3,10 @@ package model.entity;
 public class User {
 
 	private String username;
-
-	public User(String username) {
+	private int idUser;
+	
+	public User(int idUser,String username) {
+		this.idUser = idUser;
 		this.username = username;
 	}
 	
@@ -27,6 +29,11 @@ public class User {
 		} else if (!username.equals(other.username))
 			return false;
 		return true;
+	}
+
+	
+	public int getIdUser() {
+		return idUser;
 	}
 
 	@Override

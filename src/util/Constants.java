@@ -17,10 +17,20 @@ public class Constants {
 	public final static String KEY_USERNAME = "username";
 	public final static String KEY_PASSWORD = "password";
 
+	public final static String KEY_ID_MESSAGE= "idMessage";
 	public final static String KEY_ID_CONVERSATION = "idConversation";
+	public final static String KEY_ID_SENDER = "idSender";
+	public final static String KEY_ID_RECIPIENT = "idRecipient";
 	public final static String KEY_USERNAME_SENDER = "usernameSender";
 	public final static String KEY_USERNAME_RECIPIENT = "usernameRecipient";
 	public final static String KEY_MESSAGE_CONTENT = "messageContent";
+	public final static String KEY_MESSANGE_DATE= "dateMessage";
+	public final static String KEY_INFO = "info";
+	
+	public final static String KEY_USERS = "users";
+	public final static String KEY_CONVERSATIONS = "conversations";
+	public final static String KEY_RECIPIENTS = "recipients";
+	public final static String KEY_PARTICIPANTS = "participants";
 
 	/**
 	 * Valeurs
@@ -29,19 +39,26 @@ public class Constants {
 	// Statuts ou type d'erreur
 	public final static String VALUE_MESSAGE_OK = "ok";
 	public final static String VALUE_ERROR_USER_NOT_FOUND = "userNotFound";
-	public final static String VALUE_ERROR_USER_ALREADY_EXIST = "userAlreadyExist";
+	public final static String VALUE_ERROR_USER_ALREADY_REGISTERED = "userAlreadyRegistered";
+	public final static String VALUE_ERROR_USER_ALREADY_LOGGED_IN = "userAlreadyLoggedIn";
 	public final static String VALUE_ERROR_PASSWORD_INCORRECT = "passwordIncorrect";
+	public final static String VALUE_ERROR_NO_PASSWORD_PROVIDED = "noPasswordProvided";
 	public final static String VALUE_ERROR_INTERNAL = "internalServerError";
-
+	public final static String VALUE_SYSTEM = "system";
 	public final static String VALUE_DELETED_MESSAGE = "Message supprimé";
+	public final static String VALUE_INCOMING_MESSAGE = "incommingMessage";
+	public final static String VALUE_NONE_MESSAGE = "noneMessage";
 
 	// Actions
 	public final static String VALUE_ACTION_LOGIN = "login";
 	public final static String VALUE_ACTION_REGISTER = "register";
 	public final static String VALUE_ACTION_DISCONNECT = "disconnect";
+	public final static String VALUE_ACTION_CREATE_CONVERSATION = "createConversation";
 	public final static String VALUE_ACTION_SEND_MESSAGE = "sendMessage";
+	public final static String VALUE_ACTION_GET_CONNECTED_USERS = "getConnectedUsers";
+	public final static String VALUE_ACTION_GET_USERS = "getUsers";
 	public final static String VALUE_ACTION_RECEIVE_MESSAGE = "receiveMessage";
-	public final static String VALUE_ACTION_GET_LIST_CONVERSATION = "getListConversation";
-	public final static String VALUE_ACTION_GET_CONVERSATION_MESSAGES = "getConversationMessages";
+	public final static String VALUE_ACTION_GET_CONVERSATIONS = "getConversations";
+	
 
 }

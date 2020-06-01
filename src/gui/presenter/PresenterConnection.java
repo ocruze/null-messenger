@@ -7,6 +7,7 @@ import org.json.JSONObject;
 import gui.model.ModelConnection;
 import gui.view.ViewConnection;
 import model.client.Client;
+import model.client.UserSession;
 import util.Constants;
 
 public class PresenterConnection implements IPresenter{
@@ -16,7 +17,6 @@ public class PresenterConnection implements IPresenter{
 	private Client client;
 	private ModelConnection model;
 	//private boolean isLogIn;
-	private boolean clientNotRegister;
 
 	public Consumer<Window> changeWindow;
 
@@ -32,7 +32,6 @@ public class PresenterConnection implements IPresenter{
 		this.view = view;
 		this.model = model;
 		this.client = client;
-		this.clientNotRegister = false;
 		init();
 	}
 
@@ -46,22 +45,20 @@ public class PresenterConnection implements IPresenter{
 		case Constants.VALUE_ERROR_USER_NOT_FOUND:
 			this.view.needRegister();
 			break;
-		case Constants.VALUE_ERROR_USER_ALREADY_EXIST:
+		case Constants.VALUE_ERROR_USER_ALREADY_REGISTERED:
+			client.setWantRegister(false);
 			this.view.userAlreadyExist();
 			break;
 		case Constants.VALUE_ERROR_PASSWORD_INCORRECT:
 			break;
-		
 		}
-		//System.out.println("ONREQUESTFAILURE");
-		
 	}
 
 	public void onRequestSuccess(JSONObject json) {
 		switch (json.getString(Constants.KEY_CLIENT_ACTION)) {
 
 		case Constants.VALUE_ACTION_LOGIN:
-			connectionAccepted();
+			connectionAccepted(json);
 			break;
 		
 		case Constants.VALUE_ACTION_REGISTER:
@@ -78,27 +75,26 @@ public class PresenterConnection implements IPresenter{
 	public void registerSuccess() {
 		this.view.registerSuccess();
 	}
-	public void connectionAccepted() {
+	public void connectionAccepted(JSONObject json) {
+		String username = json.getString("username");
+		int userId = json.getInt("idUser");
 		this.view.prepareWindowChanged();
+		UserSession.connect(username, userId);
 		changeWindow(Window.Conversation);
-		//setLogIn(true);
 	}
 
 	public void login() {
 		this.client.setHostName(model.getHostName());
-		this.client.setUserName(model.getUserName());
 		this.client.setPort(model.getPort());
-		this.client.setPassword(model.getPassword());
 		this.client.execute();
+		this.client.getRequestInvoker().login(model.getUserName(), model.getPassword());
 	}
 
 	public void register() {
 		this.client.setHostName(model.getHostName());
-		this.client.setUserName(model.getUserName());
 		this.client.setPort(model.getPort());
-		this.client.setPassword(model.getPassword());
-		this.client.setWantRegister(true);
 		this.client.execute();
+		this.client.getRequestInvoker().register(model.getUserName(), model.getPassword());
 	}
 
 	public void setPassword(String password) {
@@ -119,6 +115,11 @@ public class PresenterConnection implements IPresenter{
 
 	public Client getClient() {
 		return this.client;
+	}
+
+	public void disconnect() {
+		this.client.getRequestInvoker().disconnect(UserSession.getConnectedUsername());
+		
 	}
 
 

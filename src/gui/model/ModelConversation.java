@@ -9,6 +9,7 @@ import model.entity.User;
 public class ModelConversation {
 	private List<User> listParticipantsNewConv;
 	private List<Conversation> listConversations;
+	private List<User> listUser;
 	private String userName;
 	private int idUser;
 
@@ -49,6 +50,15 @@ public class ModelConversation {
 	public void setListConversations(List<Conversation> listConversations) {
 		this.listConversations = listConversations;
 	}
+	
+	public User getUser(int id) {
+		for(User user : this.listUser) {
+			if(user.getIdUser() == id) {
+				return user;
+			}
+		}
+		return null;
+	}
 
 	public String getUserName() {
 		return userName;
@@ -65,5 +75,14 @@ public class ModelConversation {
 	public void setIdUser(int idUser) {
 		this.idUser = idUser;
 	}
+
+	public List<User> getListUser() {
+		return listUser;
+	}
+
+	public void setListUser(List<User> listUser) {
+		this.listUser = listUser;
+	}
+	
 
 }

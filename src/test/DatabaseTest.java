@@ -1,6 +1,8 @@
 package test;
 
+import static org.junit.Assert.assertTrue;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.io.File;
 import java.sql.ResultSet;
@@ -10,7 +12,9 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import exceptions.RegisterWithoutPasswordException;
 import exceptions.UnknownUserException;
+import exceptions.UserAlreadyRegisteredException;
 import model.database.Database;
 import util.Constants;
 
@@ -45,10 +49,11 @@ public class DatabaseTest {
 		ResultSet res;
 		try {
 			// addding one user
-			database.addUser("arnest", "");
+			database.addUser("arnest", "test");
 			res = database.getUser(1);
 			assertEquals("arnest", res.getString(Constants.KEY_USERNAME));
-		} catch (SQLException | UnknownUserException e) {
+		} catch (SQLException | UnknownUserException | UserAlreadyRegisteredException
+				| RegisterWithoutPasswordException e) {
 			e.printStackTrace();
 		}
 
@@ -61,7 +66,7 @@ public class DatabaseTest {
 
 		// addding another user
 		try {
-			database.addUser("leo", "");
+			database.addUser("leo", "test");
 			count = database.count("user");
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -71,18 +76,59 @@ public class DatabaseTest {
 	}
 
 	@Test
+	void testInsertUserAlreadyRegistered() {
+		try {
+			database.addUser("arnest", "test");
+		} catch (UserAlreadyRegisteredException | RegisterWithoutPasswordException e) {
+			e.printStackTrace();
+		}
+		assertThrows(UserAlreadyRegisteredException.class, () -> {
+			database.addUser("arnest", "test");
+		});
+	}
+
+	@Test
+	void testRegisterWithoutPassword() {
+		assertThrows(RegisterWithoutPasswordException.class, () -> {
+			database.addUser("arnest", "");
+		});
+
+	}
+
+//	@Test
+//	void testAddConnectedUser() {
+//		try {
+//			database.addUser("arnest", "test");
+//		} catch (Exception e) {
+//			e.printStackTrace();
+//		}
+//		assertTrue(database.addConnectedUser(1));
+//	}
+
+//	@Test
+//	void testDeletedConnectedUser() {
+//		try {
+//			database.addUser("arnest", "test");
+//		} catch (Exception e) {
+//			e.printStackTrace();
+//		}
+//		database.addConnectedUser(1);
+//		assertTrue(database.deleteConnectedUser(1));
+//	}
+
+	@Test
 	void testGetUsers() {
 		ResultSet res = null;
 		String username = "";
 		try {
-			database.addUser("arnest", "");
-			database.addUser("leo", "");
-			database.addUser("max", "");
+			database.addUser("arnest", "test");
+			database.addUser("leo", "test");
+			database.addUser("max", "test");
 
 			res = database.getUsers();
 			res.next();
 			username = res.getString(Constants.KEY_USERNAME);
-		} catch (SQLException e) {
+		} catch (SQLException | UserAlreadyRegisteredException | RegisterWithoutPasswordException e) {
 			e.printStackTrace();
 		}
 
@@ -114,14 +160,15 @@ public class DatabaseTest {
 		int id = -1;
 
 		try {
-			database.addUser("arnest", "");
-			database.addUser("max", "");
+			database.addUser("arnest", "test");
+			database.addUser("max", "test");
 
 			res = database.getUser("max");
 			username = res.getString(Constants.KEY_USERNAME);
 			id = res.getInt(Constants.KEY_ID_USER);
 
-		} catch (SQLException | UnknownUserException e) {
+		} catch (SQLException | UnknownUserException | UserAlreadyRegisteredException
+				| RegisterWithoutPasswordException e) {
 			e.printStackTrace();
 		}
 
@@ -129,37 +176,42 @@ public class DatabaseTest {
 		assertEquals(2, id);
 	}
 
-	@Test
-	void testModifyUser() {
-		ResultSet res = null;
-		String username = "";
-
-		try {
-			database.addUser("arnest", "");
-			res = database.getUser(1);
-			username = res.getString(Constants.KEY_USERNAME);
-		} catch (SQLException | UnknownUserException e) {
-		}
-		assertEquals("arnest", username);
-
-		try {
-			database.modifyUserUsername(1, "Arnest");
-			res = database.getUser(1);
-
-			username = res.getString(Constants.KEY_USERNAME);
-		} catch (SQLException | UnknownUserException e) {
-			e.printStackTrace();
-		}
-
-		assertEquals("Arnest", username);
-	}
+//	@Test
+//	void testModifyUser() {
+//		ResultSet res = null;
+//		String username = "";
+//
+//		try {
+//			database.addUser("arnest", "test");
+//			res = database.getUser(1);
+//			username = res.getString(Constants.KEY_USERNAME);
+//		} catch (SQLException | UnknownUserException | UserAlreadyRegisteredException
+//				| RegisterWithoutPasswordException e) {
+//		}
+//		assertEquals("arnest", username);
+//
+//		try {
+//			database.modifyUserUsername(1, "Arnest");
+//			res = database.getUser(1);
+//
+//			username = res.getString(Constants.KEY_USERNAME);
+//		} catch (SQLException | UnknownUserException e) {
+//			e.printStackTrace();
+//		}
+//
+//		assertEquals("Arnest", username);
+//	}
 
 	@Test
 	void testDeleteUser() {
 		int count = -1;
 
-		database.addUser("arnest", "");
-		database.addUser("leo", "");
+		try {
+			database.addUser("arnest", "test");
+			database.addUser("leo", "test");
+		} catch (UserAlreadyRegisteredException | RegisterWithoutPasswordException e) {
+			e.printStackTrace();
+		}
 		count = database.count("user");
 		assertEquals(2, count);
 
@@ -188,7 +240,7 @@ public class DatabaseTest {
 	void testAddGetMessage() {
 		String message = "";
 		try {
-			database.addUser("arnest", "");
+			database.addUser("arnest", "test");
 			database.addConversation();
 
 			database.addMessage(1, 1, "heyy");
@@ -207,8 +259,8 @@ public class DatabaseTest {
 		ResultSet res = null;
 
 		try {
-			database.addUser("arnest", "");
-			database.addUser("leo", "");
+			database.addUser("arnest", "test");
+			database.addUser("leo", "test");
 
 			database.addConversation();
 
@@ -219,7 +271,7 @@ public class DatabaseTest {
 
 			res.next();
 			message = res.getString("content");
-		} catch (SQLException e) {
+		} catch (SQLException | UserAlreadyRegisteredException | RegisterWithoutPasswordException e) {
 			e.printStackTrace();
 		}
 		assertEquals("heyy leo", message);
@@ -237,8 +289,8 @@ public class DatabaseTest {
 	void testDeleteMessage() {
 		String message = "";
 		try {
-			database.addUser("arnest", "");
-			database.addUser("leo", "");
+			database.addUser("arnest", "test");
+			database.addUser("leo", "test");
 
 			database.addConversation();
 
@@ -253,7 +305,7 @@ public class DatabaseTest {
 			res.next();
 
 			message = res.getString("content");
-		} catch (SQLException e) {
+		} catch (SQLException | UserAlreadyRegisteredException | RegisterWithoutPasswordException e) {
 			e.printStackTrace();
 		}
 		assertEquals("Message supprimé", message);
