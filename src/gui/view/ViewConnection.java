@@ -32,6 +32,7 @@ public class ViewConnection extends JFrame {
 	private JPasswordField passwordField;
 	private JTextField portField;
 	public PresenterConnection presenter;
+	public boolean errorOccur = false;
 
 	public enum FieldType {
 		USERNAME, PASSWORD, IP, PORT
@@ -52,10 +53,9 @@ public class ViewConnection extends JFrame {
 	public void init() {
 		setBackground(Color.WHITE);
 		this.addWindowListener(new WindowAdapter() {
-		    public void windowClosing(WindowEvent e) {
-		    	presenter.disconnect();
-		    	//THANK YOU
-		    }
+			public void windowClosing(WindowEvent e) {
+				presenter.disconnect();
+			}
 		});
 		setBounds(100, 100, 729, 476);
 		contentPane = new JPanel();
@@ -118,11 +118,11 @@ public class ViewConnection extends JFrame {
 				presenter.setHostName(getValueField(ipField, FieldType.IP));
 				presenter.setUsername(getValueField(usernameField, FieldType.USERNAME));
 				presenter.setPort(Integer.parseInt(getValueField(portField, FieldType.PORT)));
-				presenter.login();
+				if(errorOccur != true) {
+					presenter.login();
+				} 
 			} catch (Exception e2) {
-				JOptionPane message = new JOptionPane();
-				message.showMessageDialog(null, "Une erreur s'est produite : " + e2.getMessage(), "Erreur",
-						JOptionPane.ERROR_MESSAGE);
+		
 			}
 		});
 		contentPane.add(loginButton);
@@ -136,8 +136,7 @@ public class ViewConnection extends JFrame {
 				presenter.setPassword(getValueField(passwordField, FieldType.PASSWORD));
 				presenter.setHostName(getValueField(ipField, FieldType.IP));
 				presenter.setUsername(getValueField(usernameField, FieldType.USERNAME));
-				presenter.setPort(Integer.parseInt(getValueField(portField,
-				FieldType.PORT)));
+				presenter.setPort(Integer.parseInt(getValueField(portField, FieldType.PORT)));
 				presenter.register();
 			} catch (Exception e2) {
 				JOptionPane message = new JOptionPane();
@@ -195,23 +194,26 @@ public class ViewConnection extends JFrame {
 		lbl_close.setBounds(691, 0, 37, 27);
 		contentPane.add(lbl_close);
 	}
+
 	public void prepareWindowChanged() {
-		//this.setUndecorated(false);
+		// this.setUndecorated(false);
 		this.setVisible(false);
 	}
+
 	public void needRegister() {
 		JOptionPane message = new JOptionPane();
 		message.showMessageDialog(null, "Please register before signing in", "Info", JOptionPane.WARNING_MESSAGE);
 	}
-	
+
 	public void registerSuccess() {
 		JOptionPane message = new JOptionPane();
 		message.showMessageDialog(null, "you have been successfully register", "Info", JOptionPane.INFORMATION_MESSAGE);
 	}
-	
+
 	public void userAlreadyExist() {
 		JOptionPane message = new JOptionPane();
-		message.showMessageDialog(null, "A user with this username already exists", "Info", JOptionPane.WARNING_MESSAGE);
+		message.showMessageDialog(null, "A user with this username already exists", "Info",
+				JOptionPane.WARNING_MESSAGE);
 	}
 
 	public String getValueField(JTextField field, FieldType type) throws Exception {
@@ -229,22 +231,28 @@ public class ViewConnection extends JFrame {
 		}
 		Matcher m = p.matcher(field.getText());
 
-		if (!m.matches() && !type.equals(FieldType.USERNAME) && !type.equals(FieldType.PASSWORD)
-				&& !type.equals(FieldType.IP)) {
-			message.showMessageDialog(null,
-					"Le champ " + type.name().toLowerCase() + " ne repecte pas le critère demandé", "Erreur",
-					JOptionPane.ERROR_MESSAGE);
-		}
-
 		if (!field.getText().equals("") && !(field instanceof JPasswordField)) {
-
+			errorOccur = false;
 			return field.getText();
 		} else if (type.equals(FieldType.PASSWORD)) {
 			JPasswordField passwordField = (JPasswordField) field;
 			if (!String.valueOf(passwordField.getPassword()).equals("")) {
 				return String.valueOf(passwordField.getPassword());
+			} else {
+				errorOccur = true;
+				message.showMessageDialog(null, "Le champ " + type.name().toLowerCase() + " n'est pas renseigné",
+						"Erreur", JOptionPane.ERROR_MESSAGE);
 			}
-		} else {
+		} else if (!m.matches() && !type.equals(FieldType.USERNAME) && !type.equals(FieldType.PASSWORD)
+				&& !type.equals(FieldType.IP)) {
+			errorOccur = true;
+			message.showMessageDialog(null,
+					"Le champ " + type.name().toLowerCase() + " ne repecte pas le critère demandé", "Erreur",
+					JOptionPane.ERROR_MESSAGE);
+		}
+
+		else {
+			errorOccur = true;
 			message.showMessageDialog(null, "Le champ " + type.name().toLowerCase() + " n'est pas renseigné", "Erreur",
 					JOptionPane.ERROR_MESSAGE);
 		}
