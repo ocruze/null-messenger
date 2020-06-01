@@ -171,14 +171,14 @@ public class PresenterConversation implements IPresenter {
 
 				this.model.setListConversations(listConversation);
 				this.view.loadConversations(listConversation);
-				
-				for(Conversation conv: this.model.getListConversations()) {
-					if(conv.getIdConversation() == UserSession.getConversationId()) {
+
+				for (Conversation conv : this.model.getListConversations()) {
+					if (conv.getIdConversation() == UserSession.getConversationId()) {
 						System.out.println(conv.getMessages());
 						this.view.loadMessages(conv.getMessages());
 					}
 				}
-				
+
 //				this.view.loadConversations(this.model.getListConversations());
 //				this.view.loadMessages(this.model.get);
 
@@ -194,6 +194,14 @@ public class PresenterConversation implements IPresenter {
 		}
 
 		this.view.loadConversations(this.model.getListConversations());
+
+		if (UserSession.getConversationId() != -1) {
+			Conversation c = this.model.getListConversations().stream()
+					.filter(x -> x.getIdConversation() == UserSession.getConversationId()).findAny().get();
+			if (c != null)
+				this.view.loadMessages(c.getMessages());
+		}
+
 	}
 
 	public void onRequestFailureConversation(JSONObject json) {
@@ -204,6 +212,5 @@ public class PresenterConversation implements IPresenter {
 
 		}
 	}
-	
 
 }

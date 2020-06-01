@@ -12,6 +12,7 @@ import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.List;
+import java.util.Optional;
 import java.util.Vector;
 
 import javax.swing.DefaultListCellRenderer;
@@ -278,14 +279,15 @@ public class ViewConversation extends JFrame {
 	public void loadConversations(List<Conversation> listConversation) {
 		if (listConversation == null || listConversation.size() == 0)
 			return;
-
+		Vector<Conversation> convVector = new Vector<Conversation>(listConversation);
 		jListConversation.removeAll();
-		jListConversation.setListData(new Vector<Conversation>(listConversation));
+		jListConversation.setListData(convVector);
+		
 		jListConversation.setCellRenderer(new DefaultListCellRenderer() {
 
 			private static final long serialVersionUID = -2663637240222087200L;
 
-			@Override
+//			@Override
 			public Component getListCellRendererComponent(JList<?> list, Object value, int index, boolean isSelected,
 					boolean cellHasFocus) {
 				Component renderer = super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
@@ -311,6 +313,14 @@ public class ViewConversation extends JFrame {
 				return renderer;
 			}
 		});
+		
+		if(UserSession.getConversationId() != -1) {
+			Optional<Conversation> conv = convVector
+					.stream()
+					.filter(c -> c.getIdConversation() == UserSession.getConversationId())
+					.findFirst();
+			jListConversation.setSelectedIndex(convVector.indexOf(conv.get()));
+		}
 
 		this.validate();
 		this.repaint();
@@ -321,7 +331,6 @@ public class ViewConversation extends JFrame {
 	public void loadMessages(List<Message> listMessage) {
 		jListMessage.removeAll();
 		jListMessage.setListData(new Vector<Message>(listMessage));
-		
 		
 		jListMessage.setCellRenderer(new DefaultListCellRenderer() {
 
@@ -348,6 +357,8 @@ public class ViewConversation extends JFrame {
 
 	private void sendMessage() {
 		String message = messageTxt.getText();
+		messageTxt.setText("");
+		
 		int convId = -1;
 
 		if (jListConversation.getSelectedValue() != null) {
