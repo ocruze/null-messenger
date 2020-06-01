@@ -43,9 +43,10 @@ public class PresenterConversation implements IPresenter {
 	public void LoadConversations() {
 		client.getInvoker().loadConversations();
 	}
-	
+
 	public void createConversation() {
-		model.getListParticipantsNewConv().add(new User(UserSession.getConnectedUserId(), UserSession.getConnectedUsername()));
+		model.getListParticipantsNewConv()
+				.add(new User(UserSession.getConnectedUserId(), UserSession.getConnectedUsername()));
 		client.getInvoker().createConversation(model.getListParticipantsNewConv());
 	}
 
@@ -61,7 +62,7 @@ public class PresenterConversation implements IPresenter {
 	public void setListParticipantsNewConv(List<User> listParticipantsNewConv) {
 		this.model.setListParticipantsNewConv(listParticipantsNewConv);
 	}
-	
+
 	public List<User> getListUser() {
 		return this.model.getListUser();
 	}
@@ -129,13 +130,15 @@ public class PresenterConversation implements IPresenter {
 
 				JSONArray jsonArrayConversation = json.getJSONArray(Constants.KEY_CONVERSATIONS);
 				List<Conversation> listConversation = new ArrayList<Conversation>();
-				List<Message> listMessage = new ArrayList<Message>();
-				List<User> listUser = new ArrayList<User>();
+				// List<Message> listMessage = new ArrayList<Message>();
 
-				Conversation conversation = new Conversation();
 				jsonArrayConversation.forEach(item -> {
+					List<Message> listMessage = new ArrayList<Message>();
+					List<User> listUser = new ArrayList<User>();
+					Conversation conversation = new Conversation();
 					JSONArray array = (JSONArray) item;
 					array.forEach(message -> {
+
 						JSONObject obj = (JSONObject) message;
 						int id = Integer.valueOf(obj.get(Constants.KEY_ID_SENDER).toString());
 						int idConversation = Integer.valueOf(obj.get(Constants.KEY_ID_CONVERSATION).toString());
@@ -151,6 +154,7 @@ public class PresenterConversation implements IPresenter {
 					});
 					conversation.setMessages(listMessage);
 					conversation.setParticipants(listUser);
+
 					listConversation.add(conversation);
 				});
 
@@ -160,9 +164,9 @@ public class PresenterConversation implements IPresenter {
 			}
 			// System.out.println(this.model.getListConversations());
 			break;
-			
+
 		case Constants.VALUE_ACTION_CREATE_CONVERSATION:
-			this.view.loadConversations(this.model.getListConversations());;
+			this.client.getInvoker().loadConversations();
 			break;
 		}
 
