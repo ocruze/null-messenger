@@ -85,7 +85,7 @@ public class RequestInvoker {
 		jsonMessage.put(Constants.KEY_RECIPIENTS, createJarrayUsers(conversation.getParticipants()));
 		send(jsonMessage);
 		
-		loadConversations();
+		//loadConversations();
 	}
 
 	public void disconnect(String username) {

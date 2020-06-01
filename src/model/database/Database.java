@@ -11,7 +11,9 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 import exceptions.RegisterWithoutPasswordException;
 import exceptions.UnknownUserException;
@@ -576,9 +578,9 @@ public class Database {
 		}
 	}
 
-	public ResultSet getConversationParticipants(int idConversation) {
+	public List<Integer> getConversationParticipants(int idConversation) {
 		initConnectionIfClosed();
-
+		List<Integer> usersList = new ArrayList<Integer>();
 		String query = "SELECT DISTINCT(idSender) FROM message WHERE idConversation = ? ;";
 		PreparedStatement stmt;
 		try {
@@ -586,12 +588,13 @@ public class Database {
 			stmt.setInt(1, idConversation);
 
 			ResultSet res = stmt.executeQuery();
-
-			if (res.isClosed()) {
-				return null;
+			
+			while(res.next()) {
+				System.out.println("voici l id conversation = "+res.getInt(1));
+				usersList.add(res.getInt(1)); 
 			}
 
-			return res;
+			return usersList;
 		} catch (SQLException e) {
 			e.printStackTrace();
 			return null;

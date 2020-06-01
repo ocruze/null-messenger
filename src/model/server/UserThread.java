@@ -9,6 +9,7 @@ import java.io.PrintWriter;
 import java.net.Socket;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Optional;
 
@@ -31,15 +32,15 @@ public class UserThread extends Thread {
 	private int idUser;
 	JSONObject jsonClientMessage;
 	JSONObject jsonServerMessage;
-	private int idConvOptional;
+	private Optional<Integer> idConvOptional;
 
 	// private User user;
 
-	public int getIdConvOptional() {
+	public Optional<Integer> getIdConvOptional() {
 		return idConvOptional;
 	}
 
-	public void setIdConvOptional(int idConvOptional) {
+	public void setIdConvOptional(Optional<Integer> idConvOptional) {
 		this.idConvOptional = idConvOptional;
 	}
 
@@ -183,26 +184,23 @@ public class UserThread extends Thread {
 //					});
 
 					JSONArray listRecipients = jsonClientMessage.getJSONArray(Constants.KEY_RECIPIENTS);
-					setIdConvOptional(1);
+					Optional<Integer> idconv = Optional.of(jsonClientMessage.getInt(Constants.KEY_ID_CONVERSATION));
+					//setIdConvOptional(Optional.of(1));
 					try {
-						listRecipients.forEach(item -> {
-
-							JSONObject obj = (JSONObject) item;
-							String sender = obj.get(Constants.KEY_ID_USER).toString();
-							//String recipient = obj.get(Constants.KEY_USERNAME_RECIPIENT).toString();
-							//String recipient = Constants.VALUE_SYSTEM;
-							if (this.getIdConvOptional() == -1) {
-								this.setIdConvOptional(sendMessage(sender, recipient, content, 1));
-							} else {
-								sendMessage(sender, recipient, content, this.getIdConvOptional());
-							}
-							
-							UserThread recipientThread = server.getUserThread(recipient);
-							if (recipientThread != null) {
-								recipientThread.receiveMessage();
-							}
-
-						});
+//						listRecipients.forEach(item -> {
+//
+//							JSONObject obj = (JSONObject) item;
+//							String sender = obj.get(Constants.KEY_ID_USER).toString();
+//							// String recipient = obj.get(Constants.KEY_USERNAME_RECIPIENT).toString();
+//							// String recipient = Constants.VALUE_SYSTEM;
+//							sendMessage(sender, content, idconv);
+////							UserThread recipientThread = server.getUserThread(recipient);
+////							if (recipientThread != null) {
+////								recipientThread.receiveMessage();
+////							}
+//
+//						});
+						sendMessage(jsonClientMessage.get(Constants.KEY_USERNAME_SENDER).toString(), content, idconv);
 
 					} catch (Exception e) {
 						e.printStackTrace();
@@ -234,18 +232,17 @@ public class UserThread extends Thread {
 //					});
 
 					JSONArray listParticipant = jsonClientMessage.getJSONArray(Constants.KEY_PARTICIPANTS);
-					setIdConvOptional(-1);
+					setIdConvOptional(Optional.of(-1));
 					try {
 						listParticipant.forEach(item -> {
 
 							JSONObject obj = (JSONObject) item;
 							String sender = obj.get(Constants.KEY_USERNAME).toString();
-							String recipient =  sender;//Constants.VALUE_SYSTEM;
-							if (this.getIdConvOptional() == -1) {
-								this.setIdConvOptional(sendMessage(sender, recipient,
-										"you have been add to the conversation" + sender, -1));
+							if (this.getIdConvOptional().get() == -1) {
+								this.setIdConvOptional(Optional.of(sendMessage(sender,
+										"you have been add to the conversation" + sender, Optional.of(-1))));
 							} else {
-								sendMessage(sender, recipient, "you have been add to the conversation" + sender,
+								sendMessage(sender, "you have been add to the conversation " + sender,
 										this.getIdConvOptional());
 							}
 
@@ -254,6 +251,7 @@ public class UserThread extends Thread {
 					} catch (Exception e) {
 						e.printStackTrace();
 					}
+					jsonServerMessage.put(Constants.KEY_MESSAGE, Constants.VALUE_MESSAGE_OK);
 
 					break;
 
@@ -324,8 +322,9 @@ public class UserThread extends Thread {
 				}
 
 				jsonServerMessage.put(Constants.KEY_CONVERSATIONS, jArrayConv);
+				jsonServerMessage.put(Constants.KEY_INFO, Constants.VALUE_INCOMING_MESSAGE);
 			}
-			jsonServerMessage.put(Constants.KEY_INFO, Constants.VALUE_INCOMING_MESSAGE);
+
 			jsonServerMessage.put(Constants.KEY_MESSAGE, Constants.VALUE_MESSAGE_OK);
 
 		} catch (SQLException e) {
@@ -384,12 +383,12 @@ public class UserThread extends Thread {
 		json.put(Constants.KEY_MESSAGE, Constants.VALUE_MESSAGE_OK);
 		send(json);
 	}
-	
-	private int sendMessage(String sender, String recipient, String message){
-		return this.sendMessage(sender, recipient, message, Optional.empty());
+
+	private int sendMessage(String sender, String message) {
+		return this.sendMessage(sender, message, Optional.empty());
 	}
 
-	private int sendMessage(String sender, String recipient, String message, Optional<Integer> idConvOptional) {
+	private int sendMessage(String sender, String message, Optional<Integer> idConvOptional) {
 		ResultSet resSender = server.getUser(sender);
 		UserThread threadRecipient = null;
 		String idConversation = "";
@@ -397,14 +396,14 @@ public class UserThread extends Thread {
 
 		// sauvegarde du message dans la BD
 		try {
-			if(resSender.next()) {
+			if (resSender.next()) {
 				idSender = resSender.getInt(Constants.KEY_ID_USER);
 				System.out.println(resSender.getInt(Constants.KEY_ID_USER));
 			}
 		} catch (SQLException e1) {
 			e1.printStackTrace();
 		}
-	
+
 		try {
 			/**
 			 * if(jsonClientMessage.get(Constants.KEY_ID_CONVERSATION).equals(null)) {
@@ -416,38 +415,46 @@ public class UserThread extends Thread {
 			} else {
 				idConv = idConvOptional.get();
 			}
-	
+
 		} catch (JSONException e) {
 			idConv = server.getPrivateConversationId(idSender, idRecipient);
 		}
 		if (idConv == -1)
 			idConv = server.getDatabase().addConversation();
-	
+
 		server.getDatabase().addMessage(idConv, idSender, message);
-	
+
 		// si user connecté, on l'envoie le msg, sinon rien
 		// fait crasher pour l'instant
 		try {
-			server.getDatabase().getConversationParticipants(idConversation);
-			
-			threadRecipient = server.getUserThread(recipient);
-			if (threadRecipient != null) {
-	
-				jsonServerMessage.put(Constants.KEY_USERNAME_SENDER, sender);
-				jsonServerMessage.put(Constants.KEY_USERNAME_RECIPIENT, recipient);
-				jsonServerMessage.put(Constants.KEY_MESSAGE_CONTENT, message);
-				jsonServerMessage.put(Constants.KEY_MESSAGE, Constants.VALUE_MESSAGE_OK);
-	
-				threadRecipient.send(jsonServerMessage);
-			}
+
+			List<Integer> allUsers = server.getDatabase().getConversationParticipants(idConv);
+			int idLocal = idSender;
+			allUsers.stream().filter(u -> u != idLocal).forEach(u -> {
+				sendMessageToUser(u);
+			});
+
 		} catch (NoSuchElementException e) {
 			System.out.println("user not connected yet, the message will be deliver later");
 		}
-	
+
 		jsonServerMessage = new JSONObject();
 		jsonServerMessage.put(Constants.KEY_MESSAGE, Constants.VALUE_MESSAGE_OK);
 
 		return idConv;
+	}
+
+	private void sendMessageToUser(int targetId) {
+		UserThread threadRecipient = server.getUserThread(targetId);
+		if (threadRecipient != null) {
+			// jsonServerMessage.put(Constants.KEY_USERNAME_SENDER, sender);
+			// jsonServerMessage.put(Constants.KEY_USERNAME_RECIPIENT, recipient);
+			// jsonServerMessage.put(Constants.KEY_MESSAGE_CONTENT, message);
+			jsonServerMessage.put(Constants.KEY_CLIENT_ACTION, Constants.VALUE_ACTION_GET_CONVERSATIONS);
+			jsonServerMessage.put(Constants.KEY_MESSAGE, Constants.VALUE_MESSAGE_OK);
+
+			threadRecipient.send(threadRecipient.getConversations());
+		}
 	}
 
 }

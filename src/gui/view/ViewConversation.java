@@ -180,7 +180,9 @@ public class ViewConversation extends JFrame {
 			public void mouseClicked(MouseEvent e) {
 				Conversation conv = jListConversation.getSelectedValue();
 				System.out.println(conv.getClass().getName());
-				loadMessages(conv.getMessages());
+
+				if (conv != null && conv.getMessages() != null && conv.getMessages().size() != 0)
+					loadMessages(conv.getMessages());
 			}
 
 		});
@@ -348,7 +350,7 @@ public class ViewConversation extends JFrame {
 
 		if (!message.equals(""))
 			System.out.println("Id CONVERSATION : " + jListConversation.getSelectedValue().getIdConversation());
-			presenter.sendMessage(message, jListConversation.getSelectedValue());
+		presenter.sendMessage(message, jListConversation.getSelectedValue());
 
 	}
 

@@ -13,8 +13,7 @@ VALUES
 	(6, "marie", "123456", null),
 	(7, "pierre", "123456", null),
 	(8, "pegasse", "123456", null),
-	(9, "jean", "123456", null),
-	(13, "system", "admin", null);
+	(9, "jean", "123456", null);
 
 
 INSERT INTO conversation
