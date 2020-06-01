@@ -436,7 +436,7 @@ public class Database {
 	public int getPrivateConversationId(int idUser1, int idUser2) {
 		initConnectionIfClosed();
 
-		String query = "SELECT (SELECT DISTINCT(idconversation) FROM message WHERE idSender = ?) AND (SELECT DISTINCT(idconversation) FROM message WHERE idSender = ?)";
+		String query = "SELECT (SELECT DISTINCT(idConversation) FROM message WHERE idSender = ?) AND (SELECT DISTINCT(idConversation) FROM message WHERE idSender = ?)";
 		PreparedStatement stmt;
 		try {
 			stmt = conn.prepareStatement(query);
@@ -450,7 +450,8 @@ public class Database {
 
 			return res.getInt(Constants.KEY_ID_CONVERSATION);
 		} catch (SQLException e) {
-			e.printStackTrace();
+			//e.printStackTrace();
+			System.out.println("conversation not found, a new will be created");
 			return -1;
 		}
 	}

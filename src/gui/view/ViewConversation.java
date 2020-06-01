@@ -5,6 +5,7 @@ import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
+import java.awt.event.ActionEvent;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 import java.util.ArrayList;
@@ -27,6 +28,7 @@ import javax.swing.JTextArea;
 import javax.swing.JTextField;
 
 import gui.presenter.PresenterConversation;
+import gui.view.ViewConnection.FieldType;
 import model.entity.Conversation;
 import model.entity.Message;
 import model.entity.User;
@@ -103,6 +105,10 @@ public class ViewConversation extends JFrame {
 
 		JButton btnCreateConv = new JButton("Create");
 		GroupLayout gl_leftPanel = new GroupLayout(newConvPanel);
+		btnCreateConv.addActionListener((ActionEvent e) -> {
+	            presenter.setListParticipantsNewConv(jListUser.getSelectedValuesList());
+	            presenter.createConversation();
+		});
 		gl_leftPanel.setHorizontalGroup(gl_leftPanel.createParallelGroup(Alignment.LEADING).addGroup(gl_leftPanel
 				.createSequentialGroup()
 				.addGroup(gl_leftPanel.createParallelGroup(Alignment.LEADING)
@@ -238,10 +244,15 @@ public class ViewConversation extends JFrame {
 	
 	public void loadConversations(List<Conversation> listConversation) {
 		List<String> listParticipant = new ArrayList<String>();
+		List<String> newListConversation = new ArrayList<String>();
 		for(Conversation conv : listConversation) {
-			listParticipant.add(conv.getParticipants().toString());
+			for(User user : conv.getParticipants()) {
+				listParticipant.add(user.getUsername());
+			}
+			newListConversation.add(listParticipant.toString());
+			listParticipant = new ArrayList<String>();
 		}
-		jListConversation.setListData(new Vector<String>(listParticipant));
+		jListConversation.setListData(new Vector<String>(newListConversation));
 		this.validate();
 		this.repaint();
 	}

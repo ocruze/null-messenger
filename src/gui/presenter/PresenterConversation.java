@@ -43,6 +43,11 @@ public class PresenterConversation implements IPresenter {
 	public void LoadConversations() {
 		client.getInvoker().loadConversations();
 	}
+	
+	public void createConversation() {
+		model.getListParticipantsNewConv().add(new User(UserSession.getConnectedUserId(), UserSession.getConnectedUsername()));
+		client.getInvoker().createConversation(model.getListParticipantsNewConv());
+	}
 
 	/**
 	 * public List<Conversation> LoadConversations() {
@@ -55,6 +60,14 @@ public class PresenterConversation implements IPresenter {
 
 	public void setListParticipantsNewConv(List<User> listParticipantsNewConv) {
 		this.model.setListParticipantsNewConv(listParticipantsNewConv);
+	}
+	
+	public List<User> getListUser() {
+		return this.model.getListUser();
+	}
+
+	public void setListUser(List<User> listUser) {
+		this.model.setListUser(listUser);
 	}
 
 	public List<Conversation> getListConversations() {
@@ -108,8 +121,8 @@ public class PresenterConversation implements IPresenter {
 			});
 
 			listUsers.remove(new User(UserSession.getConnectedUserId(), UserSession.getConnectedUsername()));
-			this.model.setListParticipantsNewConv(listUsers);
-			this.view.loadUsers(this.model.getListParticipantsNewConv());
+			this.model.setListUser(listUsers);
+			this.view.loadUsers(this.model.getListUser());
 			break;
 		case Constants.VALUE_ACTION_GET_CONVERSATIONS:
 			if (!json.getString(Constants.KEY_INFO).equals(Constants.VALUE_NONE_MESSAGE)) {
@@ -146,6 +159,10 @@ public class PresenterConversation implements IPresenter {
 
 			}
 			// System.out.println(this.model.getListConversations());
+			break;
+			
+		case Constants.VALUE_ACTION_CREATE_CONVERSATION:
+			this.view.loadConversations(this.model.getListConversations());;
 			break;
 		}
 

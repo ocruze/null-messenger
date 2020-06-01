@@ -42,16 +42,17 @@ public class Constants {
 	public final static String VALUE_ERROR_PASSWORD_INCORRECT = "passwordIncorrect";
 	public final static String VALUE_ERROR_NO_PASSWORD_PROVIDED = "noPasswordProvided";
 	public final static String VALUE_ERROR_INTERNAL = "internalServerError";
-
+	public final static String VALUE_SYSTEM = "system";
 	public final static String VALUE_DELETED_MESSAGE = "Message supprimé";
-	
-	public final static String VALUE_NONE_MESSAGE = "aucun message";
+	public final static String VALUE_INCOMING_MESSAGE = "incommingMessage";
+	public final static String VALUE_NONE_MESSAGE = "noneMessage";
+	public final static String VALUE_PARTICIPANT = "participants";
 
 	// Actions
 	public final static String VALUE_ACTION_LOGIN = "login";
 	public final static String VALUE_ACTION_REGISTER = "register";
 	public final static String VALUE_ACTION_DISCONNECT = "disconnect";
-
+	public final static String VALUE_ACTION_CREATE_CONVERSATION = "createConversation";
 	public final static String VALUE_ACTION_SEND_MESSAGE = "sendMessage";
 	public final static String VALUE_ACTION_GET_CONNECTED_USERS = "getConnectedUsers";
 	public final static String VALUE_ACTION_GET_USERS = "getUsers";
