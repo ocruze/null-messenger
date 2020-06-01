@@ -7,6 +7,7 @@ Insert for fast test
 
 INSERT INTO user
 VALUES
+	(3, "paul", "123456", null),
 	(4, "jacques", "123456", null),
 	(5, "avril", "123456", null),
 	(6, "marie", "123456", null),

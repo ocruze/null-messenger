@@ -37,5 +37,12 @@ public class Conversation {
 	{
 		return this.participants;
 	}
+
+	@Override
+	public String toString() {
+		return this.participants+"" + this.messages+"";
+	}
+	
+	
 	
 }

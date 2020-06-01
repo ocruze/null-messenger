@@ -7,6 +7,7 @@ import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Vector;
 
@@ -40,7 +41,7 @@ public class ViewConversation extends JFrame {
 	private JTextField convNameField;
 	private PresenterConversation presenter;
 	private JList<User> jListUser;
-	private JList<Conversation> jListConversation;
+	private JList<String> jListConversation;
 	private JList<Message> jListMessage;
 
 	/**
@@ -236,7 +237,11 @@ public class ViewConversation extends JFrame {
 	}
 	
 	public void loadConversations(List<Conversation> listConversation) {
-		jListConversation.setListData(new Vector<Conversation>(listConversation));
+		List<String> listParticipant = new ArrayList<String>();
+		for(Conversation conv : listConversation) {
+			listParticipant.add(conv.getParticipants().toString());
+		}
+		jListConversation.setListData(new Vector<String>(listParticipant));
 		this.validate();
 		this.repaint();
 	}

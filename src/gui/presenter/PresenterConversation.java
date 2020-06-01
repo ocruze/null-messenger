@@ -112,37 +112,40 @@ public class PresenterConversation implements IPresenter {
 			this.view.loadUsers(this.model.getListParticipantsNewConv());
 			break;
 		case Constants.VALUE_ACTION_GET_CONVERSATIONS:
-			JSONArray jsonArrayConversation = json.getJSONArray(Constants.KEY_CONVERSATIONS);
-			List<Conversation> listConversation = new ArrayList<Conversation>();
-			List<Message> listMessage = new ArrayList<Message>();
-			List<User> listUser = new ArrayList<User>();
+			if (!json.getString(Constants.KEY_INFO).equals(Constants.VALUE_NONE_MESSAGE)) {
 
-			Conversation conversation = new Conversation();
-			jsonArrayConversation.forEach(item -> {
-				JSONArray array = (JSONArray) item;
-				array.forEach(message -> {
-					JSONObject obj = (JSONObject) message;
-					int id = Integer.valueOf(obj.get(Constants.KEY_ID_SENDER).toString());
-					int idConversation = Integer.valueOf(obj.get(Constants.KEY_ID_CONVERSATION).toString());
-					conversation.setIdConversation(idConversation);
-					User user = model.getUser(id);
-					if (user == null && UserSession.getConnectedUserId() == id) {
-						user = new User(UserSession.getConnectedUserId(), UserSession.getConnectedUsername());
-					}
-					Message newMessage = new Message(obj.get(Constants.KEY_MESSAGE_CONTENT).toString(), user,
-							obj.get(Constants.KEY_MESSANGE_DATE).toString());
-					listMessage.add(newMessage);
-					listUser.add(user);
+				JSONArray jsonArrayConversation = json.getJSONArray(Constants.KEY_CONVERSATIONS);
+				List<Conversation> listConversation = new ArrayList<Conversation>();
+				List<Message> listMessage = new ArrayList<Message>();
+				List<User> listUser = new ArrayList<User>();
+
+				Conversation conversation = new Conversation();
+				jsonArrayConversation.forEach(item -> {
+					JSONArray array = (JSONArray) item;
+					array.forEach(message -> {
+						JSONObject obj = (JSONObject) message;
+						int id = Integer.valueOf(obj.get(Constants.KEY_ID_SENDER).toString());
+						int idConversation = Integer.valueOf(obj.get(Constants.KEY_ID_CONVERSATION).toString());
+						conversation.setIdConversation(idConversation);
+						User user = model.getUser(id);
+						if (user == null && UserSession.getConnectedUserId() == id) {
+							user = new User(UserSession.getConnectedUserId(), UserSession.getConnectedUsername());
+						}
+						Message newMessage = new Message(obj.get(Constants.KEY_MESSAGE_CONTENT).toString(), user,
+								obj.get(Constants.KEY_MESSANGE_DATE).toString());
+						listMessage.add(newMessage);
+						listUser.add(user);
+					});
+					conversation.setMessages(listMessage);
+					conversation.setParticipants(listUser);
+					listConversation.add(conversation);
 				});
-				conversation.setMessages(listMessage);
-				conversation.setParticipants(listUser);
-				listConversation.add(conversation);
-			});
 
-			this.model.setListConversations(listConversation);
-			this.view.loadConversations(this.model.getListConversations());
+				this.model.setListConversations(listConversation);
+				this.view.loadConversations(this.model.getListConversations());
 
-			System.out.println(this.model.getListConversations());
+			}
+			// System.out.println(this.model.getListConversations());
 			break;
 		}
 

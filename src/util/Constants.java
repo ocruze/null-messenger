@@ -25,6 +25,7 @@ public class Constants {
 	public final static String KEY_USERNAME_RECIPIENT = "usernameRecipient";
 	public final static String KEY_MESSAGE_CONTENT = "messageContent";
 	public final static String KEY_MESSANGE_DATE= "dateMessage";
+	public final static String KEY_INFO = "info";
 	
 	public final static String KEY_USERS = "users";
 	public final static String KEY_CONVERSATIONS = "users";
@@ -43,6 +44,8 @@ public class Constants {
 	public final static String VALUE_ERROR_INTERNAL = "internalServerError";
 
 	public final static String VALUE_DELETED_MESSAGE = "Message supprimé";
+	
+	public final static String VALUE_NONE_MESSAGE = "aucun message";
 
 	// Actions
 	public final static String VALUE_ACTION_LOGIN = "login";

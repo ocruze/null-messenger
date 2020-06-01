@@ -219,7 +219,11 @@ public class UserThread extends Thread {
 
 					JSONArray jArrayConv = new JSONArray();
 					try {
-						while (res.next()) {
+						if(res == null) {
+							jsonServerMessage.put(Constants.KEY_INFO, Constants.VALUE_NONE_MESSAGE);
+						}
+						else {
+							while (res.next()) {
 							int idConversation = res.getInt(1);
 							ResultSet resMessages = server.getDatabase().getConversationMessages(idConversation);
 
@@ -240,7 +244,9 @@ public class UserThread extends Thread {
 						}
 
 						jsonServerMessage.put(Constants.KEY_CONVERSATIONS, jArrayConv);
+						}
 						jsonServerMessage.put(Constants.KEY_MESSAGE, Constants.VALUE_MESSAGE_OK);
+						
 					} catch (SQLException e) {
 						e.printStackTrace();
 						jsonServerMessage.put(Constants.KEY_MESSAGE, Constants.VALUE_ERROR_INTERNAL);
