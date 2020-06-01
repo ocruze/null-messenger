@@ -35,7 +35,9 @@ De préférence utiliser Eclipse avec java version 8.
 
 ## How to use
 
-//TODO
+L'utilisateur devra s'enregistrer en remplissant un formulaire : username,password, adresse ip et le port. Ensuite il pourra se connecter.S'il souhaite communiquer, il lui
+suffira de créer une conversation en sélectionnant le(s) prénom(s) se trouvants sur une liste déroulante. Ensuite il pourra écrire du text dans un rectangle dédié et appuyer sur le bouton envoyer pour que le(s) destinataire(s) peut/puissent
+voir le message.
 
 ## Licence
 
