@@ -14,7 +14,6 @@ public class ReadThread extends Thread {
 	private BufferedReader reader;
 	private Socket socket;
 	private Client client;
-	private JSONObject json;
 
 	public ReadThread(Socket socket, Client client) {
 		this.socket = socket;
@@ -37,10 +36,19 @@ public class ReadThread extends Thread {
 				jsonServerMessage = receive();
 
 				if (!jsonServerMessage.getString(Constants.KEY_MESSAGE).equals(Constants.VALUE_MESSAGE_OK)) {
-					System.out.println(jsonServerMessage);
-					client.onRequestFailed(jsonServerMessage);
-				}else {
-					client.onRequestSuccess(jsonServerMessage);
+					//System.out.println(jsonServerMessage);
+					if (UserSession.isConnected()) {
+						client.onRequestFailedConversation(jsonServerMessage);
+					} else {
+						client.onRequestFailed(jsonServerMessage);
+					}
+				} else {
+					if (UserSession.isConnected()) {
+						client.onRequestSuccessConversation(jsonServerMessage);
+					} else {
+						client.onRequestSuccess(jsonServerMessage);
+					}
+
 				}
 
 			} catch (IOException ex) {
@@ -66,6 +74,7 @@ public class ReadThread extends Thread {
 			return false;
 		}
 	}
+
 	boolean register() {
 		try {
 			JSONObject jsonMessage = receive();

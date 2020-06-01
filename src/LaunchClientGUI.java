@@ -6,6 +6,7 @@ import gui.presenter.PresenterConversation;
 import gui.view.ViewConnection;
 import gui.view.ViewConversation;
 import model.client.Client;
+import model.client.UserSession;
 
 public class LaunchClientGUI {
 
@@ -43,10 +44,12 @@ public class LaunchClientGUI {
 		 **/
 		case Conversation:
 			ViewConversation viewConversation = new ViewConversation();
+			
+			Client client = presenterConnection.getClient();
+
 			PresenterConversation presenterConversation = new PresenterConversation(viewConversation,
-					new ModelConversation(presenterConnection.getClient().getUsername(),
-							presenterConnection.getClient().getIdUser()),
-					presenterConnection.getClient());
+					new ModelConversation(UserSession.getConnectedUsername(), UserSession.getConnectedUserId()), client);
+			
 			viewConversation.setPresenter(presenterConversation);
 			setPresenterConversation(presenterConversation);
 			break;
